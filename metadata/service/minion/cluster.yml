@@ -1,0 +1,13 @@
+applications:
+- salt
+parameters:
+  salt:
+    minion:
+      enabled: true
+      master:
+        host: ${_param:salt_master_host}
+      mine:
+        interval: 60
+        module:
+          grains.items: []
+          network.interfaces: []

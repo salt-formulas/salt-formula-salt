@@ -1,0 +1,2 @@
+salt/*             /usr/share/salt-formulas/env/salt/
+metadata/service/*      /usr/share/salt-formulas/reclass/service/salt/

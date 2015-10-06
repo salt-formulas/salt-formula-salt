@@ -1,0 +1,10 @@
+applications:
+- salt
+- git
+- openssh
+parameters:
+  salt:
+    master:
+      enabled: true
+      command_timeout: 5
+      worker_threads: 2

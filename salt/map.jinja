@@ -1,0 +1,120 @@
+
+{% set master = salt['grains.filter_by']({
+    'Arch': {
+        'pkgs': ['salt-zmq'],
+        'service': 'salt-master',
+        'pillar': {
+            'engine': 'salt',
+        },
+        'accept_policy': 'preseed',
+        'bind': {},
+        'formula': {},
+        'base_environment': 'dev',
+    },
+    'Debian': {
+        'pkgs': ['salt-master'],
+        'service': 'salt-master',
+        'pillar': {
+            'engine': 'salt',
+        },
+        'accept_policy': 'preseed',
+        'bind': {},
+        'formula': {},
+        'base_environment': 'dev',
+    },
+    'Gentoo': {
+        'pkgs': ['app-admin/salt'],
+        'service': 'salt-master',
+        'pillar': {
+            'engine': 'salt',
+        },
+        'accept_policy': 'preseed',
+        'bind': {},
+        'formula': {},
+        'base_environment': 'dev',
+    },
+    'MacOS': {
+        'pkgs': ['saltstack'],
+        'service': 'salt-master',
+        'pillar': {
+            'engine': 'salt',
+        },
+        'accept_policy': 'preseed',
+        'bind': {},
+        'formula': {},
+        'base_environment': 'dev',
+    },
+    'RedHat': {
+        'pkgs': ['salt-master'],
+        'service': 'salt-master',
+        'pillar': {
+            'engine': 'salt',
+        },
+        'accept_policy': 'preseed',
+        'bind': {},
+        'formula': {},
+        'base_environment': 'dev',
+    },
+}, merge=salt['pillar.get']('salt:master')) %}
+
+{% set minion = salt['grains.filter_by']({
+    'Arch': {
+        'pkgs': ['salt-zmq'],
+        'graph_pkgs': ['graphviz'],
+        'graph_states_pkgs': ['python-pydot', 'python-yaml'],
+        'graph_states': False,
+        'service': 'salt-minion',
+    },
+    'Debian': {
+        'pkgs': ['salt-minion'],
+        'graph_pkgs': ['graphviz'],
+        'graph_states_pkgs': ['python-pydot', 'python-yaml'],
+        'graph_states': False,
+        'service': 'salt-minion',
+    },
+    'Gentoo': {
+        'pkgs': ['app-admin/salt'],
+        'graph_pkgs': ['graphviz'],
+        'graph_states_pkgs': ['python-pydot', 'python-yaml'],
+        'graph_states': False,
+        'service': 'salt-minion',
+    },
+    'MacOS': {
+        'pkgs': ['saltstack'],
+        'graph_pkgs': ['graphviz'],
+        'graph_states_pkgs': ['python-pydot', 'python-yaml'],
+        'graph_states': False,
+        'service': 'salt-minion',
+    },
+    'RedHat': {
+        'pkgs': ['salt-minion'],
+        'graph_pkgs': ['graphviz'],
+        'graph_states_pkgs': ['python-pydot', 'python-yaml'],
+        'graph_states': False,
+        'service': 'salt-minion',
+    },
+}, merge=salt['pillar.get']('salt:minion')) %}
+
+{% set api = salt['grains.filter_by']({
+    'Debian': {
+        'pkgs': ['salt-api'],
+        'service': 'salt-api',
+    },
+    'RedHat': {
+        'pkgs': ['salt-api'],
+        'service': 'salt-api',
+    },
+}, merge=salt['pillar.get']('salt:api')) %}
+
+{% set control = salt['grains.filter_by']({
+    'Debian': {
+        'python_pkgs': ['apache-libcloud', 'netaddr'],
+        'pkgs': ['python-netaddr', 'python-libcloud'],
+        'cluster': {},
+    },
+    'RedHat': {
+        'python_pkgs': ['apache-libcloud', 'netaddr'],
+        'pkgs': ['python-netaddr', 'python-libcloud'],
+        'cluster': {},
+    },
+}, merge=salt['pillar.get']('salt:control')) %}

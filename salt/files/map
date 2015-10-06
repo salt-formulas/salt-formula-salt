@@ -1,0 +1,8 @@
+{%- from "salt/map.jinja" import control with context %}
+
+{%- set cluster = salt['pillar.get']('salt:control:cluster:'+cluster_name) %}
+
+{%- for node_name, node in cluster.node.iteritems() %}
+{{ node_name }}.{{ cluster.domain }}:
+- {{ node_name }}.{{ cluster.domain }}
+{%- endfor %}

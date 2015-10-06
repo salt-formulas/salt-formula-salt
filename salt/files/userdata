@@ -1,0 +1,9 @@
+{%- from "salt/map.jinja" import config with context %}
+{%- set cluster = salt['pillar.get']('salt:control:cluster:'+cluster_name) %}
+{%- set node = salt['pillar.get']('salt:control:cluster:'+cluster_name+':node:'+node_name) %}
+#!/bin/bash
+curl --insecure -L http://bootstrap.saltstack.org -o install_salt.sh
+sh install_salt.sh
+echo "id: {{ node_name }}.{{ cluster.domain }}" > /etc/salt/minion.d/minion.conf
+echo "master: salt/master: {{ cluster.config.host }}" >> /etc/salt/minion.d/minion.conf
+service salt-minion restart

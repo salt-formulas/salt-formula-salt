@@ -1,0 +1,13 @@
+applications:
+- salt
+- git
+- openssh
+parameters:
+  _param:
+    salt_master_base_environment: dev
+  salt:
+    master:
+      enabled: true
+      command_timeout: 5
+      worker_threads: 2
+      base_environment: ${_param:salt_master_base_environment}
