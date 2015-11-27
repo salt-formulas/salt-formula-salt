@@ -9,3 +9,10 @@ role:
       version:
         value: {{ salt['cmd.run']('salt-minion --version')|replace('salt-minion ', '') }}
 {%- endif %}
+{%- if pillar.salt.master is defined %}
+  master:
+    name: master
+    param:
+      version:
+        value: {{ salt['cmd.run']('salt --version')|replace('salt ', '') }}
+{%- endif %}
