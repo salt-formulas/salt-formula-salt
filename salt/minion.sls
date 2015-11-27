@@ -7,10 +7,16 @@ salt_minion_packages:
 
 salt_minion_grains_dir:
   file.directory:
-  - name: /var/lib/salt/grains
+  - name: /etc/salt/grains.d
   - mode: 700
   - makedirs: true
   - user: root
+
+salt_minion_grains_file:
+  cmd.run:
+  - name: cat /etc/salt/grains.d/* > /etc/salt/grains
+  - require:
+    - file: salt_minion_grains_dir
 
 /etc/salt/minion.d/minion.conf:
   file.managed:

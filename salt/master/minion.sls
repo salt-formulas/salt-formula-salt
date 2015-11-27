@@ -18,7 +18,6 @@ include:
   file.symlink:
   - target: /srv/salt/minion_keys
   - require:
-    - file: /srv/salt/env/{{ name }}
     - file: /srv/salt/minion_keys
 
 {%- endfor %}
