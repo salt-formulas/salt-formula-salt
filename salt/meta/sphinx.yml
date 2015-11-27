@@ -1,0 +1,11 @@
+{%- set server = pillar.sphinx.server %}
+name: Salt
+description: Salt is a new approach to infrastructure management. Easy enough to get running in minutes, scalable enough to manage tens of thousands of servers, and fast enough to communicate with them in seconds.
+role:
+{%- if pillar.salt.minion is defined %}
+  minion:
+    name: minion
+    param:
+      version:
+        value: {{ salt['cmd.run']('salt-minion --version')|replace('salt-minion ', '') }}
+{%- endif %}

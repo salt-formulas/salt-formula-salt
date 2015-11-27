@@ -2,6 +2,8 @@ applications:
 - salt
 - git
 - openssh
+classes:
+- service.salt.support
 parameters:
   salt:
     master:

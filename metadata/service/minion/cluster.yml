@@ -1,5 +1,7 @@
 applications:
 - salt
+classes:
+- service.salt.support
 parameters:
   salt:
     minion:
