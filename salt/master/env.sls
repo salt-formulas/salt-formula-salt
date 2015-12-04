@@ -7,7 +7,7 @@ include:
 
 {%- if master.system is defined %}
 
-salt_env_{{ master.system.environment }}_dirs:
+salt_env_{{ master.system.environment }}_dirs_obsolete:
   file.directory:
   - names: 
     - /srv/salt/env/{{ master.system.environment }}/_modules
