@@ -1,3 +1,6 @@
 name: "salt"
 version: "0.2"
 source: "https://github.com/tcpcloud/salt-formula-salt"
+dependencies:
+- name: git
+  source: "https://github.com/tcpcloud/salt-formula-git"
