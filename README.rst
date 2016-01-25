@@ -194,6 +194,8 @@ Multi-master Salt minion
 
 Salt minion with salt mine options
 
+.. code-block:: yaml
+
     salt:
       minion:
         enabled: true
