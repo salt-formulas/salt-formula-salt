@@ -4,3 +4,5 @@ source: "https://github.com/tcpcloud/salt-formula-salt"
 dependencies:
 - name: git
   source: "https://github.com/tcpcloud/salt-formula-git"
+- name: reclass
+  source: "https://github.com/tcpcloud/salt-formula-reclass"
