@@ -6,9 +6,10 @@ linux:
     enabled: true
 reclass:
   storage:
+    enabled: true
     data_source:
       engine: git
-      address:  'git...'
+      address:  'git@git.domain.com'
       branch: master
 salt:
   master:
