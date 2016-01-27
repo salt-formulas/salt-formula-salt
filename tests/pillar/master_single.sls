@@ -10,6 +10,12 @@ salt:
     command_timeout: 5
     worker_threads: 2
     base_environment: prd
+    pillar:
+      engine: salt
+      source:
+        engine: git
+        address: 'git@repo.domain.com:salt/pillar-demo.git'
+        branch: 'master'
     environment:
       prd:
         formula:

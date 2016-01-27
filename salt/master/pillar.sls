@@ -15,11 +15,15 @@ include:
     - file: /srv/salt/env
     - pkg: git_packages
 
+{%- if master.system is defined %}
+
 /srv/salt/env/{{ master.system.environment }}/top.sls:
   file.symlink:
   - target: /srv/salt/pillar/files_top.sls
   - require:
     - file: /srv/salt/env/{{ master.system.environment }}
+
+{%- endif %}
 
 {%- elif master.pillar.engine == 'reclass' %}
 
@@ -28,7 +32,6 @@ include:
 
 /srv/salt/reclass/classes/service:
   file.directory
-
 
 {%- if master.system is defined %}
 
@@ -68,8 +71,7 @@ include:
 
 {%- endfor %}
 
-{%-endif %}
-
+{%- endif %}
 
 {%- endif %}
 
