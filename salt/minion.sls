@@ -15,8 +15,6 @@ salt_minion_grains_dir:
 salt_minion_grains_placeholder:
   file.touch:
   - name: /etc/salt/grains.d/placeholder
-  - user: root
-  - group: root
   - require:
     - file: salt_minion_grains_dir
 
