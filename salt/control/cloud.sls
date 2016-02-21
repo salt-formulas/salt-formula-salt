@@ -1,5 +1,23 @@
 {% from "salt/map.jinja" import control with context %}
-{%- if control.enabled %}
+{%- if control.enabled and control.cloud_enabled is defined %}
+
+salt_control_cloud_packages:
+  pkg.installed:
+    - names: {{ control.cloud_pkgs }}
+
+/etc/salt/control.providers:
+  file.managed:
+  - source: salt://salt/files/providers.conf
+  - user: root
+  - group: root
+  - template: jinja
+
+/etc/salt/control.profiles:
+  file.managed:
+  - source: salt://salt/files/profiles.conf
+  - user: root
+  - group: root
+  - template: jinja
 
 /srv/salt/cloud/maps:
   file.directory:
@@ -10,6 +28,8 @@
   - makedirs: true
 
 {%- for cluster_name, cluster in control.cluster.iteritems() %}
+
+{%- if cluster.engine == "cloud" %}
 
 /srv/salt/cloud/maps/{{ cluster_name }}:
   file.managed:
@@ -41,6 +61,8 @@
       node_name: "{{ node_name }}"
 
 {%- endfor %}
+
+{%- endif %}
 
 {%- endfor %}
 

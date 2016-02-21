@@ -95,6 +95,7 @@
     },
 }, merge=salt['pillar.get']('salt:minion')) %}
 
+
 {% set api = salt['grains.filter_by']({
     'Debian': {
         'pkgs': ['salt-api'],
@@ -106,15 +107,22 @@
     },
 }, merge=salt['pillar.get']('salt:api')) %}
 
+
 {% set control = salt['grains.filter_by']({
     'Debian': {
-        'python_pkgs': ['apache-libcloud', 'netaddr'],
-        'pkgs': ['python-netaddr', 'python-libcloud'],
+        'cloud_pips': ['apache-libcloud', 'netaddr'],
+        'cloud_pkgs': ['python-netaddr', 'python-libcloud'],
+        'virt_pips': ['libvirt-python',],
+        'virt_pkgs': ['libvirt-dev', 'pkg-config'],
+        'maas_pkgs': ['python-maas-client',],
         'cluster': {},
     },
     'RedHat': {
-        'python_pkgs': ['apache-libcloud', 'netaddr'],
-        'pkgs': ['python-netaddr', 'python-libcloud'],
+        'cloud_pips': ['apache-libcloud', 'netaddr'],
+        'cloud_pkgs': ['python-netaddr', 'python-libcloud'],
+        'virt_pips': ['libvirt-python',],
+        'virt_pkgs': ['libvirt-dev', 'pkg-config'],
+        'maas_pkgs': ['python-maas-client',],
         'cluster': {},
     },
 }, merge=salt['pillar.get']('salt:control')) %}

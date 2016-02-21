@@ -3,6 +3,13 @@
 salt-formula
 ============
 
+0.0.3
+-----
+
+- High availability
+- Cloud control updated
+- Virt control added
+
 0.0.2
 -----
 

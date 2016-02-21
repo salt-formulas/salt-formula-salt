@@ -13,79 +13,15 @@ Sample pillars
 Salt master
 -----------
 
-Salt master with base environment and pillar metadata source
+Salt master with base production environment and pillar tree as metadata backend
 
-.. code-block:: yaml
+.. literalinclude:: tests/pillar/master_single_pillar.sls
+   :language: yaml
 
-    salt:
-      master:
-        enabled: true
-        command_timeout: 5
-        worker_threads: 2
-        pillar:
-          engine: salt
-          source:
-            engine: git
-            address: 'git@repo.domain.com:salt/pillar-demo.git'
-            branch: 'master'
-        base_environment: prd
-        environment:
-          prd:
-            enabled: true
-            formula:
-              linux:
-                source: git
-                address: 'git@repo.domain.com:salt/formula-linux.git'
-                branch: 'master'
-              salt:
-                source: git
-                address: 'git@repo.domain.com:salt/formula-salt.git'
-                branch: 'master'
-              openssh:
-                source: git
-                address: 'git@repo.domain.com:salt/formula-openssh.git'
-                branch: 'master'
+Salt master with reclass ENC as metadata backend
 
-Simple Salt master with base environment and custom states
-
-.. code-block:: yaml
-
-    salt:
-      master:
-        ...
-        environment:
-          base:
-            states:
-            - name: gitlab
-              source: git
-              address: 'git@repo.domain.cz:salt/state-gitlab.git'
-              branch: 'master'
-            formulas:
-            ...
-
-Salt master with reclass ENC
-
-.. code-block:: yaml
-
-    salt:
-      master:
-        enabled: true
-        ...
-        pillar:
-          engine: reclass
-          data_dir: /srv/salt/reclass
-
-Salt master with windows repository
-
-.. code-block:: yaml
-
-    salt:
-      master:
-        enabled: true
-        ...
-        windows_repo:
-          type: git
-          address: 'git@repo.domain.com:salt/win-packages.git'
+.. literalinclude:: tests/pillar/master_single_reclass.sls
+   :language: yaml
 
 Salt master with API
 
@@ -139,153 +75,70 @@ Salt master with custom handlers
     salt:
       master:
         enabled: true
-        command_timeout: 5
-        worker_threads: 2
-        environments:
-        - name: base
-          states:
-          - source: git
-            address: 'git@repo.domain.com:salt/state-ubuntu.git'
-            branch: 'master'
-          pillar:
-            source: git
-            address: 'git@repo.domain.com:salt/pillar-demo.git'
-            branch: 'master'
-        handlers:
-          name: logstash
-          type: udp
-          bind:
-            host: 127.0.0.1
-            port: 9999
+        handler:
+          handler01:
+            engine: udp
+            bind:
+              host: 127.0.0.1
+              port: 9999
       minion:
-        handlers:
-        - engine: udp
-          bind:
-            host: 127.0.0.1
-            port: 9999
-        - engine: zmq
-          bind:
-            host: 127.0.0.1
-            port: 9999
+        handler:
+          handler01:
+            engine: udp
+            bind:
+              host: 127.0.0.1
+              port: 9999
+          handler02:
+            engine: zmq
+            bind:
+              host: 127.0.0.1
+              port: 9999
+
 
 Salt minion
 -----------
 
-Simplest Salt minion
+Simplest Salt minion setup with central configuration node
 
 .. code-block:: yaml
 
-    salt:
-      minion:
-        enabled: true
-        master:
-          host: master.domain.com
+.. literalinclude:: tests/pillar/minion_master.sls
+   :language: yaml
 
-Multi-master Salt minion
+Multi-master Salt minion setup
 
-.. code-block:: yaml
-
-    salt:
-      minion:
-        enabled: true
-        masters:
-        -  host: master1.domain.com
-        -  host: master2.domain.com
+.. literalinclude:: tests/pillar/minion_multi_master.sls
+   :language: yaml
 
 Salt minion with salt mine options
 
-.. code-block:: yaml
-
-    salt:
-      minion:
-        enabled: true
-        master:
-          host: master.domain.com
-        mine:
-          interval: 60
-          module:
-            grains.items: []
-            network.interfaces: []
+.. literalinclude:: tests/pillar/minion_mine.sls
+   :language: yaml
 
 Salt minion with graphing dependencies
 
-.. code-block:: yaml
+.. literalinclude:: tests/pillar/minion_graph.sls
+   :language: yaml
 
-    salt:
-      minion:
-        enabled: true
-        graph_states: true
-        master:
-          host: master.domain.com
 
-Salt control (cloud/virt)
--------------------------
+Salt control (cloud/kvm/docker)
+-------------------------------
 
-Salt cloud with local OpenStack insecure (ignoring SSL cert errors) provider 
+Salt cloud with local OpenStack provider
 
-.. code-block:: yaml
-
-    salt:
-      control:
-        enabled: true
-        provider:
-          openstack_account:
-            engine: openstack
-            insecure: true
-            region: RegionOne
-            identity_url: 'https://10.0.0.2:35357'
-            tenant: devops
-            user: user
-            password: 'password'
-            fixed_networks:
-            - 123d3332-18be-4d1d-8d4d-5f5a54456554e
-            floating_networks:
-            - public
-            ignore_cidr: 192.168.0.0/16
+.. literalinclude:: tests/pillar/control_cloud_openstack.sls
+   :language: yaml
 
 Salt cloud with Digital Ocean provider
 
-.. code-block:: yaml
+.. literalinclude:: tests/pillar/control_cloud_digitalocean.sls
+   :language: yaml
 
-    salt:
-      control:
-        enabled: true
-        provider:
-          dony1:
-            engine: digital_ocean
-            region: New York 1
-            client_key: xxxxxxx
-            api_key: xxxxxxx
+Salt virt KVM cluster
 
-Salt cloud with cluster definition
+.. literalinclude:: tests/pillar/control_virt.sls
+   :language: yaml
 
-.. code-block:: yaml
-
-    salt:
-      control:
-        enabled: true
-        cluster:
-          devops_ase:
-            config:
-              engine: salt
-              host: 147.32.120.1
-            node:
-              proxy1.ase.cepsos.cz:
-                provider: cepsos_devops
-                image: Ubuntu12.04 x86_64
-                size: m1.medium
-              node1.ase.cepsos.cz:
-                provider: cepsos_devops
-                image: Ubuntu12.04 x86_64
-                size: m1.medium
-              node2.ase.cepsos.cz:
-                provider: cepsos_devops
-                image: Ubuntu12.04 x86_64
-                size: m1.medium
-              node3.ase.cepsos.cz:
-                provider: cepsos_devops
-                image: Ubuntu12.04 x86_64
-                size: m1.medium
 
 Usage
 =====
@@ -302,6 +155,7 @@ Debug LIBCLOUD for salt-cloud connection
 
     export LIBCLOUD_DEBUG=/dev/stderr; salt-cloud --list-sizes provider_name --log-level all
 
+
 Read more
 =========
 
@@ -313,6 +167,7 @@ Read more
 * https://github.com/saltstack-formulas/salt-formula
 * http://docs.saltstack.com/en/latest/topics/tutorials/multimaster.html
 
+
 salt-cloud
 ----------
 
@@ -323,3 +178,6 @@ salt-cloud
 * http://salt-cloud.readthedocs.org/en/latest/topics/rackspace.html
 * http://salt-cloud.readthedocs.org/en/latest/topics/map.html
 * http://docs.saltstack.com/en/latest/topics/tutorials/multimaster.html
+
+salt-virt
+---------

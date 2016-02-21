@@ -1,0 +1,18 @@
+parameters:
+  salt:
+    control:
+      enabled: true
+      virt_enabled: true
+      size:
+        small:
+          cpu: 1
+          ram: 2
+          hdd: 10
+        medium:
+          cpu: 2
+          ram: 4
+          hdd: 20
+        large:
+          cpu: 4
+          ram: 8
+          hdd: 70

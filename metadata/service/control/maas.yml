@@ -1,0 +1,5 @@
+parameters:
+  salt:
+    control:
+      enabled: true
+      maas_enabled: true
