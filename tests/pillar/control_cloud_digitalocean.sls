@@ -1,6 +1,7 @@
 salt:
   control:
     enabled: true
+    cloud_enabled: true
     provider:
       digitalocean_account:
         engine: digital_ocean

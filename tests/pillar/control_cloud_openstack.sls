@@ -1,6 +1,7 @@
 salt:
   control:
     enabled: true
+    cloud_enabled: true
     provider:
       openstack_account:
         engine: openstack

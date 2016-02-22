@@ -1,6 +1,7 @@
 salt:
   control:
     enabled: true
+    virt_enabled: true
     size:
       small:
         cpu: 1
