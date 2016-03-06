@@ -31,7 +31,17 @@ salt_control_virt_{{ cluster_name }}_{{ node_name }}:
   - cpu: {{ size.cpu }}
   - mem: {{ size.ram }}
   - image: salt://{{ node.image }}
+  - start: True
+  - kwargs: {'seed': True }
   - unless: virsh list --all | grep {{ node_name }}.{{ cluster.domain }}
+
+#salt_control_seed_{{ cluster_name }}_{{ node_name }}:
+#  module.run:
+#  - name: seed.apply
+#  - path: /srv/salt-images/{{ node_name }}.{{ cluster.domain }}/system.qcow2
+#  - id_: {{ node_name }}.{{ cluster.domain }}
+#  - unless: virsh list | grep {{ node_name }}.{{ cluster.domain }}
+  
 
 {%- endif %}
 
