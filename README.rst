@@ -181,3 +181,30 @@ salt-cloud
 
 salt-virt
 ---------
+
+Sample pillar
+
+.. code-block:: yaml
+
+  salt:
+    control:
+      enabled: True
+      virt_enabled: True
+      size:
+        medium:
+          cpu: 2
+          ram: 1024
+      cluster:
+        localnode:
+          domain: domain.com
+          engine: virt
+          config:
+            engine: salt
+            host: 127.0.0.1
+          node:
+            ubuntu01:
+              provider: node001.domain.com
+              image: ubuntu-14-04-x64-1456128611.qcow2
+              size: medium
+              disk_profile: database
+              net_profile: testing

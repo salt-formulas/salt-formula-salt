@@ -32,7 +32,10 @@ salt_control_virt_{{ cluster_name }}_{{ node_name }}:
   - mem: {{ size.ram }}
   - image: salt://{{ node.image }}
   - start: True
-  - kwargs: {'seed': True }
+  - disk: {{ node.disk_profile }}
+  - nic: {{ node.net_profile }} 
+  - kwargs:
+      seed: True
   - unless: virsh list --all | grep {{ node_name }}.{{ cluster.domain }}
 
 #salt_control_seed_{{ cluster_name }}_{{ node_name }}:
