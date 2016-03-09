@@ -60,7 +60,7 @@ VIRT_DEFAULT_HYPER = 'kvm'
 def __virtual__():
     if not HAS_ALL_IMPORTS:
         return False
-    return 'virt'
+    return 'virtng'
 
 
 def __get_conn():
@@ -642,7 +642,7 @@ def list_vms():
 
     .. code-block:: bash
 
-        salt '*' virt.list_vms
+        salt '*' virtng.list_vms
     '''
     vms = []
     vms.extend(list_active_vms())
@@ -658,7 +658,7 @@ def list_active_vms():
 
     .. code-block:: bash
 
-        salt '*' virt.list_active_vms
+        salt '*' virtng.list_active_vms
     '''
     conn = __get_conn()
     vms = []
@@ -675,7 +675,7 @@ def list_inactive_vms():
 
     .. code-block:: bash
 
-        salt '*' virt.list_inactive_vms
+        salt '*' virtng.list_inactive_vms
     '''
     conn = __get_conn()
     vms = []
@@ -709,7 +709,7 @@ def vm_info(vm_=None):
 
     .. code-block:: bash
 
-        salt '*' virt.vm_info
+        salt '*' virtng.vm_info
     '''
     def _info(vm_):
         dom = _get_dom(vm_)
@@ -742,7 +742,7 @@ def vm_state(vm_=None):
 
     .. code-block:: bash
 
-        salt '*' virt.vm_state <vm name>
+        salt '*' virtng.vm_state <vm name>
     '''
     def _info(vm_):
         state = ''
@@ -767,7 +767,7 @@ def node_info():
 
     .. code-block:: bash
 
-        salt '*' virt.node_info
+        salt '*' virtng.node_info
     '''
     conn = __get_conn()
     raw = conn.getInfo()
@@ -790,7 +790,7 @@ def get_nics(vm_):
 
     .. code-block:: bash
 
-        salt '*' virt.get_nics <vm name>
+        salt '*' virtng.get_nics <vm name>
     '''
     nics = {}
     doc = minidom.parse(_StringIO(get_xml(vm_)))
@@ -834,7 +834,7 @@ def get_macs(vm_):
 
     .. code-block:: bash
 
-        salt '*' virt.get_macs <vm name>
+        salt '*' virtng.get_macs <vm name>
     '''
     macs = []
     doc = minidom.parse(_StringIO(get_xml(vm_)))
@@ -854,7 +854,7 @@ def get_graphics(vm_):
 
     .. code-block:: bash
 
-        salt '*' virt.get_graphics <vm name>
+        salt '*' virtng.get_graphics <vm name>
     '''
     out = {'autoport': 'None',
            'keymap': 'None',
@@ -880,7 +880,7 @@ def get_disks(vm_):
 
     .. code-block:: bash
 
-        salt '*' virt.get_disks <vm name>
+        salt '*' virtng.get_disks <vm name>
     '''
     disks = {}
     doc = minidom.parse(_StringIO(get_xml(vm_)))
@@ -977,7 +977,7 @@ def setmem(vm_, memory, config=False):
 
     .. code-block:: bash
 
-        salt '*' virt.setmem myvm 768
+        salt '*' virtng.setmem myvm 768
     '''
     if vm_state(vm_) != 'shutdown':
         return False
@@ -1010,7 +1010,7 @@ def setvcpus(vm_, vcpus, config=False):
 
     .. code-block:: bash
 
-        salt '*' virt.setvcpus myvm 2
+        salt '*' virtng.setvcpus myvm 2
     '''
     if vm_state(vm_) != 'shutdown':
         return False
@@ -1037,7 +1037,7 @@ def freemem():
 
     .. code-block:: bash
 
-        salt '*' virt.freemem
+        salt '*' virtng.freemem
     '''
     conn = __get_conn()
     mem = conn.getInfo()[1]
@@ -1059,7 +1059,7 @@ def freecpu():
 
     .. code-block:: bash
 
-        salt '*' virt.freecpu
+        salt '*' virtng.freecpu
     '''
     conn = __get_conn()
     cpus = conn.getInfo()[2]
@@ -1078,7 +1078,7 @@ def full_info():
 
     .. code-block:: bash
 
-        salt '*' virt.full_info
+        salt '*' virtng.full_info
     '''
     return {'freecpu': freecpu(),
             'freemem': freemem(),
@@ -1094,7 +1094,7 @@ def get_xml(vm_):
 
     .. code-block:: bash
 
-        salt '*' virt.get_xml <vm name>
+        salt '*' virtng.get_xml <vm name>
     '''
     dom = _get_dom(vm_)
     return dom.XMLDesc(0)
@@ -1113,8 +1113,8 @@ def get_profiles(hypervisor=None):
 
     .. code-block:: bash
 
-        salt '*' virt.get_profiles
-        salt '*' virt.get_profiles hypervisor=esxi
+        salt '*' virtng.get_profiles
+        salt '*' virtng.get_profiles hypervisor=esxi
     '''
     ret = {}
     if hypervisor:
@@ -1140,7 +1140,7 @@ def shutdown(vm_):
 
     .. code-block:: bash
 
-        salt '*' virt.shutdown <vm name>
+        salt '*' virtng.shutdown <vm name>
     '''
     dom = _get_dom(vm_)
     return dom.shutdown() == 0
@@ -1154,7 +1154,7 @@ def pause(vm_):
 
     .. code-block:: bash
 
-        salt '*' virt.pause <vm name>
+        salt '*' virtng.pause <vm name>
     '''
     dom = _get_dom(vm_)
     return dom.suspend() == 0
@@ -1168,7 +1168,7 @@ def resume(vm_):
 
     .. code-block:: bash
 
-        salt '*' virt.resume <vm name>
+        salt '*' virtng.resume <vm name>
     '''
     dom = _get_dom(vm_)
     return dom.resume() == 0
@@ -1182,7 +1182,7 @@ def create(vm_):
 
     .. code-block:: bash
 
-        salt '*' virt.create <vm name>
+        salt '*' virtng.create <vm name>
     '''
     dom = _get_dom(vm_)
     return dom.create() == 0
@@ -1196,7 +1196,7 @@ def start(vm_):
 
     .. code-block:: bash
 
-        salt '*' virt.start <vm name>
+        salt '*' virtng.start <vm name>
     '''
     return create(vm_)
 
@@ -1209,7 +1209,7 @@ def stop(vm_):
 
     .. code-block:: bash
 
-        salt '*' virt.stop <vm name>
+        salt '*' virtng.stop <vm name>
     '''
     return destroy(vm_)
 
@@ -1222,7 +1222,7 @@ def reboot(vm_):
 
     .. code-block:: bash
 
-        salt '*' virt.reboot <vm name>
+        salt '*' virtng.reboot <vm name>
     '''
     dom = _get_dom(vm_)
 
@@ -1239,7 +1239,7 @@ def reset(vm_):
 
     .. code-block:: bash
 
-        salt '*' virt.reset <vm name>
+        salt '*' virtng.reset <vm name>
     '''
     dom = _get_dom(vm_)
 
@@ -1257,7 +1257,7 @@ def ctrl_alt_del(vm_):
 
     .. code-block:: bash
 
-        salt '*' virt.ctrl_alt_del <vm name>
+        salt '*' virtng.ctrl_alt_del <vm name>
     '''
     dom = _get_dom(vm_)
     return dom.sendKey(0, 0, [29, 56, 111], 3, 0) == 0
@@ -1271,7 +1271,7 @@ def create_xml_str(xml):
 
     .. code-block:: bash
 
-        salt '*' virt.create_xml_str <XML in string format>
+        salt '*' virtng.create_xml_str <XML in string format>
     '''
     conn = __get_conn()
     return conn.createXML(xml, 0) is not None
@@ -1285,7 +1285,7 @@ def create_xml_path(path):
 
     .. code-block:: bash
 
-        salt '*' virt.create_xml_path <path to XML file on the node>
+        salt '*' virtng.create_xml_path <path to XML file on the node>
     '''
     if not os.path.isfile(path):
         return False
@@ -1300,7 +1300,7 @@ def define_xml_str(xml):
 
     .. code-block:: bash
 
-        salt '*' virt.define_xml_str <XML in string format>
+        salt '*' virtng.define_xml_str <XML in string format>
     '''
     conn = __get_conn()
     return conn.defineXML(xml) is not None
@@ -1314,7 +1314,7 @@ def define_xml_path(path):
 
     .. code-block:: bash
 
-        salt '*' virt.define_xml_path <path to XML file on the node>
+        salt '*' virtng.define_xml_path <path to XML file on the node>
 
     '''
     if not os.path.isfile(path):
@@ -1330,7 +1330,7 @@ def define_vol_xml_str(xml):
 
     .. code-block:: bash
 
-        salt '*' virt.define_vol_xml_str <XML in string format>
+        salt '*' virtng.define_vol_xml_str <XML in string format>
     '''
     poolname = __salt__['config.get']('libvirt:storagepool', 'default')
     conn = __get_conn()
@@ -1346,7 +1346,7 @@ def define_vol_xml_path(path):
 
     .. code-block:: bash
 
-        salt '*' virt.define_vol_xml_path <path to XML file on the node>
+        salt '*' virtng.define_vol_xml_path <path to XML file on the node>
 
     '''
     if not os.path.isfile(path):
@@ -1362,7 +1362,7 @@ def migrate_non_shared(vm_, target, ssh=False):
 
     .. code-block:: bash
 
-        salt '*' virt.migrate_non_shared <vm name> <target hypervisor>
+        salt '*' virtng.migrate_non_shared <vm name> <target hypervisor>
     '''
     cmd = _get_migrate_command() + ' --copy-storage-all ' + vm_\
         + _get_target(target, ssh)
@@ -1380,7 +1380,7 @@ def migrate_non_shared_inc(vm_, target, ssh=False):
 
     .. code-block:: bash
 
-        salt '*' virt.migrate_non_shared_inc <vm name> <target hypervisor>
+        salt '*' virtng.migrate_non_shared_inc <vm name> <target hypervisor>
     '''
     cmd = _get_migrate_command() + ' --copy-storage-inc ' + vm_\
         + _get_target(target, ssh)
@@ -1398,7 +1398,7 @@ def migrate(vm_, target, ssh=False):
 
     .. code-block:: bash
 
-        salt '*' virt.migrate <vm name> <target hypervisor>
+        salt '*' virtng.migrate <vm name> <target hypervisor>
     '''
     cmd = _get_migrate_command() + ' ' + vm_\
         + _get_target(target, ssh)
@@ -1418,7 +1418,7 @@ def seed_non_shared_migrate(disks, force=False):
 
     .. code-block:: bash
 
-        salt '*' virt.seed_non_shared_migrate <disks>
+        salt '*' virtng.seed_non_shared_migrate <disks>
     '''
     for _, data in disks.items():
         fn_ = data['file']
@@ -1478,7 +1478,7 @@ def destroy(vm_):
 
     .. code-block:: bash
 
-        salt '*' virt.destroy <vm name>
+        salt '*' virtng.destroy <vm name>
     '''
     dom = _get_dom(vm_)
     return dom.destroy() == 0
@@ -1493,7 +1493,7 @@ def undefine(vm_):
 
     .. code-block:: bash
 
-        salt '*' virt.undefine <vm name>
+        salt '*' virtng.undefine <vm name>
     '''
     dom = _get_dom(vm_)
     return dom.undefine() == 0
@@ -1509,7 +1509,7 @@ def purge(vm_, dirs=False):
 
     .. code-block:: bash
 
-        salt '*' virt.purge <vm name>
+        salt '*' virtng.purge <vm name>
     '''
     disks = get_disks(vm_)
     try:
@@ -1537,7 +1537,7 @@ def virt_type():
 
     .. code-block:: bash
 
-        salt '*' virt.virt_type
+        salt '*' virtng.virt_type
     '''
     return __grains__['virtual']
 
@@ -1550,7 +1550,7 @@ def is_kvm_hyper():
 
     .. code-block:: bash
 
-        salt '*' virt.is_kvm_hyper
+        salt '*' virtng.is_kvm_hyper
     '''
     try:
         if 'kvm_' not in salt.utils.fopen('/proc/modules').read():
@@ -1569,7 +1569,7 @@ def is_xen_hyper():
 
     .. code-block:: bash
 
-        salt '*' virt.is_xen_hyper
+        salt '*' virtng.is_xen_hyper
     '''
     try:
         if __grains__['virtual_subtype'] != 'Xen Dom0':
@@ -1594,7 +1594,7 @@ def is_hyper():
 
     .. code-block:: bash
 
-        salt '*' virt.is_hyper
+        salt '*' virtng.is_hyper
     '''
     try:
         import libvirt  # pylint: disable=import-error
@@ -1626,7 +1626,7 @@ def vm_cputime(vm_=None):
 
     .. code-block:: bash
 
-        salt '*' virt.vm_cputime
+        salt '*' virtng.vm_cputime
     '''
     host_cpus = __get_conn().getInfo()[2]
 
@@ -1680,7 +1680,7 @@ def vm_netstats(vm_=None):
 
     .. code-block:: bash
 
-        salt '*' virt.vm_netstats
+        salt '*' virtng.vm_netstats
     '''
     def _info(vm_):
         dom = _get_dom(vm_)
@@ -1743,7 +1743,7 @@ def vm_diskstats(vm_=None):
 
     .. code-block:: bash
 
-        salt '*' virt.vm_blockstats
+        salt '*' virtng.vm_blockstats
     '''
     def get_disk_devs(vm_):
         doc = minidom.parse(_StringIO(get_xml(vm_)))
