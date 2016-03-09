@@ -47,7 +47,6 @@ salt_control_virt_{{ cluster_name }}_{{ node_name }}:
 #  - id_: {{ node_name }}.{{ cluster.domain }}
 #  - unless: virsh list | grep {{ node_name }}.{{ cluster.domain }}
   
-
 {%- endif %}
 
 {%- endfor %}
