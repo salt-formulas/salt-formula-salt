@@ -42,7 +42,7 @@ salt_control_virt_packages:
 
 salt_control_virt_{{ cluster_name }}_{{ node_name }}:
   module.run:
-  - name: virt.init
+  - name: virtng.init
   - m_name: {{ node_name }}.{{ cluster.domain }}
   - cpu: {{ size.cpu }}
   - mem: {{ size.ram }}
