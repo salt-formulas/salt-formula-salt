@@ -36,6 +36,8 @@ salt_control_virt_{{ cluster_name }}_{{ node_name }}:
   - nic: {{ node.net_profile }} 
   - kwargs:
       seed: True
+      serial_type: pty
+      console: True
   - unless: virsh list --all | grep {{ node_name }}.{{ cluster.domain }}
 
 #salt_control_seed_{{ cluster_name }}_{{ node_name }}:
