@@ -46,7 +46,7 @@ salt_control_virt_{{ cluster_name }}_{{ node_name }}:
   - m_name: {{ node_name }}.{{ cluster.domain }}
   - cpu: {{ size.cpu }}
   - mem: {{ size.ram }}
-  - image: salt://{{ node.image }}
+  - image: {{ node.image }}
   - start: True
   - disk: {{ size.disk_profile }}
   - nic: {{ size.net_profile }}
