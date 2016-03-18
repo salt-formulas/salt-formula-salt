@@ -1,4 +1,6 @@
 salt:
+  minion:
+    enabled: true
   control:
     enabled: true
     virt_enabled: true
@@ -25,9 +27,9 @@ salt:
         node:
           ubuntu1:
             provider: node01.domain.com
-            image: ubuntu.qcow
+            image: "salt://ubuntu.qcow"
             size: medium
           ubuntu2:
             provider: node02.domain.com
-            image: bubuntu.qcomw
+            image: "http://ubuntu.com"
             size: small
