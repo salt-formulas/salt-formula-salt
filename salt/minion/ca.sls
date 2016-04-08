@@ -4,9 +4,9 @@
 include:
 - salt.minion.service
 
-/etc/salt/minion.d/_signing_policies.conf:
+/etc/salt/minion.d/_pki.conf:
   file.managed:
-  - source: salt://salt/files/_signing_policies.conf
+  - source: salt://salt/files/_pki.conf
   - template: jinja
   - require:
     - pkg: salt_minion_packages

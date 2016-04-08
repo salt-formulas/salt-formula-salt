@@ -16,7 +16,7 @@ include:
 
 /etc/pki/cert/{{ cert.authority }}/{{ cert.common_name }}.crt:
   x509.certificate_managed:
-  - ca_server: wst01.newt.cz
+  - ca_server: {{ cert.host }}
   - signing_policy: {{ cert.authority }}
   - public_key: /etc/pki/cert/{{ cert.authority }}/{{ cert.common_name }}.key
   - CN: {{ cert.common_name }}
