@@ -23,19 +23,18 @@ include:
   - days_remaining: 30
   - backup: True
 
-{%- endfor %}
+{%- for ca_path,ca_cert in salt['mine.get'](cert.host, 'x509.get_pem_entries')[cert.host].iteritems() %}
 
-{#
-/usr/local/share/ca-certificates:
-  file.directory: []
+{%- if '/etc/pki/ca/'+cert.authority in ca_path %}
 
-{%- for ca_path,ca in salt['mine.get']('ca', 'x509.get_pem_entries')['ca'].iteritems() %}
-
-/usr/local/share/ca-certificates/{{ ca }}.crt:
+/etc/pki/cert/{{ cert.authority }}/ca.crt:
   x509.pem_managed:
-  - text: {{ salt['mine.get']('ca', 'x509.get_pem_entries')['ca']['/etc/pki/ca.crt']|replace('\n', '') }}
+  - text: {{ ca_cert|replace('\n', '') }}
+
+{%- endif %}
 
 {%- endfor %}
-#}
+
+{%- endfor %}
 
 {%- endif %}
