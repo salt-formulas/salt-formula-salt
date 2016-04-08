@@ -5,9 +5,11 @@ include:
 - salt.minion.service
 
 {%- for cert_name,cert in minion.cert.iteritems() %}
+{%- set rowloop = loop %}
 
-/etc/pki/cert/{{ cert.authority }}:
+ca_dir_{{ cert.authority }}_{{ loop.index }}:
   file.directory:
+  - name: /etc/pki/cert/{{ cert.authority }}
   - makedirs: true
 
 /etc/pki/cert/{{ cert.authority }}/{{ cert.common_name }}.key:
@@ -17,7 +19,7 @@ include:
 /etc/pki/cert/{{ cert.authority }}/{{ cert.common_name }}.crt:
   x509.certificate_managed:
   - ca_server: {{ cert.host }}
-  - signing_policy: {{ cert.authority }}
+  - signing_policy: {{ cert.authority }}_{{ cert.signing_policy }}
   - public_key: /etc/pki/cert/{{ cert.authority }}/{{ cert.common_name }}.key
   - CN: {{ cert.common_name }}
   - days_remaining: 30
@@ -27,8 +29,9 @@ include:
 
 {%- if '/etc/pki/ca/'+cert.authority in ca_path %}
 
-/etc/pki/cert/{{ cert.authority }}/ca.crt:
+ca_cert_{{ cert.authority }}_{{ rowloop.index }}:
   x509.pem_managed:
+  - name: /etc/pki/cert/{{ cert.authority }}/ca.crt
   - text: {{ ca_cert|replace('\n', '') }}
 
 {%- endif %}

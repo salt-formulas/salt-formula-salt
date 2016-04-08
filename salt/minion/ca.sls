@@ -33,8 +33,8 @@ include:
   - C: {{ ca.country }}
   - ST: {{ ca.state }}
   - L: {{ ca.locality }}
-  - basicConstraints: "critical CA:true"
-  - keyUsage: "critical cRLSign, keyCertSign"
+  - basicConstraints: "critical,CA:TRUE"
+  - keyUsage: "critical,cRLSign,keyCertSign"
   - subjectKeyIdentifier: hash
   - authorityKeyIdentifier: keyid,issuer:always
   - days_valid: {{ ca.days_valid.authority }}
