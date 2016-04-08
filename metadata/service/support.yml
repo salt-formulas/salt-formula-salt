@@ -1,5 +1,7 @@
 parameters:
   salt:
+    _orchestrate:
+      priority: 20
     _support:
       collectd:
         enabled: false

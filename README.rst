@@ -120,6 +120,15 @@ Salt minion with graphing dependencies
 .. literalinclude:: tests/pillar/minion_graph.sls
    :language: yaml
 
+Salt minion with PKI CA
+
+.. literalinclude:: tests/pillar/minion_pki_ca.sls
+   :language: yaml
+
+Salt minion with PKI certificate
+
+.. literalinclude:: tests/pillar/minion_pki_cert.sls
+   :language: yaml
 
 Salt control (cloud/kvm/docker)
 -------------------------------

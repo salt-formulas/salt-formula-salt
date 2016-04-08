@@ -1,0 +1,9 @@
+orchestrate:
+  master:
+    priority: 10
+  minion:
+    priority: 20
+  syndic:
+    priority: 200
+  control:
+    priority: 400
