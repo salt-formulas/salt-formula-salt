@@ -1,27 +1,22 @@
 {%- from "salt/map.jinja" import minion with context %}
 {%- if minion.enabled %}
 
-include:
-- salt.minion.service
-
-{%- for cert_name,cert in minion.cert.iteritems() %}
+{%- for cert_name,cert in minion.get('cert', {}).iteritems() %}
 {%- set rowloop = loop %}
 
-ca_dir_{{ cert.authority }}_{{ loop.index }}:
-  file.directory:
-  - name: /etc/pki/cert/{{ cert.authority }}
-  - makedirs: true
-
-/etc/pki/cert/{{ cert.authority }}/{{ cert.common_name }}.key:
+/etc/ssl/private/{{ cert.common_name }}.key:
   x509.private_key_managed:
   - bits: 4096
 
-/etc/pki/cert/{{ cert.authority }}/{{ cert.common_name }}.crt:
+/etc/ssl/certs/{{ cert.common_name }}.crt:
   x509.certificate_managed:
   - ca_server: {{ cert.host }}
   - signing_policy: {{ cert.authority }}_{{ cert.signing_policy }}
-  - public_key: /etc/pki/cert/{{ cert.authority }}/{{ cert.common_name }}.key
+  - public_key: /etc/ssl/private/{{ cert.common_name }}.key
   - CN: {{ cert.common_name }}
+  {%- if cert.alternative_names is defined %}
+  - subjectAltName: {{ cert.alternative_names }}
+  {%- endif %}
   - days_remaining: 30
   - backup: True
 
@@ -31,7 +26,7 @@ ca_dir_{{ cert.authority }}_{{ loop.index }}:
 
 ca_cert_{{ cert.authority }}_{{ rowloop.index }}:
   x509.pem_managed:
-  - name: /etc/pki/cert/{{ cert.authority }}/ca.crt
+  - name: /etc/ssl/certs/ca-{{ cert.authority }}.crt
   - text: {{ ca_cert|replace('\n', '') }}
 
 {%- endif %}
