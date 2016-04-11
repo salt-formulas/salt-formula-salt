@@ -30,9 +30,21 @@ include:
   x509.certificate_managed:
   - signing_private_key: /etc/pki/ca/{{ ca_name }}/ca.key
   - CN: {{ ca.common_name }}
+  {%- if ca.country is defined %}
   - C: {{ ca.country }}
+  {%- endif %}
+  {%- if ca.state is defined %}
   - ST: {{ ca.state }}
+  {%- endif %}
+  {%- if ca.locality is defined %}
   - L: {{ ca.locality }}
+  {%- endif %}
+  {%- if ca.organization is defined %}
+  - O: {{ ca.organization }}
+  {%- endif %}
+  {%- if ca.organization_unit is defined %}
+  - OU: {{ ca.organization_unit }}
+  {%- endif %}
   - basicConstraints: "critical,CA:TRUE"
   - keyUsage: "critical,cRLSign,keyCertSign"
   - subjectKeyIdentifier: hash
