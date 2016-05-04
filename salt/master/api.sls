@@ -9,7 +9,7 @@ salt_api_packages:
   - names:
     - salt-api
   - require:
-    - pkg: salt_master_packages
+    - {{ master.install_state }}
 
 salt_api_service:
   service.running:

@@ -45,6 +45,18 @@ Salt master with preset minions
         minions:
         - name: 'node1.system.location.domain.com'
 
+Salt master with alternative installation source and version (optional) - pip
+
+.. code-block:: yaml
+
+    salt:
+      master:
+        enabled: true
+        ...
+        source:
+          engine: pip
+          version: 2016.3.0rc2
+
 Salt master syndicate master of masters
 
 .. code-block:: yaml

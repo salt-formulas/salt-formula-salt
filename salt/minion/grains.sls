@@ -11,7 +11,7 @@ salt_minion_grains_dir:
   - makedirs: true
   - user: root
   - require:
-    - pkg: salt_minion_packages
+    - {{ minion.install_state }}
 
 salt_minion_grains_placeholder:
   file.touch:
