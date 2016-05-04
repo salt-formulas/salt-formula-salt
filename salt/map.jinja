@@ -1,128 +1,108 @@
 
-{% set master = salt['grains.filter_by']({
-    'Arch': {
-        'pkgs': ['salt-zmq'],
-        'service': 'salt-master',
-        'pillar': {
-            'engine': 'salt',
-        },
-        'accept_policy': 'preseed',
-        'bind': {},
-        'formula': {},
-        'base_environment': 'dev',
-    },
-    'Debian': {
-        'pkgs': ['salt-master'],
-        'service': 'salt-master',
-        'pillar': {
-            'engine': 'salt',
-        },
-        'accept_policy': 'preseed',
-        'bind': {},
-        'formula': {},
-        'base_environment': 'dev',
-    },
-    'Gentoo': {
-        'pkgs': ['app-admin/salt'],
-        'service': 'salt-master',
-        'pillar': {
-            'engine': 'salt',
-        },
-        'accept_policy': 'preseed',
-        'bind': {},
-        'formula': {},
-        'base_environment': 'dev',
-    },
-    'MacOS': {
-        'pkgs': ['saltstack'],
-        'service': 'salt-master',
-        'pillar': {
-            'engine': 'salt',
-        },
-        'accept_policy': 'preseed',
-        'bind': {},
-        'formula': {},
-        'base_environment': 'dev',
-    },
-    'RedHat': {
-        'pkgs': ['salt-master'],
-        'service': 'salt-master',
-        'pillar': {
-            'engine': 'salt',
-        },
-        'accept_policy': 'preseed',
-        'bind': {},
-        'formula': {},
-        'base_environment': 'dev',
-    },
-}, merge=salt['pillar.get']('salt:master')) %}
+{%- load_yaml as master_common %}
+default:
+  service: salt-master
+  accept_policy: preseed
+  bind: {}
+  formula: {}
+  base_environment: dev
+  dir:
+    files: /srv/salt/env
+  pillar:
+    engine: salt
+{%- endload %}
 
-{% set minion = salt['grains.filter_by']({
-    'Arch': {
-        'pkgs': ['salt-zmq'],
-        'graph_pkgs': ['graphviz'],
-        'graph_states_pkgs': ['python-pydot', 'python-yaml'],
-        'graph_states': False,
-        'service': 'salt-minion',
-    },
-    'Debian': {
-        'pkgs': ['salt-minion'],
-        'graph_pkgs': ['graphviz'],
-        'graph_states_pkgs': ['python-pydot', 'python-yaml'],
-        'graph_states': False,
-        'service': 'salt-minion',
-    },
-    'Gentoo': {
-        'pkgs': ['app-admin/salt'],
-        'graph_pkgs': ['graphviz'],
-        'graph_states_pkgs': ['python-pydot', 'python-yaml'],
-        'graph_states': False,
-        'service': 'salt-minion',
-    },
-    'MacOS': {
-        'pkgs': ['saltstack'],
-        'graph_pkgs': ['graphviz'],
-        'graph_states_pkgs': ['python-pydot', 'python-yaml'],
-        'graph_states': False,
-        'service': 'salt-minion',
-    },
-    'RedHat': {
-        'pkgs': ['salt-minion'],
-        'graph_pkgs': ['graphviz'],
-        'graph_states_pkgs': ['python-pydot', 'python-yaml'],
-        'graph_states': False,
-        'service': 'salt-minion',
-    },
-}, merge=salt['pillar.get']('salt:minion')) %}
+{%- load_yaml as master_specific %}
+Arch:
+  pkgs:
+  - salt-zmq
+Debian:
+  pkgs:
+  - salt-master
+Gentoo:
+  pkgs:
+  - app-admin/salt
+MacOS:
+  pkgs:
+  - saltstack
+RedHat:
+  pkgs:
+  - salt-master
+{%- endload %}
+
+{%- set raw_master = salt['grains.filter_by'](master_specific, merge=salt['pillar.get']('salt:master')) %}
+{%- set master = salt['grains.filter_by'](master_common, merge=raw_master) %}
 
 
-{% set api = salt['grains.filter_by']({
-    'Debian': {
-        'pkgs': ['salt-api'],
-        'service': 'salt-api',
-    },
-    'RedHat': {
-        'pkgs': ['salt-api'],
-        'service': 'salt-api',
-    },
-}, merge=salt['pillar.get']('salt:api')) %}
+{%- load_yaml as minion_common %}
+default:
+  graph_pkgs: 
+  - graphviz
+  graph_states_pkgs: 
+  - python-pydot
+  - python-yaml
+  graph_states: False
+  service: salt-minion
+{%- endload %}
+
+{%- load_yaml as minion_specific %}
+Arch:
+  pkgs: 
+  - salt-zmq
+Debian:
+  pkgs:
+  - salt-minion
+Gentoo:
+  pkgs: 
+  - app-admin/salt
+MacOS:
+  pkgs:
+  - saltstack
+RedHat:
+  pkgs:
+  - salt-minion
+{%- endload %}
+
+{%- set raw_minion = salt['grains.filter_by'](minion_specific, merge=salt['pillar.get']('salt:minion')) %}
+{%- set minion = salt['grains.filter_by'](minion_common, merge=raw_minion) %}
 
 
-{% set control = salt['grains.filter_by']({
-    'Debian': {
-        'cloud_pips': ['apache-libcloud', 'netaddr'],
-        'cloud_pkgs': ['python-netaddr', 'python-libcloud'],
-        'virt_pips': ['libvirt-python',],
-        'virt_pkgs': ['libvirt-dev', 'pkg-config', 'libguestfs-tools'],
-        'maas_pkgs': ['python-maas-client',],
-        'cluster': {},
-    },
-    'RedHat': {
-        'cloud_pips': ['apache-libcloud', 'netaddr'],
-        'cloud_pkgs': ['python-netaddr', 'python-libcloud'],
-        'virt_pips': ['libvirt-python',],
-        'virt_pkgs': ['libvirt-dev', 'pkg-config'],
-        'maas_pkgs': ['python-maas-client',],
-        'cluster': {},
-    },
-}, merge=salt['pillar.get']('salt:control')) %}
+{%- load_yaml as api_common %}
+default:
+  pkgs:
+  - salt-api
+  service: salt-api
+{%- endload %}
+
+{%- set api = salt['grains.filter_by'](api_common, merge=salt['pillar.get']('salt:api')) %}
+
+{%- load_yaml as control_common %}
+default:
+  cloud_pips: 
+  - apache-libcloud
+  - netaddr
+  cloud_pkgs: 
+  - python-netaddr
+  - python-libcloud
+  virt_pips: 
+  - libvirt-python
+  maas_pkgs: 
+  - python-maas-client
+  cluster: {}
+{%- endload %}
+
+{%- load_yaml as control_specific %}
+Debian:
+  virt_pkgs: 
+  - libvirt-dev
+  - pkg-config
+  - libguestfs-tools
+RedHat:
+  virt_pkgs: 
+  - libvirt-dev
+  - pkg-config
+{%- endload %}
+
+{%- set raw_control = salt['grains.filter_by'](control_specific, merge=salt['pillar.get']('salt:control')) %}
+{%- set control = salt['grains.filter_by'](control_common, merge=raw_control) %}
+
