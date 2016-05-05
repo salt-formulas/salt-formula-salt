@@ -1,9 +1,22 @@
 {%- from "salt/map.jinja" import master with context %}
 {%- if master.enabled %}
 
+{%- if master.source.get('engine', 'pkg') == 'pkg' %}
+
 salt_master_packages:
   pkg.latest:
   - names: {{ master.pkgs }}
+  {%- if master.source.version is defined %}
+  - version: {{ master.source.version }}
+  {%- endif %}
+
+{%- elif master.source.get('engine', 'pkg') == 'pip' %}
+
+salt_master_packages:
+  pip.installed:
+  - name: salt{% if master.source.version is defined %}=={{ master.source.version }}{% endif %}
+
+{%- endif %}
 
 /etc/salt/master.d/master.conf:
   file.managed:
@@ -11,7 +24,7 @@ salt_master_packages:
   - user: root
   - template: jinja
   - require:
-    - pkg: salt_master_packages
+    - {{ master.install_state }}
   - watch_in:
     - service: salt_master_service
 
@@ -23,7 +36,7 @@ salt_master_packages:
   - user: root
   - template: jinja
   - require:
-    - pkg: salt_master_packages
+    - {{ master.install_state }}
   - watch_in:
     - service: salt_master_service
 

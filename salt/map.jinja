@@ -2,6 +2,16 @@
 {%- load_yaml as master_common %}
 default:
   service: salt-master
+  {%- if pillar.salt.master is defined %}
+  {%- if pillar.salt.master.source.engine == 'pkg' %}
+  install_state: "pkg: salt_master_packages"
+  {%- elif pillar.salt.master.source.engine == 'pip' %}
+  install_state: "pip: salt_master_packages"
+  {%- endif %}
+  {%- endif %}
+  {%- if pillar.salt.master.source.version is defined %}
+  version: {{ pillar.salt.master.source.version }}
+  {%- endif %}
   accept_policy: preseed
   bind: {}
   formula: {}
@@ -43,6 +53,16 @@ default:
   - python-yaml
   graph_states: False
   service: salt-minion
+  {%- if pillar.salt.minion is defined %}
+  {%- if pillar.salt.minion.source.engine == 'pkg' %}
+  install_state: "pkg: salt_minion_packages"
+  {%- elif pillar.salt.minion.source.engine == 'pip' %}
+  install_state: "pip: salt_minion_packages"
+  {%- endif %}
+  {%- endif %}
+  {%- if pillar.salt.minion.source.version is defined %}
+  version: {{ pillar.salt.minion.source.version }}
+  {%- endif %}
 {%- endload %}
 
 {%- load_yaml as minion_specific %}

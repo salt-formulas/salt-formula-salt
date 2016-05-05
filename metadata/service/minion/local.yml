@@ -6,6 +6,8 @@ parameters:
   salt:
     minion:
       enabled: true
+      source:
+        engine: pkg
       local: true
       pillar:
         engine: reclass

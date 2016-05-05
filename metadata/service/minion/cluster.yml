@@ -6,6 +6,8 @@ parameters:
   salt:
     minion:
       enabled: true
+      source:
+        engine: pkg
       masters:
         - host: ${_param:salt_master_host}
         - host: ${_param:salt_master_host}

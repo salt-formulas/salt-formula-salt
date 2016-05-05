@@ -9,7 +9,7 @@ include:
   - source: salt://salt/files/_pki.conf
   - template: jinja
   - require:
-    - pkg: salt_minion_packages
+    - {{ minion.install_state }}
   - watch_in:
     - service: salt_minion_service
 

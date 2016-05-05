@@ -8,7 +8,7 @@ salt_api_packages:
   pkg.installed
   - names: {{ api.pkgs }}
   - require:
-    - pkg: salt_master_packages
+    - {{ master.install_state }}
 
 salt_api_service:
   service.running:

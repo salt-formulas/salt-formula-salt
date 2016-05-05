@@ -5,7 +5,7 @@ salt_graph_packages:
   pkg.latest:
   - names: {{ minion.graph_pkgs }}
   - require:
-    - pkg: salt_minion_packages
+    - {{ minion.install_state }}
 
 salt_graph_states_packages:
   pkg.latest:

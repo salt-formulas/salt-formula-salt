@@ -10,7 +10,7 @@ include:
   file.directory:
   - makedirs: true
   - require:
-    - pkg: salt_master_packages
+    - {{ master.install_state }}
 
 {%- for name, environment in master.environment.iteritems() %}
 
