@@ -8,9 +8,9 @@ default:
   {%- elif pillar.salt.master.source.engine == 'pip' %}
   install_state: "pip: salt_master_packages"
   {%- endif %}
-  {%- endif %}
   {%- if pillar.salt.master.source.version is defined %}
   version: {{ pillar.salt.master.source.version }}
+  {%- endif %}
   {%- endif %}
   accept_policy: preseed
   bind: {}
@@ -59,9 +59,9 @@ default:
   {%- elif pillar.salt.minion.source.engine == 'pip' %}
   install_state: "pip: salt_minion_packages"
   {%- endif %}
-  {%- endif %}
   {%- if pillar.salt.minion.source.version is defined %}
   version: {{ pillar.salt.minion.source.version }}
+  {%- endif %}
   {%- endif %}
 {%- endload %}
 
