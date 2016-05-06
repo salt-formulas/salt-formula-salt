@@ -151,10 +151,49 @@ salt_master_{{ environment_name }}_{{ formula_name }}_formula:
   git.latest:
   - name: {{ formula.address }}
   - target: /usr/share/salt-formulas/env/_formulas/{{ formula_name }}
-  - rev: {{ formula.revision }}
+  {% if formula.get("revision", "").split("/")[0] == "refs" %}
+  - rev: {{ formula.branch|default("master") }}
+  {%- if grains['saltversion'] < "2015.8.0" %}
+  - branch: {{ formula.branch|default("master") }}
+  {%- endif %}
+  {% else %}
+  - rev: {{ formula.revision|default(formula.branch) }}
+  {%- if grains['saltversion'] < "2015.8.0" %}
+  - branch: {{ formula.branch|default(formula.revision) }}
+  {%- endif %}
+  {% endif %}
+  - force_reset: {{ formula.force_reset|default(False) }}
   - require:
     - file: salt_env_{{ environment_name }}_dirs
     - pkg: git_packages
+
+{%- if formula.get("revision", "").split("/")[0] == "refs" %}
+
+salt_master_{{ environment_name }}_{{ formula_name }}_formula_refs_workaround_fetch:
+  module.run:
+  - name: git.fetch
+  - cwd: /usr/share/salt-formulas/env/_formulas/{{ formula_name }}
+  - opts: {{ formula.address }} {{ formula.revision }}
+  - require: 
+    - git: salt_master_{{ environment_name }}_{{ formula_name }}_formula
+
+salt_master_{{ environment_name }}_{{ formula_name }}_formula_refs_workaround_reset:
+  module.run:
+  - name: git.reset
+  - cwd: /usr/share/salt-formulas/env/_formulas/{{ formula_name }}
+  - opts: --hard FETCH_HEAD
+  - require:
+    - module: salt_master_{{ environment_name }}_{{ formula_name }}_formula_refs_workaround_fetch
+
+salt_master_{{ environment_name }}_{{ formula_name }}_formula_refs_workaround_rebase:
+  module.run:
+  - name: git.rebase
+  - cwd: /usr/share/salt-formulas/env/_formulas/{{ formula_name }}
+  - rev: origin/{{ formula.branch|default("master") }}
+  - require:
+    - module: salt_master_{{ environment_name }}_{{ formula_name }}_formula_refs_workaround_reset
+
+{%- endif %}
 
 salt_env_{{ environment_name }}_{{ formula_name }}_link:
   file.symlink:
@@ -246,3 +285,4 @@ salt_master_{{ environment_name }}_{{ state_name }}_state:
 {# end new #}
 
 {%- endif %}
+
