@@ -6,7 +6,7 @@ parameters:
       collectd:
         enabled: false
       heka:
-        enabled: false
+        enabled: true
       sensu:
         enabled: true
       sphinx:

@@ -1,0 +1,47 @@
+{%- if pillar.salt.minion is defined %}
+[logstreamer_salt_minion]
+type = "LogstreamerInput"
+log_directory = "/var/log/salt"
+file_match = 'minion-?(?P<Index>\d+)?(\.gz)?'
+priority = ["^Index"]
+decoder = "Sandbox_salt_minion"
+
+[Sandbox_salt_minion]
+type = "PayloadRegexDecoder"
+match_regex = '^(?P<Timestamp>[0-9\-]+ [0-9:]+),\d+ \[(?P<Module>[\w\d\.]+)[\ \t]*\]\[(?P<Severity>\w+)[\ \t]*\]\[(?P<JID>\d+)\] (?P<Payload>.*)'
+timestamp_layout = "2006-01-02 15:04:05"
+
+[Sandbox_salt_minion.severity_map]
+DEBUG = 7
+INFO = 6
+WARNING = 4
+ERROR = 3
+
+[Sandbox_salt_minion.message_fields]
+Module = "%Module%"
+JID = "%JID%"
+{%- endif %}
+
+{% if pillar.salt.master is defined %}
+[logstreamer_salt_master]
+type = "LogstreamerInput"
+log_directory = "/var/log/salt"
+file_match = 'master-?(?P<Index>\d+)?(\.gz)?'
+priority = ["^Index"]
+decoder = "Sandbox_salt_master"
+
+[Sandbox_salt_master]
+type = "PayloadRegexDecoder"
+match_regex = '^(?P<Timestamp>[0-9\-]+ [0-9:]+),\d+ \[(?P<Module>[\w\d\.]+)[\ \t]*\]\[(?P<Severity>\w+)[\ \t]*\]\[(?P<JID>\d+)\] (?P<Payload>.*)'
+timestamp_layout = "2006-01-02 15:04:05"
+
+[Sandbox_salt_master.severity_map]
+DEBUG = 7
+INFO = 6
+WARNING = 4
+ERROR = 3
+
+[Sandbox_salt_master.message_fields]
+Module = "%Module%"
+JID = "%JID%"
+{%- endif %}
