@@ -2,15 +2,16 @@
 {%- load_yaml as master_common %}
 default:
   service: salt-master
-  {%- if pillar.salt.master is defined %}
-  {%- if pillar.salt.master.source.engine == 'pkg' %}
+  {%- if pillar.salt.get('master', {}).get('source', {}).get('engine', 'pkg') == 'pkg' %}
   install_state: "pkg: salt_master_packages"
+  source:
+    engine: pkg
   {%- elif pillar.salt.master.source.engine == 'pip' %}
   install_state: "pip: salt_master_packages"
   {%- endif %}
-  {%- if pillar.salt.master.source.version is defined %}
+
+  {%- if pillar.salt.get('master', {}).get('source', {}).version is defined %}
   version: {{ pillar.salt.master.source.version }}
-  {%- endif %}
   {%- endif %}
   accept_policy: preseed
   bind: {}
@@ -46,34 +47,35 @@ RedHat:
 
 {%- load_yaml as minion_common %}
 default:
-  graph_pkgs: 
+  graph_pkgs:
   - graphviz
-  graph_states_pkgs: 
+  graph_states_pkgs:
   - python-pydot
   - python-yaml
   graph_states: False
   service: salt-minion
-  {%- if pillar.salt.minion is defined %}
-  {%- if pillar.salt.minion.source.engine == 'pkg' %}
+  {%- if pillar.salt.get('minion', {}).get('source', {}).get('engine', 'pkg') == 'pkg' %}
   install_state: "pkg: salt_minion_packages"
+  source:
+    engine: pkg
   {%- elif pillar.salt.minion.source.engine == 'pip' %}
   install_state: "pip: salt_minion_packages"
   {%- endif %}
-  {%- if pillar.salt.minion.source.version is defined %}
+
+  {%- if pillar.salt.get('minion', {}).get('source', {}).version is defined %}
   version: {{ pillar.salt.minion.source.version }}
-  {%- endif %}
   {%- endif %}
 {%- endload %}
 
 {%- load_yaml as minion_specific %}
 Arch:
-  pkgs: 
+  pkgs:
   - salt-zmq
 Debian:
   pkgs:
   - salt-minion
 Gentoo:
-  pkgs: 
+  pkgs:
   - app-admin/salt
 MacOS:
   pkgs:
@@ -98,27 +100,27 @@ default:
 
 {%- load_yaml as control_common %}
 default:
-  cloud_pips: 
+  cloud_pips:
   - apache-libcloud
   - netaddr
-  cloud_pkgs: 
+  cloud_pkgs:
   - python-netaddr
   - python-libcloud
-  virt_pips: 
+  virt_pips:
   - libvirt-python
-  maas_pkgs: 
+  maas_pkgs:
   - python-maas-client
   cluster: {}
 {%- endload %}
 
 {%- load_yaml as control_specific %}
 Debian:
-  virt_pkgs: 
+  virt_pkgs:
   - libvirt-dev
   - pkg-config
   - libguestfs-tools
 RedHat:
-  virt_pkgs: 
+  virt_pkgs:
   - libvirt-dev
   - pkg-config
 {%- endload %}
