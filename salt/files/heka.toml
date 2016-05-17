@@ -14,8 +14,12 @@ timestamp_layout = "2006-01-02 15:04:05"
 [Sandbox_salt_minion.severity_map]
 DEBUG = 7
 INFO = 6
+NOTICE = 5
 WARNING = 4
 ERROR = 3
+CRITICAL = 2
+ALERT = 1
+EMERGENCY = 0
 
 [Sandbox_salt_minion.message_fields]
 Module = "%Module%"
