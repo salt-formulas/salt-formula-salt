@@ -106,6 +106,15 @@ Salt master with custom handlers
               host: 127.0.0.1
               port: 9999
 
+Salt master peer for remote certificate sign.
+
+.. code-block:: yaml
+
+    salt:
+      master:
+        peer:
+          ".*":
+          - x509.sign_remote_certificate
 
 Salt minion
 -----------
