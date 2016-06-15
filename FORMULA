@@ -1,0 +1,8 @@
+name: salt
+os: Arch, Debian, Gentoo, MacOS, RedHat
+os_family: Arch, Debian, Gentoo, MacOS, RedHat
+version: 201606
+release: 1
+summary: Salt salt formula
+description: Install and configure Salt masters and minions.
+top_level_dir: salt
