@@ -41,8 +41,10 @@ RedHat:
   - salt-master
 {%- endload %}
 
+{%- if pillar.salt.master is defined %}
 {%- set raw_master = salt['grains.filter_by'](master_specific, merge=salt['pillar.get']('salt:master')) %}
 {%- set master = salt['grains.filter_by'](master_common, merge=raw_master) %}
+{%- endif %}
 
 
 {%- load_yaml as minion_common %}
@@ -85,8 +87,10 @@ RedHat:
   - salt-minion
 {%- endload %}
 
+{%- if pillar.salt.minion is defined %}
 {%- set raw_minion = salt['grains.filter_by'](minion_specific, merge=salt['pillar.get']('salt:minion')) %}
 {%- set minion = salt['grains.filter_by'](minion_common, merge=raw_minion) %}
+{%- endif %}
 
 
 {%- load_yaml as api_common %}
@@ -125,6 +129,7 @@ RedHat:
   - pkg-config
 {%- endload %}
 
+{%- if pillar.salt.control is defined %}
 {%- set raw_control = salt['grains.filter_by'](control_specific, merge=salt['pillar.get']('salt:control')) %}
 {%- set control = salt['grains.filter_by'](control_common, merge=raw_control) %}
-
+{%- endif %}
