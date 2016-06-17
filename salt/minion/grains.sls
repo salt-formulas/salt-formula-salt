@@ -23,7 +23,7 @@ salt_minion_grains_file:
   cmd.run:
   - name: cat /etc/salt/grains.d/* > /etc/salt/grains
   - require:
-    - file: salt_minion_grains_dir
+    - file: salt_minion_grains_placeholder
   - watch_in:
     - service: salt_minion_service
 
