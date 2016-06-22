@@ -57,6 +57,53 @@ Salt master with alternative installation source and version (optional) - pip
           engine: pip
           version: 2016.3.0rc2
 
+Salt master with specified formula to install through apt-get
+
+.. code-block:: yaml
+
+    salt:
+      master:
+        enabled: true
+        ...
+        environment:
+          prd:
+            keysone:
+              source: pkg
+              name: salt-formula-keystone
+
+Clone master branch of keystone formula as local feature branch
+
+.. code-block:: yaml
+
+    salt:
+      master:
+        enabled: true
+        ...
+        environment:
+          dev:
+            formula:
+              keystone:
+                source: git
+                address: git@github.com:openstack/salt-formula-keystone.git
+                revision: master
+                branch: feature
+
+Salt master with specified formula refs (for example for Gerrit review)
+
+.. code-block:: yaml
+
+    salt:
+      master:
+        enabled: true
+        ...
+        environment:
+          dev:
+            formula:
+              keystone:
+                source: git
+                address: https://git.openstack.org/openstack/salt-formula-keystone
+                revision: refs/changes/56/123456/1
+
 Salt master syndicate master of masters
 
 .. code-block:: yaml
