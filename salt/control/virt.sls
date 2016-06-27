@@ -8,6 +8,11 @@ salt_control_virt_packages:
   pkg.installed:
     - names: {{ control.virt_pkgs }}
 
+update-guestfs-appliance:
+  cmd.wait:
+    - watch:
+      - pkg: salt_control_virt_packages
+
 {#
 {%- for package in control.virt_pips %}
 
