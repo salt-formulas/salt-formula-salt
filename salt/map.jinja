@@ -76,6 +76,7 @@ Arch:
 Debian:
   pkgs:
   - salt-minion
+  - m2crypto
 Gentoo:
   pkgs:
   - app-admin/salt
@@ -85,6 +86,7 @@ MacOS:
 RedHat:
   pkgs:
   - salt-minion
+  - m2crypto
 {%- endload %}
 
 {%- if pillar.salt.minion is defined %}
