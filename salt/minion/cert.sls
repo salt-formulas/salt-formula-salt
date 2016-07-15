@@ -8,6 +8,13 @@
   x509.private_key_managed:
   - bits: 4096
 
+{{ cert.common_name }}_rights:
+  file.managed:
+  - name: /etc/ssl/private/{{ cert.common_name }}.key
+  - mode: 600
+  - require:
+    - x509: /etc/ssl/private/{{ cert.common_name }}.key
+
 /etc/ssl/certs/{{ cert.common_name }}.crt:
   x509.certificate_managed:
   - ca_server: {{ cert.host }}
