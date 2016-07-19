@@ -27,4 +27,11 @@ salt_minion_grains_file:
   - watch_in:
     - service: salt_minion_service
 
+salt_minion_grains_publish:
+  module.run:
+  - name: mine.send
+  - name: grains.items
+  - require:
+    - cmd: salt_minion_grains_file
+
 {%- endif %}

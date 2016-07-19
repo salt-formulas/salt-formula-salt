@@ -12,6 +12,7 @@
   file.managed:
   - name: /etc/ssl/private/{{ cert.common_name }}.key
   - mode: 600
+  - replace: False
   - require:
     - x509: /etc/ssl/private/{{ cert.common_name }}.key
 
