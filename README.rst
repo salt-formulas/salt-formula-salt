@@ -28,11 +28,25 @@ Salt master with API
 .. code-block:: yaml
 
     salt:
-      master:
-        ...
       api:
         enabled: true
-        port: 8000
+        ssl:
+          engine: salt
+        bind:
+          address: 0.0.0.0
+          port: 8000
+
+Salt master with defined user ACLs
+
+.. code-block:: yaml
+
+    salt:
+      master:
+        user:
+          peter:
+            permissions:
+            - 'fs.fs'
+            - 'fs.\*'
 
 Salt master with preset minions
 
