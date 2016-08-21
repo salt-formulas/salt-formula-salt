@@ -25,28 +25,13 @@ Salt master with reclass ENC as metadata backend
 
 Salt master with API
 
-.. code-block:: yaml
-
-    salt:
-      api:
-        enabled: true
-        ssl:
-          engine: salt
-        bind:
-          address: 0.0.0.0
-          port: 8000
+.. literalinclude:: tests/pillar/master_api.sls
+   :language: yaml
 
 Salt master with defined user ACLs
 
-.. code-block:: yaml
-
-    salt:
-      master:
-        user:
-          peter:
-            permissions:
-            - 'fs.fs'
-            - 'fs.\*'
+.. literalinclude:: tests/pillar/master_acl.sls
+   :language: yaml
 
 Salt master with preset minions
 
@@ -55,7 +40,6 @@ Salt master with preset minions
     salt:
       master:
         enabled: true
-        ...
         minions:
         - name: 'node1.system.location.domain.com'
 
@@ -125,8 +109,7 @@ Salt master syndicate master of masters
     salt:
       master:
         enabled: true
-        ...
-        syndic:
+        syndicate:
           mode: master
 
 Salt master syndicate (client) master
@@ -136,7 +119,6 @@ Salt master syndicate (client) master
     salt:
       master:
         enabled: true
-        ...
         syndicate:
           mode: client
           host: master-master
@@ -221,6 +203,9 @@ Salt minion with graphing dependencies
 
 .. literalinclude:: tests/pillar/minion_graph.sls
    :language: yaml
+
+PKI CA
+~~~~~~
 
 Salt minion with PKI CA
 

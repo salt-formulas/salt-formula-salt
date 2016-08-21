@@ -16,10 +16,9 @@ salt:
     environment:
       prd:
         formula: {}
-    ssh_minion:
-      node01:
-        host: 10.0.0.1
-        user: saltssh
-        sudo: true
-        key_file: /path/to/the/key
-        port: 22
+    handler:
+      handler01:
+        engine: udp
+        bind:
+          host: 127.0.0.1
+          port: 9999
