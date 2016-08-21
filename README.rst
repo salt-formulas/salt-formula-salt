@@ -177,6 +177,26 @@ Salt master peer for remote certificate sign.
           ".*":
           - x509.sign_remote_certificate
 
+
+Salt SSH
+--------
+
+Salt SSH with sudoer using key
+
+.. literalinclude:: tests/pillar/master_ssh_minion_key.sls
+   :language: yaml
+
+Salt SSH with sudoer using password
+
+.. literalinclude:: tests/pillar/master_ssh_minion_password.sls
+   :language: yaml
+
+Salt SSH with root using password
+
+.. literalinclude:: tests/pillar/master_ssh_minion_root.sls
+   :language: yaml
+
+
 Salt minion
 -----------
 
@@ -212,6 +232,7 @@ Salt minion with PKI certificate
 .. literalinclude:: tests/pillar/minion_pki_cert.sls
    :language: yaml
 
+
 Salt control (cloud/kvm/docker)
 -------------------------------
 
@@ -225,7 +246,7 @@ Salt cloud with Digital Ocean provider
 .. literalinclude:: tests/pillar/control_cloud_digitalocean.sls
    :language: yaml
 
-Salt virt KVM cluster
+Salt virt with KVM cluster
 
 .. literalinclude:: tests/pillar/control_virt.sls
    :language: yaml
@@ -270,32 +291,3 @@ salt-cloud
 * http://salt-cloud.readthedocs.org/en/latest/topics/map.html
 * http://docs.saltstack.com/en/latest/topics/tutorials/multimaster.html
 
-salt-virt
----------
-
-Sample pillar
-
-.. code-block:: yaml
-
-  salt:
-    control:
-      enabled: True
-      virt_enabled: True
-      size:
-        medium:
-          cpu: 2
-          ram: 1024
-      cluster:
-        localnode:
-          domain: domain.com
-          engine: virt
-          config:
-            engine: salt
-            host: 127.0.0.1
-          node:
-            ubuntu01:
-              provider: node001.domain.com
-              image: ubuntu-14-04-x64-1456128611.qcow2
-              size: medium
-              disk_profile: database
-              net_profile: testing
