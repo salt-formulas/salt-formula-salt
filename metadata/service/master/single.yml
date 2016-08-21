@@ -13,5 +13,5 @@ parameters:
       source:
         engine: pkg
       command_timeout: 5
-      worker_threads: 2
+      worker_threads: 3
       base_environment: ${_param:salt_master_base_environment}
