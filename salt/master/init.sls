@@ -6,7 +6,7 @@ include:
 {%- if pillar.salt.master.windows_repo is defined %}
 - salt.master.win_repo
 {%- endif %}
-{%- if pillar.salt.master.ssh_minion is defined %}
+{%- if pillar.salt.master.ssh is defined %}
 - salt.master.ssh
 {%- endif %}
 {#

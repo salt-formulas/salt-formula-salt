@@ -16,10 +16,11 @@ salt:
     environment:
       prd:
         formula: {}
-    ssh_minion:
-      node01:
-        host: 10.0.0.1
-        user: saltssh
-        sudo: true
-        password: password
-        port: 22
+    ssh:
+      minion:
+        node01:
+          host: 10.0.0.1
+          user: saltssh
+          sudo: true
+          password: password
+          port: 22

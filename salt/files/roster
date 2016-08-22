@@ -1,5 +1,5 @@
 {%- from "salt/map.jinja" import master with context %}
-{%- for minion_name, minion in master.get('ssh_minion', {}).items() %}
+{%- for minion_name, minion in master.ssh.get('minion', {}).iteritems() %}
 {{ minion_name }}:
   host: {{ minion.host }}
   user: {{ minion.user }}
@@ -14,3 +14,6 @@
   tty: True
   {%- endif %}
 {%- endfor %}
+{#-
+  vim: syntax=jinja
+-#}

@@ -1,3 +1,9 @@
+salt-formula-salt (0.4) trusty; urgency=medium
+
+  * New upstream version
+
+ -- Filip Pytloun <filip@pytloun.cz>  Mon, 22 Aug 2016 14:41:59 +0200
+
 salt-formula-salt (0.2) trusty; urgency=medium
 
   * First public release
