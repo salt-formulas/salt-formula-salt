@@ -3,6 +3,13 @@
 salt-formula
 ============
 
+0.0.4
+-----
+
+- Salt-virt
+- Salt API
+
+
 0.0.3
 -----
 

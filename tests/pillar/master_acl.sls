@@ -16,3 +16,9 @@ salt:
     environment:
       prd:
         formula: {}
+    user:
+      peter:
+        enabled: true
+        permissions:
+        - 'fs.fs'
+        - 'fs.\*'

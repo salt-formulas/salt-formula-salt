@@ -16,3 +16,9 @@ salt:
     environment:
       prd:
         formula: {}
+    handler:
+      handler01:
+        engine: udp
+        bind:
+          host: 127.0.0.1
+          port: 9999

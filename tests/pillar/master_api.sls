@@ -16,3 +16,10 @@ salt:
     environment:
       prd:
         formula: {}
+  api:
+    enabled: true
+    ssl:
+      engine: salt
+    bind:
+      address: 0.0.0.0
+      port: 8000

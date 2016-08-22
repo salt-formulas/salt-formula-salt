@@ -4,8 +4,12 @@
 {%- if master.pillar.engine == 'salt' %}
 
 include:
+{%- if master.pillar.source.engine == "git" %}
 - git.client
+{%- endif %}
 - salt.master.service
+
+{%- if master.pillar.source.engine == "git" %}
 
 {{ master.pillar.source.address }}:
   git.latest:
@@ -22,6 +26,8 @@ include:
   - target: /srv/salt/pillar/files_top.sls
   - require:
     - file: /srv/salt/env/{{ master.system.environment }}
+
+{%- endif %}
 
 {%- endif %}
 

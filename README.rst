@@ -25,28 +25,13 @@ Salt master with reclass ENC as metadata backend
 
 Salt master with API
 
-.. code-block:: yaml
-
-    salt:
-      api:
-        enabled: true
-        ssl:
-          engine: salt
-        bind:
-          address: 0.0.0.0
-          port: 8000
+.. literalinclude:: tests/pillar/master_api.sls
+   :language: yaml
 
 Salt master with defined user ACLs
 
-.. code-block:: yaml
-
-    salt:
-      master:
-        user:
-          peter:
-            permissions:
-            - 'fs.fs'
-            - 'fs.\*'
+.. literalinclude:: tests/pillar/master_acl.sls
+   :language: yaml
 
 Salt master with preset minions
 
@@ -55,7 +40,6 @@ Salt master with preset minions
     salt:
       master:
         enabled: true
-        ...
         minions:
         - name: 'node1.system.location.domain.com'
 
@@ -125,8 +109,7 @@ Salt master syndicate master of masters
     salt:
       master:
         enabled: true
-        ...
-        syndic:
+        syndicate:
           mode: master
 
 Salt master syndicate (client) master
@@ -136,7 +119,6 @@ Salt master syndicate (client) master
     salt:
       master:
         enabled: true
-        ...
         syndicate:
           mode: client
           host: master-master
@@ -177,6 +159,26 @@ Salt master peer for remote certificate sign.
           ".*":
           - x509.sign_remote_certificate
 
+
+Salt SSH
+--------
+
+Salt SSH with sudoer using key
+
+.. literalinclude:: tests/pillar/master_ssh_minion_key.sls
+   :language: yaml
+
+Salt SSH with sudoer using password
+
+.. literalinclude:: tests/pillar/master_ssh_minion_password.sls
+   :language: yaml
+
+Salt SSH with root using password
+
+.. literalinclude:: tests/pillar/master_ssh_minion_root.sls
+   :language: yaml
+
+
 Salt minion
 -----------
 
@@ -202,6 +204,9 @@ Salt minion with graphing dependencies
 .. literalinclude:: tests/pillar/minion_graph.sls
    :language: yaml
 
+PKI CA
+~~~~~~
+
 Salt minion with PKI CA
 
 .. literalinclude:: tests/pillar/minion_pki_ca.sls
@@ -211,6 +216,7 @@ Salt minion with PKI certificate
 
 .. literalinclude:: tests/pillar/minion_pki_cert.sls
    :language: yaml
+
 
 Salt control (cloud/kvm/docker)
 -------------------------------
@@ -225,7 +231,7 @@ Salt cloud with Digital Ocean provider
 .. literalinclude:: tests/pillar/control_cloud_digitalocean.sls
    :language: yaml
 
-Salt virt KVM cluster
+Salt virt with KVM cluster
 
 .. literalinclude:: tests/pillar/control_virt.sls
    :language: yaml
@@ -270,32 +276,3 @@ salt-cloud
 * http://salt-cloud.readthedocs.org/en/latest/topics/map.html
 * http://docs.saltstack.com/en/latest/topics/tutorials/multimaster.html
 
-salt-virt
----------
-
-Sample pillar
-
-.. code-block:: yaml
-
-  salt:
-    control:
-      enabled: True
-      virt_enabled: True
-      size:
-        medium:
-          cpu: 2
-          ram: 1024
-      cluster:
-        localnode:
-          domain: domain.com
-          engine: virt
-          config:
-            engine: salt
-            host: 127.0.0.1
-          node:
-            ubuntu01:
-              provider: node001.domain.com
-              image: ubuntu-14-04-x64-1456128611.qcow2
-              size: medium
-              disk_profile: database
-              net_profile: testing
