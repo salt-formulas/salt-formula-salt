@@ -43,9 +43,9 @@ salt_minion_cert_{{ cert_name }}_dirs:
     - ca_server: {{ cert.host }}
     - signing_policy: {{ cert.authority }}_{{ cert.signing_policy }}
     - public_key: {{ key_file }}
-    - CN: {{ cert.common_name }}
+    - CN: "{{ cert.common_name }}"
     {%- if cert.alternative_names is defined %}
-    - subjectAltName: {{ cert.alternative_names }}
+    - subjectAltName: "{{ cert.alternative_names }}"
     {%- endif %}
     - days_remaining: 30
     - backup: True

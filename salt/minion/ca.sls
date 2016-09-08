@@ -29,7 +29,7 @@ include:
 /etc/pki/ca/{{ ca_name }}/ca.crt:
   x509.certificate_managed:
   - signing_private_key: /etc/pki/ca/{{ ca_name }}/ca.key
-  - CN: {{ ca.common_name }}
+  - CN: "{{ ca.common_name }}"
   {%- if ca.country is defined %}
   - C: {{ ca.country }}
   {%- endif %}
