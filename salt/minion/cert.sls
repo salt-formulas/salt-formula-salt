@@ -6,8 +6,10 @@
 
 {%- set key_file  = cert.get('key_file', '/etc/ssl/private/' + cert.common_name + '.key') %}
 {%- set cert_file = cert.get('cert_file', '/etc/ssl/certs/' + cert.common_name + '.crt') %}
+{%- set ca_file = cert.get('ca_file', '/etc/ssl/certs/ca-' + cert.authority + '.crt') %}
 {%- set key_dir = key_file|replace(key_file.split('/')[-1], "") %}
 {%- set cert_dir = cert_file|replace(cert_file.split('/')[-1], "") %}
+{%- set ca_dir = ca_file|replace(ca_file.split('/')[-1], "") %}
 
 {# Only ensure directories exists, don't touch permissions, etc. #}
 salt_minion_cert_{{ cert_name }}_dirs:
@@ -15,6 +17,7 @@ salt_minion_cert_{{ cert_name }}_dirs:
     - names:
       - {{ key_dir }}
       - {{ cert_dir }}
+      - {{ ca_dir }}
     - makedirs: true
     - replace: false
 
@@ -69,7 +72,6 @@ salt_minion_cert_{{ cert_name }}_dirs:
 {%- for ca_path,ca_cert in salt['mine.get'](cert.host, 'x509.get_pem_entries')[cert.host].iteritems() %}
 
 {%- if '/etc/pki/ca/'+cert.authority in ca_path %}
-{%- set ca_file = cert.get('ca_file', '/etc/ssl/certs/ca-' + cert.authority + '.crt') %}
 
 {{ ca_file }}_{{ rowloop.index }}:
   x509.pem_managed:
@@ -77,6 +79,10 @@ salt_minion_cert_{{ cert_name }}_dirs:
     - text: {{ ca_cert|replace('\n', '') }}
     - watch:
       - x509: {{ cert_file }}
+    {%- if cert.all_file is defined %}
+    - watch_in:
+      - cmd: salt_minion_cert_{{ cert_name }}_all
+    {%- endif %}
 
 {{ ca_file }}_cert_permissions:
   file.managed:
@@ -88,6 +94,29 @@ salt_minion_cert_{{ cert_name }}_dirs:
 {%- endif %}
 
 {%- endfor %}
+
+{%- if cert.all_file is defined %}
+salt_minion_cert_{{ cert_name }}_all:
+  cmd.wait:
+    - name: cat {{ key_file }} {{ cert_file }} {{ ca_file }} > {{ cert.all_file }}
+    - watch:
+      - x509: {{ key_file }}
+      - x509: {{ cert_file }}
+
+{{ cert.all_file }}_cert_permissions:
+  file.managed:
+    - name: {{ cert.all_file }}
+    - mode: {{ cert.get("mode", 0600) }}
+    {%- if salt['user.info'](cert.get("user", "root")) %}
+    - user: {{ cert.get("user", "root") }}
+    {%- endif %}
+    {%- if salt['group.info'](cert.get("group", "root")) %}
+    - group: {{ cert.get("group", "root") }}
+    {%- endif %}
+    - replace: false
+    - watch:
+      - cmd: salt_minion_cert_{{ cert_name }}_all
+{%- endif %}
 
 {%- endfor %}
 
