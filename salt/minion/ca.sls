@@ -55,8 +55,9 @@ include:
   - require:
     - x509: /etc/pki/ca/{{ ca_name }}/ca.key
 
-mine.send:
+salt_system_ca_mine_send_ca_{{ ca_name }}:
   module.run:
+  - name: mine.send
   - func: x509.get_pem_entries
   - kwargs:
       glob_path: /etc/pki/ca/{{ ca_name }}/ca.crt
