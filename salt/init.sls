@@ -12,4 +12,7 @@ include:
 {%- if pillar.salt.control is defined %}
 - salt.control
 {%- endif %}
+{%- if pillar.salt.api is defined %}
+- salt.api
+{%- endif %}
 {%- endif %}
