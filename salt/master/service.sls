@@ -30,6 +30,16 @@ salt_master_packages:
 
 {%- if master.peer is defined %}
 
+/etc/salt/master.d/_acl.conf:
+  file.managed:
+  - source: salt://salt/files/_acl.conf
+  - user: root
+  - template: jinja
+  - require:
+    - {{ master.install_state }}
+  - watch_in:
+    - service: salt_master_service
+
 /etc/salt/master.d/_peer.conf:
   file.managed:
   - source: salt://salt/files/_peer.conf
@@ -39,6 +49,7 @@ salt_master_packages:
     - {{ master.install_state }}
   - watch_in:
     - service: salt_master_service
+
 
 {%- endif %}
 
