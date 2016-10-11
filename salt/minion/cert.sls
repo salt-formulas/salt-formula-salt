@@ -69,7 +69,7 @@ salt_minion_cert_{{ cert_name }}_dirs:
     - watch:
       - x509: {{ cert_file }}
 
-{%- for ca_path,ca_cert in salt['mine.get'](cert.host, 'x509.get_pem_entries')[cert.host].iteritems() %}
+{%- for ca_path,ca_cert in salt['mine.get'](cert.host, 'x509.get_pem_entries').get(cert.host, {}).iteritems() %}
 
 {%- if '/etc/pki/ca/'+cert.authority in ca_path %}
 
