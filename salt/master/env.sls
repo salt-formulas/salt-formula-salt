@@ -153,12 +153,12 @@ salt_master_{{ environment_name }}_{{ formula_name }}_formula:
   - target: /usr/share/salt-formulas/env/_formulas/{{ formula_name }}
   {% if formula.get("revision", "").split("/")[0] == "refs" %}
   - rev: {{ formula.branch|default("master") }}
-  {%- if grains['saltversion'] < "2015.8.0" %}
+  {%- if grains['saltversion'] >= "2015.8.0" %}
   - branch: {{ formula.branch|default("master") }}
   {%- endif %}
   {% else %}
   - rev: {{ formula.revision|default(formula.branch) }}
-  {%- if grains['saltversion'] < "2015.8.0" %}
+  {%- if grains['saltversion'] >= "2015.8.0" %}
   - branch: {{ formula.branch|default(formula.revision) }}
   {%- endif %}
   {% endif %}
