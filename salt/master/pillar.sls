@@ -37,7 +37,9 @@ include:
 - reclass.storage.data
 
 /srv/salt/reclass/classes/service:
-  file.directory
+  file.directory:
+  - require:
+    - file: reclass_data_dir
 
 {%- if master.system is defined %}
 
@@ -47,7 +49,6 @@ include:
   file.symlink:
   - target: /srv/salt/env/{{ master.system.environment }}/{{ formula_name }}/metadata/service
   - require:
-    - git: reclass_data_source
     - file: /srv/salt/reclass/classes/service
 
 {%- endfor %}
@@ -68,7 +69,6 @@ include:
   - target: /usr/share/salt-formulas/env/_formulas/{{ formula_name }}/metadata/service
   {%- endif %}
   - require:
-    - git: reclass_data_source
     - file: /srv/salt/reclass/classes/service
 
 {%- endif %}
