@@ -28,7 +28,7 @@ salt_master_packages:
   - watch_in:
     - service: salt_master_service
 
-{%- if master.peer is defined %}
+{%- if master.user is defined %}
 
 /etc/salt/master.d/_acl.conf:
   file.managed:
@@ -40,6 +40,10 @@ salt_master_packages:
   - watch_in:
     - service: salt_master_service
 
+{%- endif %}
+
+{%- if master.peer is defined %}
+
 /etc/salt/master.d/_peer.conf:
   file.managed:
   - source: salt://salt/files/_peer.conf
@@ -49,7 +53,6 @@ salt_master_packages:
     - {{ master.install_state }}
   - watch_in:
     - service: salt_master_service
-
 
 {%- endif %}
 
