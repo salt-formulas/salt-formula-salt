@@ -1,9 +1,10 @@
 orchestrate:
   master:
-    priority: 10
-  minion:
-    priority: 20
-  syndic:
-    priority: 200
-  control:
+    priority: 60
+  minion: 
+    priority: 70
+  control: 
     priority: 400
+    require:
+    - salt: salt.master
+
