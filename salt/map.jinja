@@ -55,6 +55,8 @@ default:
   - python-pydot
   - python-yaml
   graph_states: False
+  log:
+    level: info
   service: salt-minion
   {%- if pillar.salt.get('minion', {}).get('source', {}).get('engine', 'pkg') == 'pkg' %}
   install_state: "pkg: salt_minion_packages"
