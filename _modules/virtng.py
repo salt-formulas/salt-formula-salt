@@ -622,7 +622,7 @@ def init(name,
 
     if kwargs.get('seed') and seedable:
         install = kwargs.get('install', True)
-        seed_cmd = kwargs.get('seed_cmd', 'seed.apply')
+        seed_cmd = kwargs.get('seed_cmd', 'seedng.apply')
 
         __salt__[seed_cmd](img_dest,
                            id_=name,
