@@ -38,8 +38,7 @@ include:
 
 /srv/salt/reclass/classes/service:
   file.directory:
-  - require:
-    - file: reclass_data_dir
+  - makedirs: True
 
 {%- if master.system is defined %}
 
