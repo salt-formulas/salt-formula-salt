@@ -122,6 +122,19 @@ Salt syndic: Lower master
           host: master-of-master-host
         timeout: 5
 
+Salt syndic: Lower master with multi-master of masters
+
+.. code-block:: yaml
+
+    salt:
+      syndic:
+        enabled: true
+        masters:
+        - host: master-of-master-host1
+        - host: master-of-master-host2
+        timeout: 5
+
+
 Salt master with custom handlers
 
 .. code-block:: yaml
