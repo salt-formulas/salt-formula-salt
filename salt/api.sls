@@ -1,5 +1,5 @@
 {%- from "salt/map.jinja" import api with context %}
-{%- if api.enabled %}
+{%- if api.get('enabled', False) %}
 
 salt_api_packages:
   pkg.installed:
