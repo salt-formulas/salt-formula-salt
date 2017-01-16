@@ -47,6 +47,18 @@ RedHat:
 {%- endif %}
 
 
+{%- load_yaml as syndic_defaults %}
+Debian:
+  pkgs:
+  - salt-syndic
+RedHat:
+  pkgs:
+  - salt-syndic
+{%- endload %}
+
+{%- set syndic = salt['grains.filter_by'](syndic_defaults, merge=salt['pillar.get']('salt:syndic')) %}
+
+
 {%- load_yaml as minion_common %}
 default:
   graph_pkgs:

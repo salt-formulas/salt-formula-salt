@@ -102,26 +102,38 @@ Salt master with specified formula refs (for example for Gerrit review)
                 address: https://git.openstack.org/openstack/salt-formula-keystone
                 revision: refs/changes/56/123456/1
 
-Salt master syndicate master of masters
+Salt syndic: Master of masters
 
 .. code-block:: yaml
 
     salt:
       master:
         enabled: true
-        syndicate:
-          mode: master
+        order_masters: True
 
-Salt master syndicate (client) master
+Salt syndic: Lower master
 
 .. code-block:: yaml
 
     salt:
-      master:
+      syndic:
         enabled: true
-        syndicate:
-          mode: client
-          host: master-master
+        master:
+          host: master-of-master-host
+        timeout: 5
+
+Salt syndic: Lower master with multi-master of masters
+
+.. code-block:: yaml
+
+    salt:
+      syndic:
+        enabled: true
+        masters:
+        - host: master-of-master-host1
+        - host: master-of-master-host2
+        timeout: 5
+
 
 Salt master with custom handlers
 
