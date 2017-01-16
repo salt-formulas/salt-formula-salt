@@ -15,5 +15,11 @@ salt_syndic_packages:
   - template: jinja
   - watch_in:
     - service: salt_master_service
+    - service: salt_syndic_service
+
+salt_syndic_service:
+  service.running:
+  - name: {{ syndic.service }}
+  - enable: true
 
 {%- endif %}

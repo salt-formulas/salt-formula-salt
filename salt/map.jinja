@@ -49,9 +49,11 @@ RedHat:
 
 {%- load_yaml as syndic_defaults %}
 Debian:
+  service: salt-syndic
   pkgs:
   - salt-syndic
 RedHat:
+  service: salt-syndic
   pkgs:
   - salt-syndic
 {%- endload %}
