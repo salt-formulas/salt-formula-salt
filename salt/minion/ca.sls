@@ -61,7 +61,7 @@ salt_system_ca_mine_send_ca_{{ ca_name }}:
   - func: x509.get_pem_entries
   - kwargs:
       glob_path: /etc/pki/ca/{{ ca_name }}/ca.crt
-  - onchanges:
+  - require:
     - x509: /etc/pki/ca/{{ ca_name }}/ca.crt
 
 {%- endfor %}
