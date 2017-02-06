@@ -84,7 +84,7 @@ salt_minion_cert_{{ cert_name }}_dirs:
       - cmd: salt_minion_cert_{{ cert_name }}_all
     {%- endif %}
 
-{{ ca_file }}_cert_permissions:
+{{ ca_file }}_cert_permissions_{{ rowloop.index }}:
   file.managed:
     - name: {{ ca_file }}
     - mode: 0644
