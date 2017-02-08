@@ -9,7 +9,7 @@ include:
 
 salt_env_{{ master.system.environment }}_dirs_obsolete:
   file.directory:
-  - names: 
+  - names:
     - /srv/salt/env/{{ master.system.environment }}/_modules
     - /srv/salt/env/{{ master.system.environment }}/_states
     - /srv/salt/env/{{ master.system.environment }}/_grains
@@ -108,7 +108,7 @@ salt_master_{{ master.system.environment }}_returners:
 
 salt_env_{{ environment_name }}_pre_dirs:
   file.directory:
-  - names: 
+  - names:
     - /usr/share/salt-formulas/env/_modules
     - /usr/share/salt-formulas/env/_states
     - /usr/share/salt-formulas/env/_grains
@@ -126,7 +126,7 @@ salt_env_{{ environment_name }}_dirs:
 
 salt_env_{{ environment_name }}_dirs:
   file.directory:
-  - names: 
+  - names:
     - /srv/salt/env/{{ environment_name }}/_modules
     - /srv/salt/env/{{ environment_name }}/_states
     - /srv/salt/env/{{ environment_name }}/_grains
@@ -135,15 +135,18 @@ salt_env_{{ environment_name }}_dirs:
 
 {%- endif %}
 
+salt_master_{{ environment_name }}_pkg_formulas:
+  pkg.latest:
+  - pkgs:
+{%- for formula_name, formula in environment.get('formula', {}).iteritems() %}
+{%- if formula.source == 'pkg' %}
+    - {{ formula.name }}
+{%- endif %}
+{%- endfor %}
+
 {%- for formula_name, formula in environment.get('formula', {}).iteritems() %}
 
-{%- if formula.source == 'pkg' %}
-
-salt_master_{{ environment_name }}_{{ formula.name }}_formula:
-  pkg.latest:
-  - name: {{ formula.name }}
-
-{%- elif formula.source == 'git' %}
+{%- if formula.source == 'git' %}
 
 {%- if master.base_environment == environment_name %}
 
@@ -174,7 +177,7 @@ salt_master_{{ environment_name }}_{{ formula_name }}_formula_refs_workaround_fe
   - name: git.fetch
   - cwd: /usr/share/salt-formulas/env/_formulas/{{ formula_name }}
   - opts: {{ formula.address }} {{ formula.revision }}
-  - require: 
+  - require:
     - git: salt_master_{{ environment_name }}_{{ formula_name }}_formula
 
 salt_master_{{ environment_name }}_{{ formula_name }}_formula_refs_workaround_reset:
