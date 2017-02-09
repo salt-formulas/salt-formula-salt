@@ -1,5 +1,7 @@
 {%- from "salt/map.jinja" import minion with context %}
+
 {%- if minion.enabled %}
+{%- if minion.cert is defined %}
 
 {%- for cert_name,cert in minion.get('cert', {}).iteritems() %}
 {%- set rowloop = loop %}
@@ -10,6 +12,11 @@
 {%- set key_dir = key_file|replace(key_file.split('/')[-1], "") %}
 {%- set cert_dir = cert_file|replace(cert_file.split('/')[-1], "") %}
 {%- set ca_dir = ca_file|replace(ca_file.split('/')[-1], "") %}
+{%- if grains.os_family == 'RedHat' %}
+{%- set cacerts_dir='/etc/pki/ca-trust/source/anchors' %}
+{%- else %}
+{%- set cacerts_dir='/usr/local/share/ca-certificates' %}
+{%- endif %}
 
 {# Only ensure directories exists, don't touch permissions, etc. #}
 salt_minion_cert_{{ cert_name }}_dirs:
@@ -43,11 +50,21 @@ salt_minion_cert_{{ cert_name }}_dirs:
 
 {{ cert_file }}:
   x509.certificate_managed:
-    - ca_server: {{ cert.host }}
+    {% if cert.host is defined %}- ca_server: {{ cert.host }}{%- endif %}
+    {% if cert.authority is defined and cert.signing_policy is defined %}
     - signing_policy: {{ cert.authority }}_{{ cert.signing_policy }}
+    {%- endif %}
     - public_key: {{ key_file }}
     - CN: "{{ cert.common_name }}"
-    {%- if cert.alternative_names is defined %}
+    {% if cert.state is defined %}- ST: {{ cert.state }}{%- endif %}
+    {% if cert.country is defined %}- C: {{ cert.country }}{%- endif %}
+    {% if cert.locality is defined %}- L: {{ cert.locality }}{%- endif %}
+    {% if cert.organization is defined %}- O: {{ cert.organization }}{%- endif %}
+    {% if cert.signing_private_key is defined and cert.signing_cert is defined %}
+    - signing_private_key: "{{ cert.signing_private_key }}"
+    - signing_cert: "{{ cert.signing_cert }}"
+    {%- endif %}
+    {% if cert.alternative_names is defined %}
     - subjectAltName: "{{ cert.alternative_names }}"
     {%- endif %}
     {%- if cert.extended_key_usage is defined %}
@@ -75,6 +92,7 @@ salt_minion_cert_{{ cert_name }}_dirs:
     - watch:
       - x509: {{ cert_file }}
 
+{%- if cert.host is defined %}
 {%- for ca_path,ca_cert in salt['mine.get'](cert.host, 'x509.get_pem_entries').get(cert.host, {}).iteritems() %}
 
 {%- if '/etc/pki/ca/'+cert.authority in ca_path %}
@@ -97,30 +115,17 @@ salt_minion_cert_{{ cert_name }}_dirs:
     - watch:
       - x509: {{ ca_file }}
 
-{%- if grains.os_family == 'Debian' %}
-
-salt_ca_certificates_packages_{{ rowloop.index }}:
-  pkg.installed:
-    - name: ca-certificates
-
-{{ ca_file }}_{{ rowloop.index }}_debian_symlink:
+{{ ca_file }}_{{ rowloop.index }}_local_trusted_symlink:
   file.symlink:
-    - name: "/usr/local/share/ca-certificates/ca-{{ cert.authority }}.crt"
+    - name: "{{ cacerts_dir }}/ca-{{ cert.authority }}.crt"
     - target: {{ ca_file }}
     - watch_in:
-      - cmd: salt_update_certificates_{{ rowloop.index }}
-    - require:
-      - pkg: salt_ca_certificates_packages_{{ rowloop.index }}
-
-salt_update_certificates_{{ rowloop.index }}:
-  cmd.wait:
-    - name: update-ca-certificates
-
-{%- endif %}
+      - cmd: salt_update_certificates
 
 {%- endif %}
 
 {%- endfor %}
+{%- endif %}
 
 {%- if cert.all_file is defined %}
 salt_minion_cert_{{ cert_name }}_all:
@@ -148,3 +153,48 @@ salt_minion_cert_{{ cert_name }}_all:
 {%- endfor %}
 
 {%- endif %}
+
+salt_ca_certificates_packages:
+  pkg.installed:
+{%- if grains.os_family == 'Debian' %}
+    - name: ca-certificates
+{%- elif grains.os_family == 'RedHat' %}
+    - name: ca-certificates
+{%- else %}
+    - name: []
+{%- endif %}
+
+salt_update_certificates:
+  cmd.wait:
+{%- if grains.os_family == 'Debian' %}
+    - name: "update-ca-certificates{% if minion.get('ca_certificates_cleanup') %} --fresh {% endif %}"
+{%- elif grains.os_family == 'RedHat' %}
+    - name: "update-ca-trust extract"
+{%- else %}
+    - name: true
+{%- endif %}
+    - require:
+      - pkg: salt_ca_certificates_packages
+
+{%- if minion.get('cert', {}).get('trust_salt_ca', 'True') %}
+{%- for ca_host, certs in salt['mine.get']('*/ca*', 'x510.get_pem_entries').iteritems() %}
+{%- for ca_path, ca_cert in certs.iteritems() %}
+{%- set cacert_file="ca-"+ca_path.split("/")[4]+".crt" %}
+
+salt_cert_{{ cacerts_dir }}/{{ cacert_file }}:
+  file.managed:
+  - name: {{ cacerts_dir }}/{{ cacert_file }}
+  - contents: |
+      {{ ca_cert | indent(8) }}
+  - makedirs: True
+  - show_changes: True
+  - follow_symlinks: True
+  - watch_in:
+    - cmd: salt_update_certificates
+
+{%- endfor %}
+{%- endfor %}
+{%- endif %}
+
+{%- endif %}
+

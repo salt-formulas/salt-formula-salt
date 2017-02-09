@@ -9,6 +9,7 @@ provisioner:
   salt_install: bootstrap
   salt_bootstrap_url: https://bootstrap.saltstack.com
   salt_version: latest
+  salt_minion_id: salt.ci.local
   require_chef: false
   log_level: error
   formula: salt
@@ -96,13 +97,17 @@ suites:
           base:
             "*":
               - common
+              - minion_pki
               - master_api
               - master_acl
               - master_ssh_key
               - master_ssh_password
               - master_ssh_root
               - master_handler
+              - minion_pki_cert
       pillars-from-files:
+        minion_pki.sls: tests/pillar/minion_pki_ca.sls
+        minion_pki_cert.sls: tests/pillar/minion_pki_cert.sls
         master_api.sls: tests/pillar/master_api.sls
         master_acl.sls: tests/pillar/master_acl.sls
         master_ssh_key.sls: tests/pillar/master_ssh_minion_key.sls

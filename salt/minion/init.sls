@@ -7,6 +7,4 @@ include:
 {%- if pillar.salt.minion.ca is defined %}
 - salt.minion.ca
 {%- endif %}
-{%- if pillar.salt.minion.cert is defined %}
 - salt.minion.cert
-{%- endif %}
