@@ -7,6 +7,8 @@ linux:
 salt:
   master:
     enabled: true
+    worker_threads: 2
+    command_timeout: 5
     source:
       engine: pkg
     pillar:
