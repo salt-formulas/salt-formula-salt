@@ -135,14 +135,23 @@ salt_env_{{ environment_name }}_dirs:
 
 {%- endif %}
 
+{%- set _formula_pkgs = [] %}
+{%- for formula_name, formula in environment.get('formula', {}).iteritems() %}
+{%- if formula.source == 'pkg' %}
+{%- do _formula_pkgs.append(formula.name) %}
+{%- endif %}
+{%- endfor %}
+
+{% if _formula_pkgs|length > 1 %}
+
 salt_master_{{ environment_name }}_pkg_formulas:
   pkg.latest:
   - pkgs:
-{%- for formula_name, formula in environment.get('formula', {}).iteritems() %}
-{%- if formula.source == 'pkg' %}
-    - {{ formula.name }}
-{%- endif %}
+{%- for  pkg in _formula_pkgs %}
+    - {{ pkg }}
 {%- endfor %}
+
+{% endif %}
 
 {%- for formula_name, formula in environment.get('formula', {}).iteritems() %}
 
