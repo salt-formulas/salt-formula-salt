@@ -10,8 +10,10 @@ include:
   - template: jinja
   - require:
     - {{ minion.install_state }}
+  {%- if not grains.get('noservices', False) %}
   - watch_in:
     - service: salt_minion_service
+  {%- endif %}
 
 {%- for ca_name,ca in minion.ca.iteritems() %}
 
