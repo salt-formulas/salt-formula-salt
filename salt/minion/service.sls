@@ -26,12 +26,16 @@ salt_minion_packages:
   - template: jinja
   - require:
     - {{ minion.install_state }}
+  {%- if not grains.get('noservices', False) %}
   - watch_in:
     - service: salt_minion_service
+  {%- endif %}
 
+{%- if not grains.get('noservices', False) %}
 salt_minion_service:
-  service.running:
-  - name: {{ minion.service }}
-  - enable: true
+    service.running:
+    - name: {{ minion.service }}
+    - enable: true
+{%- endif %}
 
 {%- endif %}

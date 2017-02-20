@@ -32,8 +32,10 @@ update-guestfs-appliance:
   - template: jinja
   - require:
     - pkg: salt_control_virt_packages
+  {%- if not grains.get('noservices', False) %}
   - watch_in:
     - service: salt_minion_service
+  {%- endif %}
 
 {%- for cluster_name, cluster in control.cluster.iteritems() %}
 
