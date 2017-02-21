@@ -142,7 +142,10 @@ Debian:
   virt_pkgs:
   - libvirt-dev
   - pkg-config
+{% if grains.oscodename == 'trusty' %}
   - libguestfs-tools
+{% endif %}
+
 RedHat:
   virt_pkgs:
   - libvirt-dev

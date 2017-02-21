@@ -69,6 +69,17 @@ salt_control_virt_{{ cluster_name }}_{{ node_name }}:
 #  - path: /srv/salt-images/{{ node_name }}.{{ cluster.domain }}/system.qcow2
 #  - id_: {{ node_name }}.{{ cluster.domain }}
 #  - unless: virsh list | grep {{ node_name }}.{{ cluster.domain }}
+
+{%- if node.get("autostart", True) %}
+
+salt_virt_autostart_{{ cluster_name }}_{{ node_name }}:
+  module.run:
+  - name: virt.set_autostart
+  - vm_: {{ node_name }}.{{ cluster.domain }}
+  - state: true
+  - unless: virsh list --autostart | grep {{ node_name }}.{{ cluster.domain }}
+  
+{%- endif %}
   
 {%- endif %}
 
