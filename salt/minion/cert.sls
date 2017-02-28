@@ -50,6 +50,12 @@ salt_minion_cert_{{ cert_name }}_dirs:
     {%- if cert.alternative_names is defined %}
     - subjectAltName: "{{ cert.alternative_names }}"
     {%- endif %}
+    {%- if cert.extended_key_usage is defined %}
+    - extendedKeyUsage: "{{ cert.extended_key_usage }}"
+    {%- endif %}
+    {%- if cert.key_usage is defined %}
+    - keyUsage: "{{ cert.key_usage }}"
+    {%- endif %}
     - days_remaining: 30
     - backup: True
     - watch:
