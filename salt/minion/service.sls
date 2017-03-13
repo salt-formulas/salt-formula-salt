@@ -33,9 +33,17 @@ salt_minion_packages:
 
 {%- if not grains.get('noservices', False) %}
 salt_minion_service:
-    service.running:
-    - name: {{ minion.service }}
-    - enable: true
+  service.running:
+  - name: {{ minion.service }}
+  - enable: true
 {%- endif %}
+
+salt_minion_sync_all:
+  module.run:
+    - name: 'saltutil.sync_all'
+  {%- if not grains.get('noservices', False) %}
+    - watch:
+      - service: salt_minion_service
+  {%- endif %}
 
 {%- endif %}
