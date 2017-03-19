@@ -99,7 +99,7 @@ salt_minion_cert_{{ cert_name }}_dirs:
 
 {%- if grains.os_family == 'Debian' %}
 
-salt_ca_certificates_packages:
+salt_ca_certificates_packages_{{ rowloop.index }}:
   pkg.installed:
     - name: ca-certificates
 
@@ -108,11 +108,11 @@ salt_ca_certificates_packages:
     - name: "/usr/local/share/ca-certificates/ca-{{ cert.authority }}.crt"
     - target: {{ ca_file }}
     - watch_in:
-      - cmd: salt_update_certificates
+      - cmd: salt_update_certificates_{{ rowloop.index }}
     - require:
-      - pkg: salt_ca_certificates_packages
+      - pkg: salt_ca_certificates_packages_{{ rowloop.index }}
 
-salt_update_certificates:
+salt_update_certificates_{{ rowloop.index }}:
   cmd.wait:
     - name: update-ca-certificates
 
