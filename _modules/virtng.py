@@ -375,6 +375,24 @@ def _disk_profile(profile, hypervisor, **kwargs):
                   format: qcow2
                   model: virtio
 
+    Example profile for KVM/QEMU with two disks, first is created
+    from specified image, the second is empty:
+
+    .. code-block:: yaml
+
+        virt:
+          disk:
+            two_disks:
+              - system:
+                  size: 8192
+                  format: qcow2
+                  model: virtio
+                  image: http://path/to/image.qcow2
+              - lvm:
+                  size: 32768
+                  format: qcow2
+                  model: virtio
+
     The ``format`` and ``model`` parameters are optional, and will
     default to whatever is best suitable for the active hypervisor.
     '''
@@ -538,96 +556,110 @@ def init(name,
         salt 'hypervisor' virt.init vm_name 4 512 salt://path/to/image.raw
         salt 'hypervisor' virt.init vm_name 4 512 nic=profile disk=profile
     '''
+
     hypervisor = __salt__['config.get']('libvirt:hypervisor', hypervisor)
 
     nicp = _nic_profile(nic, hypervisor, **kwargs)
 
-    diskp = None
-    seedable = False
-    if image:  # with disk template image
-        # if image was used, assume only one disk, i.e. the
-        # 'default' disk profile
-        # TODO: make it possible to use disk profiles and use the
-        # template image as the system disk
-        #diskp = _disk_profile('default', hypervisor, **kwargs)
-	#new diskp TCP cloud
-	diskp = _disk_profile(disk, hypervisor, **kwargs)
-        # When using a disk profile extract the sole dict key of the first
-        # array element as the filename for disk
+    diskp = _disk_profile(disk, hypervisor, **kwargs)
+
+    if image:
+        # Backward compatibility: if 'image' is specified in the VMs arguments
+        # instead of a disk arguments. In this case, 'image' will be assigned
+        # to the first disk for the VM.
         disk_name = next(diskp[0].iterkeys())
-        disk_type = diskp[0][disk_name]['format']
-        disk_file_name = '{0}.{1}'.format(disk_name, disk_type)
-	# disk size TCP cloud
-	disk_size = diskp[0][disk_name]['size']
+        if not diskp[0][disk_name].get('image', None):
+            diskp[0][disk_name]['image'] = image
 
+    # Create multiple disks, empty or from specified images.
+    for disk in diskp:
+        log.debug("Creating disk for VM [ {0} ]: {1}".format(name, disk))
 
-        if hypervisor in ['esxi', 'vmware']:
-            # TODO: we should be copying the image file onto the ESX host
-            raise SaltInvocationError('virt.init does not support image '
-                                      'template template in conjunction '
-                                      'with esxi hypervisor')
-        elif hypervisor in ['qemu', 'kvm']:
-            img_dir = __salt__['config.option']('virt.images')
-            img_dest = os.path.join(
-                img_dir,
-                name,
-                disk_file_name
-            )
-            img_dir = os.path.dirname(img_dest)
-            sfn = __salt__['cp.cache_file'](image, saltenv)
-            if not os.path.isdir(img_dir):
-                os.makedirs(img_dir)
-            try:
-                salt.utils.files.copyfile(sfn, img_dest)
-                mask = os.umask(0)
-                os.umask(mask)
-                # Apply umask and remove exec bit
+        for disk_name, args in disk.items():
 
-		# Resizing image TCP cloud
-		cmd = 'qemu-img resize ' + img_dest  + ' ' +  str(disk_size) + 'M'
- 	        subprocess.call(cmd, shell=True)
-		
-                mode = (0o0777 ^ mask) & 0o0666
-                os.chmod(img_dest, mode)
-
-            except (IOError, OSError) as e:
-                raise CommandExecutionError('problem copying image. {0} - {1}'.format(image, e))
-
-            seedable = True
-        else:
-            log.error('unsupported hypervisor when handling disk image')
-
-    else:
-        # no disk template image specified, create disks based on disk profile
-        diskp = _disk_profile(disk, hypervisor, **kwargs)
-        if hypervisor in ['qemu', 'kvm']:
-            # TODO: we should be creating disks in the local filesystem with
-            # qemu-img
-            raise SaltInvocationError('virt.init does not support disk '
-                                      'profiles in conjunction with '
-                                      'qemu/kvm at this time, use image '
-                                      'template instead')
-        else:
-            # assume libvirt manages disks for us
-            for disk in diskp:
-                for disk_name, args in disk.items():
+            if hypervisor in ['esxi', 'vmware']:
+                if 'image' in args:
+                    # TODO: we should be copying the image file onto the ESX host
+                    raise SaltInvocationError('virt.init does not support image '
+                                              'template template in conjunction '
+                                              'with esxi hypervisor')
+                else:
+                    # assume libvirt manages disks for us
                     xml = _gen_vol_xml(name,
                                        disk_name,
                                        args['size'],
                                        hypervisor)
                     define_vol_xml_str(xml)
 
+            elif hypervisor in ['qemu', 'kvm']:
+
+                disk_type = args['format']
+                disk_file_name = '{0}.{1}'.format(disk_name, disk_type)
+                # disk size TCP cloud
+                disk_size = args['size']
+
+                img_dir = __salt__['config.option']('virt.images')
+                img_dest = os.path.join(
+                    img_dir,
+                    name,
+                    disk_file_name
+                )
+                img_dir = os.path.dirname(img_dest)
+                if not os.path.isdir(img_dir):
+                    os.makedirs(img_dir)
+
+                if 'image' in args:
+                    # Create disk from specified image
+                    sfn = __salt__['cp.cache_file'](args['image'], saltenv)
+                    try:
+                        salt.utils.files.copyfile(sfn, img_dest)
+                        mask = os.umask(0)
+                        os.umask(mask)
+                        # Apply umask and remove exec bit
+
+                        # Resizing image TCP cloud
+                        cmd = 'qemu-img resize ' + img_dest  + ' ' +  str(disk_size) + 'M'
+                        subprocess.call(cmd, shell=True)
+
+                        mode = (0o0777 ^ mask) & 0o0666
+                        os.chmod(img_dest, mode)
+
+                    except (IOError, OSError) as e:
+                        raise CommandExecutionError('problem while copying image. {0} - {1}'.format(args['image'], e))
+
+                    if kwargs.get('seed'):
+                        install = kwargs.get('install', True)
+                        seed_cmd = kwargs.get('seed_cmd', 'seedng.apply')
+
+                        __salt__[seed_cmd](img_dest,
+                                           id_=name,
+                                           config=kwargs.get('config'),
+                                           install=install)
+                else:
+                    # Create empty disk
+                    try:
+                        mask = os.umask(0)
+                        os.umask(mask)
+                        # Apply umask and remove exec bit
+
+                        # Create empty image
+                        cmd = 'qemu-img create -f ' + disk_type + ' '  + img_dest  + ' ' +  str(disk_size) + 'M'
+                        subprocess.call(cmd, shell=True)
+
+                        mode = (0o0777 ^ mask) & 0o0666
+                        os.chmod(img_dest, mode)
+
+                    except (IOError, OSError) as e:
+                        raise CommandExecutionError('problem while creating volume {0} - {1}'.format(img_dest, e))
+
+            else:
+                # Unknown hypervisor
+                raise SaltInvocationError('Unsupported hypervisor when handling disk image: {0}'
+                                          .format(hypervisor))
+
     xml = _gen_xml(name, cpu, mem, diskp, nicp, hypervisor, **kwargs)
     define_xml_str(xml)
 
-    if kwargs.get('seed') and seedable:
-        install = kwargs.get('install', True)
-        seed_cmd = kwargs.get('seed_cmd', 'seedng.apply')
-
-        __salt__[seed_cmd](img_dest,
-                           id_=name,
-                           config=kwargs.get('config'),
-                           install=install)
     if start:
         create(name)
 
