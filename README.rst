@@ -216,6 +216,16 @@ Salt minion with graphing dependencies
 .. literalinclude:: tests/pillar/minion_graph.sls
    :language: yaml
 
+Salt minion behind http proxy
+
+.. code-block:: yaml
+
+    salt:
+      minion:
+        proxy:
+          host: 127.0.0.1
+          port: 3128
+
 PKI CA
 ~~~~~~
 
