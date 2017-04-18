@@ -61,7 +61,7 @@ salt_control_virt_{{ cluster_name }}_{{ node_name }}:
       seed: True
       serial_type: pty
       console: True
-  - unless: virsh list --all | grep {{ node_name }}.{{ cluster.domain }}
+  - unless: virsh list --all --name| grep -E "^{{ node_name }}.{{ cluster.domain }}$"
 
 #salt_control_seed_{{ cluster_name }}_{{ node_name }}:
 #  module.run:
@@ -77,7 +77,7 @@ salt_virt_autostart_{{ cluster_name }}_{{ node_name }}:
   - name: virt.set_autostart
   - vm_: {{ node_name }}.{{ cluster.domain }}
   - state: true
-  - unless: virsh list --autostart | grep {{ node_name }}.{{ cluster.domain }}
+  - unless: virsh list --autostart --name| grep -E "^{{ node_name }}.{{ cluster.domain }}$"
   
 {%- endif %}
   
