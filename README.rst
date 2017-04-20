@@ -171,6 +171,57 @@ Salt master peer for remote certificate sign.
           ".*":
           - x509.sign_remote_certificate
 
+Salt proxy
+----------
+
+Salt proxy pillar
+
+.. code-block:: yaml
+
+    salt:
+      minion:
+        proxy:
+          master: localhost
+          device:
+            vsrx01.mydomain.local:
+              enabled: true
+              engine: napalm
+            csr1000v.mydomain.local:
+              enabled: true
+              engine: napalm
+
+.. note:: This is pillar of the the real salt-minion
+
+
+Proxy pillar for IOS device
+
+.. code-block:: yaml
+
+    proxy:
+      proxytype: napalm
+      driver: ios
+      host: csr1000v.mydomain.local
+      username: root
+      passwd: r00tme
+
+.. note:: This is pillar of the node thats not able to run salt-minion itself
+
+
+Proxy pillar for JunOS device
+
+.. code-block:: yaml
+
+    proxy:
+      proxytype: napalm
+      driver: junos
+      host: vsrx01.mydomain.local
+      username: root
+      passwd: r00tme
+      optional_args:
+        config_format: set
+
+.. note:: This is pillar of the node thats not able to run salt-minion itself
+
 
 Salt SSH
 --------
