@@ -1,6 +1,13 @@
 {%- from "salt/map.jinja" import minion with context %}
 
 {%- if minion.enabled %}
+
+{%- if grains.os_family == 'RedHat' %}
+{%- set cacerts_dir='/etc/pki/ca-trust/source/anchors' %}
+{%- else %}
+{%- set cacerts_dir='/usr/local/share/ca-certificates' %}
+{%- endif %}
+
 {%- if minion.cert is defined %}
 
 {%- for cert_name,cert in minion.get('cert', {}).iteritems() %}
@@ -12,11 +19,6 @@
 {%- set key_dir = key_file|replace(key_file.split('/')[-1], "") %}
 {%- set cert_dir = cert_file|replace(cert_file.split('/')[-1], "") %}
 {%- set ca_dir = ca_file|replace(ca_file.split('/')[-1], "") %}
-{%- if grains.os_family == 'RedHat' %}
-{%- set cacerts_dir='/etc/pki/ca-trust/source/anchors' %}
-{%- else %}
-{%- set cacerts_dir='/usr/local/share/ca-certificates' %}
-{%- endif %}
 
 {# Only ensure directories exists, don't touch permissions, etc. #}
 salt_minion_cert_{{ cert_name }}_dirs:
@@ -177,8 +179,13 @@ salt_update_certificates:
       - pkg: salt_ca_certificates_packages
 
 {%- if minion.get('cert', {}).get('trust_salt_ca', 'True') %}
-{%- for ca_host, certs in salt['mine.get']('*/ca*', 'x510.get_pem_entries').iteritems() %}
+
+{%- for trusted_ca_minion in minion.get('trusted_ca_minions', []) %}
+{%- for ca_host, certs in salt['mine.get'](trusted_ca_minion+'*', 'x509.get_pem_entries').iteritems() %}
+
 {%- for ca_path, ca_cert in certs.iteritems() %}
+{%- if not 'ca.crt' in  ca_path %}{% continue %}{% endif %}
+
 {%- set cacert_file="ca-"+ca_path.split("/")[4]+".crt" %}
 
 salt_cert_{{ cacerts_dir }}/{{ cacert_file }}:
@@ -192,6 +199,7 @@ salt_cert_{{ cacerts_dir }}/{{ cacert_file }}:
   - watch_in:
     - cmd: salt_update_certificates
 
+{%- endfor %}
 {%- endfor %}
 {%- endfor %}
 {%- endif %}
