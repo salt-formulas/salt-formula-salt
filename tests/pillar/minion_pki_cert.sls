@@ -8,9 +8,9 @@ salt:
   #     - x509.sign_remote_certificate
   minion:
     enabled: true
+    trusted_ca_minions:
+     - cfg01
     cert:
-      trusted_ca_minions:
-       - cfg01
       ceph_cert:
           alternative_names:
               IP:127.0.0.1,DNS:salt.ci.local,DNS:ceph.ci.local,DNS:radosgw.ci.local,DNS:swift.ci.local
