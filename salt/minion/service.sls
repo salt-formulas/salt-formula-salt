@@ -31,6 +31,34 @@ salt_minion_packages:
     - service: salt_minion_service
   {%- endif %}
 
+{%- for service_name, service in pillar.items() %}
+    {%- set support_fragment_file = service_name+'/meta/salt.yml' %}
+    {%- macro load_support_file() %}{% include support_fragment_file ignore missing %}{% endmacro %}
+    {%- set support_yaml = load_support_file()|load_yaml %}
+
+    {%- if support_yaml and support_yaml.get('minion', {}) %}
+      {%- for name, conf in support_yaml.get('minion', {}).iteritems() %}
+salt_minion_config_{{ service_name }}_{{ name }}:
+  file.managed:
+    - name: /etc/salt/minion.d/_{{ name }}.conf
+    - contents: |
+        {{ conf|yaml(False)|indent(8) }}
+    - require:
+      - {{ minion.install_state }}
+
+salt_minion_config_{{ service_name }}_{{ name }}_validity_check:
+  cmd.wait:
+    - name: python -c "import yaml; stream = file('/etc/salt/minion.d/_{{ name }}.conf', 'r'); yaml.load(stream); stream.close()"
+    - watch:
+      - file: salt_minion_config_{{ service_name }}_{{ name }}
+        {%- if not grains.get('noservices', False) %}
+    - watch_in:
+      - service: salt_minion_service
+        {%- endif %}
+      {%- endfor %}
+    {%- endif %}
+{%- endfor %}
+
 {%- if not grains.get('noservices', False) %}
 salt_minion_service:
   service.running:

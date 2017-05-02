@@ -4,17 +4,6 @@
 include:
 - salt.minion.service
 
-/etc/salt/minion.d/_pki.conf:
-  file.managed:
-  - source: salt://salt/files/_pki.conf
-  - template: jinja
-  - require:
-    - {{ minion.install_state }}
-  {%- if not grains.get('noservices', False) %}
-  - watch_in:
-    - service: salt_minion_service
-  {%- endif %}
-
 {%- for ca_name,ca in minion.ca.iteritems() %}
 
 /etc/pki/ca/{{ ca_name }}/certs:

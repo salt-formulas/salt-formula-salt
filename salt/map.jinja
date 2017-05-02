@@ -89,14 +89,11 @@ default:
 Arch:
   pkgs:
   - salt-zmq
-  grains_validity_pkgs:
-  - python-yaml
 Debian:
   pkgs:
   - salt-minion
   - python-m2crypto
   - python-psutil
-  grains_validity_pkgs:
   - python-yaml
 Gentoo:
   pkgs:
@@ -109,7 +106,6 @@ RedHat:
   - salt-minion
   - m2crypto
   - psutils
-  grains_validity_pkgs:
   - PyYAML
 {%- endload %}
 
