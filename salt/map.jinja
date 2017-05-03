@@ -90,14 +90,14 @@ Arch:
   pkgs:
   - salt-zmq
   grains_validity_pkgs:
-    - python-yaml
+  - python-yaml
 Debian:
   pkgs:
   - salt-minion
   - python-m2crypto
   - python-psutil
   grains_validity_pkgs:
-    - python-yaml
+  - python-yaml
 Gentoo:
   pkgs:
   - app-admin/salt
@@ -107,10 +107,10 @@ MacOS:
 RedHat:
   pkgs:
   - salt-minion
-  - python-m2ext
-  - python-psutil
+  - m2crypto
+  - psutils
   grains_validity_pkgs:
-    - PyYaml
+  - PyYAML
 {%- endload %}
 
 {%- if pillar.salt.minion is defined %}
