@@ -10,6 +10,8 @@
 
 {%- if minion.cert is defined %}
 
+{%- set created_ca_files = [] %}
+
 {%- for cert_name,cert in minion.get('cert', {}).iteritems() %}
 {%- set rowloop = loop %}
 
@@ -94,30 +96,26 @@ salt_minion_cert_{{ cert_name }}_dirs:
     - watch:
       - x509: {{ cert_file }}
 
-{%- if cert.host is defined %}
+{%- if cert.host is defined and ca_file not in created_ca_files %}
 {%- for ca_path,ca_cert in salt['mine.get'](cert.host, 'x509.get_pem_entries').get(cert.host, {}).iteritems() %}
 
 {%- if '/etc/pki/ca/'+cert.authority in ca_path %}
 
-{{ ca_file }}_{{ rowloop.index }}:
+{{ ca_file }}:
   x509.pem_managed:
     - name: {{ ca_file }}
     - text: {{ ca_cert|replace('\n', '') }}
     - watch:
       - x509: {{ cert_file }}
-    {%- if cert.all_file is defined %}
-    - watch_in:
-      - cmd: salt_minion_cert_{{ cert_name }}_all
-    {%- endif %}
 
-{{ ca_file }}_cert_permissions_{{ rowloop.index }}:
+{{ ca_file }}_cert_permissions:
   file.managed:
     - name: {{ ca_file }}
     - mode: 0644
     - watch:
       - x509: {{ ca_file }}
 
-{{ ca_file }}_{{ rowloop.index }}_local_trusted_symlink:
+{{ ca_file }}_local_trusted_symlink:
   file.symlink:
     - name: "{{ cacerts_dir }}/ca-{{ cert.authority }}.crt"
     - target: {{ ca_file }}
@@ -127,6 +125,7 @@ salt_minion_cert_{{ cert_name }}_dirs:
 {%- endif %}
 
 {%- endfor %}
+{%- do created_ca_files.append(ca_file) %}
 {%- endif %}
 
 {%- if cert.all_file is defined %}
@@ -136,6 +135,7 @@ salt_minion_cert_{{ cert_name }}_all:
     - watch:
       - x509: {{ key_file }}
       - x509: {{ cert_file }}
+      - x509: {{ ca_file }}
 
 {{ cert.all_file }}_cert_permissions:
   file.managed:
