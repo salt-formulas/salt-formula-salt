@@ -2,7 +2,7 @@
 
 {%- set napalm = false %}
 
-{%- for proxy_name, proxy_device in proxy.device.iteritems() %}
+{%- for proxy_name, proxy_device in proxy.get('device', {}).iteritems() %}
 
 {%- if proxy_device.engine == 'napalm' %}
 
@@ -39,7 +39,7 @@ napalm:
 
 {%- endif %}
 
-{%- for proxy_name, proxy_device in proxy.device.iteritems() %}
+{%- for proxy_name, proxy_device in proxy.get('device', {}).iteritems() %}
 
 salt_proxy_{{ proxy_name }}_service:
   service.running:
