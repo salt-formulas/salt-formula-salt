@@ -1,6 +1,6 @@
 salt:
   minion:
-    enabled:true
+    enabled: true
     proxy:
       master: localhost
       device:
