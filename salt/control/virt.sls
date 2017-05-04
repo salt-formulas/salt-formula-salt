@@ -43,6 +43,10 @@ update-guestfs-appliance:
 
 {%- for node_name, node in cluster.node.iteritems() %}
 
+{%- if node.name is defined %}
+{%- set node_name = node.name %}
+{%- endif %}
+
 {%- if node.provider == grains.id %}
 
 {%- set size = control.size.get(node.size) %}
