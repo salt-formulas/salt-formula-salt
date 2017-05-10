@@ -40,6 +40,8 @@ salt_minion_grain_{{ service_name }}_{{ name }}:
 salt_minion_grain_{{ service_name }}_{{ name }}_validity_check:
   cmd.wait:
     - name: python -c "import yaml; stream = file('/etc/salt/grains.d/{{ name }}', 'r'); yaml.load(stream); stream.close()"
+    - require:
+      - pkg: salt_minion_dependency_packages
     - watch:
       - file: salt_minion_grain_{{ service_name }}_{{ name }}
     - watch_in:

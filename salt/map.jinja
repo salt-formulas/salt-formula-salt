@@ -95,9 +95,15 @@ Arch:
 Debian:
   pkgs:
   - salt-minion
+  dependency_pkgs:
   - python-m2crypto
   - python-psutil
   - python-yaml
+  - python-msgpack
+  dependency_pkgs_pip:
+  - PyYAML
+  - M2Crypto
+  - psutil
   cert_pkgs:
   - ca-certificates
 Gentoo:
@@ -109,9 +115,14 @@ MacOS:
 RedHat:
   pkgs:
   - salt-minion
+  dependency_pkgs:
   - m2crypto
   - psutils
   - PyYAML
+  dependency_pkgs_pip:
+  - PyYAML
+  - M2Crypto
+  - psutil
   cert_pkgs:
   - ca-certificates
 {%- endload %}

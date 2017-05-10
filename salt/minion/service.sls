@@ -10,11 +10,19 @@ salt_minion_packages:
   - version: {{ minion.source.version }}
   {%- endif %}
 
+salt_minion_dependency_packages:
+  pkg.installed:
+  - pkgs: {{ minion.dependency_pkgs }}
+
 {%- elif minion.source.get('engine', 'pkg') == 'pip' %}
 
 salt_minion_packages:
   pip.installed:
   - name: salt{% if minion.source.version is defined %}=={{ minion.source.version }}{% endif %}
+
+salt_minion_dependency_packages:
+  pkg.installed:
+  - pkgs: {{ minion.dependency_pkgs_pip }}
 
 {%- endif %}
 
@@ -57,6 +65,9 @@ salt_minion_service:
   service.running:
     - name: {{ minion.service }}
     - enable: true
+    - require:
+      - pkg: salt_minion_packages
+      - pkg: salt_minion_dependency_packages
     {%- if grains.get('noservices') %}
     - onlyif: /bin/false
     {%- endif %}
@@ -81,5 +92,8 @@ salt_minion_sync_all:
     - name: 'saltutil.sync_all'
     - onchanges:
       - service: salt_minion_service
+    - require:
+      - pkg: salt_minion_packages
+      - pkg: salt_minion_dependency_packages
 
 {%- endif %}
