@@ -171,6 +171,14 @@ Salt master peer for remote certificate sign.
           ".*":
           - x509.sign_remote_certificate
 
+Configure verbosity of state output (used for `salt` command)
+
+.. code-block:: yaml
+
+    salt:
+      master:
+        state_output: terse
+
 Salt proxy
 ----------
 
