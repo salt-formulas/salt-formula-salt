@@ -94,10 +94,14 @@ Arch:
 Debian:
   pkgs:
   - salt-minion
+  dependency_pkgs:
   - python-m2crypto
   - python-psutil
-  grains_validity_pkgs:
   - python-yaml
+  dependency_pkgs_pip:
+  - PyYAML
+  - M2Crypto
+  - psutil
 Gentoo:
   pkgs:
   - app-admin/salt
@@ -107,10 +111,14 @@ MacOS:
 RedHat:
   pkgs:
   - salt-minion
+  dependency_pkgs:
   - m2crypto
   - psutils
-  grains_validity_pkgs:
   - PyYAML
+  dependency_pkgs_pip:
+  - PyYAML
+  - M2Crypto
+  - psutil
 {%- endload %}
 
 {%- if pillar.salt.minion is defined %}

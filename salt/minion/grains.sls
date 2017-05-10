@@ -22,10 +22,6 @@ salt_minion_grains_files:
   - require:
     - file: salt_minion_grains_dir
 
-salt_minion_grains_pkg_validity_check:
-  pkg.installed:
-  - pkgs: {{ minion.grains_validity_pkgs }}
-
 {%- for service_name, service in pillar.items() %}
   {%- set support_fragment_file = service_name+'/meta/salt.yml' %}
   {%- macro load_support_file() %}{% include support_fragment_file ignore missing %}{% endmacro %}
@@ -45,7 +41,7 @@ salt_minion_grain_{{ service_name }}_{{ name }}_validity_check:
   cmd.wait:
     - name: python -c "import yaml; stream = file('/etc/salt/grains.d/{{ name }}', 'r'); yaml.load(stream); stream.close()"
     - require:
-      - pkg: salt_minion_grains_pkg_validity_check
+      - pkg: salt_minion_dependency_packages
     - watch:
       - file: salt_minion_grain_{{ service_name }}_{{ name }}
     - watch_in:
