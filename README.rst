@@ -177,7 +177,7 @@ Configure verbosity of state output (used for `salt` command)
 
     salt:
       master:
-        state_output: terse
+        state_output: changes
 
 Salt proxy
 ----------
