@@ -9,7 +9,7 @@ orchestrate:
     - salt: salt.master
 
 minion:
-  {%- if pillar.salt.minion is defined and pillar.salt.minion.ca is defined %}
+  {%- if pillar.get('salt', {}).get('minion', {}).get('ca') %}
   pki:
     {%- from "salt/map.jinja" import minion with context %}
     x509_signing_policies:
