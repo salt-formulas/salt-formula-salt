@@ -43,6 +43,10 @@ salt_minion_config_{{ service_name }}_{{ name }}:
     - name: /etc/salt/minion.d/_{{ name }}.conf
     - contents: |
         {{ conf|yaml(False)|indent(8) }}
+    {%- if not grains.get('noservices', False) %}
+    - watch_in:
+      - cmd: salt_minion_service_restart
+    {%- endif %}
     - require:
       - {{ minion.install_state }}
 
@@ -52,8 +56,8 @@ salt_minion_config_{{ service_name }}_{{ name }}_validity_check:
     - watch:
       - file: salt_minion_config_{{ service_name }}_{{ name }}
         {%- if not grains.get('noservices', False) %}
-    - watch_in:
-      - service: salt_minion_service
+    - require_in:
+      - cmd: salt_minion_service_restart
         {%- endif %}
       {%- endfor %}
     {%- endif %}
@@ -64,6 +68,15 @@ salt_minion_service:
   service.running:
   - name: {{ minion.service }}
   - enable: true
+
+{#- Restart salt-minion if needed but after all states are executed #}
+salt_minion_service_restart:
+  cmd.wait:
+    - name: 'while true; do salt-call saltutil.running|grep fun: && continue; salt-call --local service.restart {{ minion.service }}; done'
+    - shell: /bin/bash
+    - bg: true
+    - require:
+      - service: salt_minion_service
 {%- endif %}
 
 salt_minion_sync_all:
