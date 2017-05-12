@@ -72,7 +72,7 @@ salt_minion_service:
 {#- Restart salt-minion if needed but after all states are executed #}
 salt_minion_service_restart:
   cmd.wait:
-    - name: 'while true; do salt-call saltutil.running|grep fun: && continue; salt-call --local service.restart {{ minion.service }}; done'
+    - name: 'while true; do salt-call saltutil.running|grep fun: && continue; salt-call --local service.restart {{ minion.service }}; break; done'
     - shell: /bin/bash
     - bg: true
     - require:
