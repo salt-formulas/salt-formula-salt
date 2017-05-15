@@ -1,5 +1,8 @@
 include:
 - salt.master.service
+{%- if pillar.salt.master.reactor is defined %}
+- salt.master.reactor
+{%- endif %}
 - salt.master.env
 - salt.master.pillar
 - salt.master.minion
