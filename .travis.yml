@@ -27,7 +27,7 @@ before_script:
 
 script:
   - test ! -e .kitchen.yml || bundle exec kitchen converge || true
-  - test ! -e .kitchen.yml || bundle exec kitchen verify
+  - test ! -e .kitchen.yml || bundle exec kitchen verify -t tests/integration
 
 notifications:
   webhooks:

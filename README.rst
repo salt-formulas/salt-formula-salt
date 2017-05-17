@@ -70,9 +70,21 @@ Install formula through system package management
         ...
         environment:
           prd:
-            keysone:
+            keystone:
               source: pkg
               name: salt-formula-keystone
+            nova:
+              source: pkg
+              name: salt-formula-keystone
+              version: 0.1+0~20160818133412.24~1.gbp6e1ebb
+            postresql:
+              source: pkg
+              name: salt-formula-postgresql
+              version: purged
+
+Formula keystone is installed latest version and the formulas without version are installed in one call to aptpkg module.
+If the version attribute is present sls iterates over formulas and take action to install specific version or remove it.
+The version attribute may have these values ``[latest|purged|removed|<VERSION>]``.
 
 Clone master branch of keystone formula as local feature branch
 
