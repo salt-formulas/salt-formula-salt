@@ -27,7 +27,7 @@ salt_minion_grains_files:
   {%- macro load_support_file() %}{% include support_fragment_file ignore missing %}{% endmacro %}
   {%- set support_yaml = load_support_file()|load_yaml %}
 
-  {%- if support_yaml %}
+  {%- if support_yaml and support_yaml.get('grain', {}) %}
     {%- for name, grain in support_yaml.get('grain', {}).iteritems() %}
 salt_minion_grain_{{ service_name }}_{{ name }}:
   file.managed:

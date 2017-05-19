@@ -192,7 +192,7 @@ salt_cert_{{ cacerts_dir }}/{{ cacert_file }}:
   file.managed:
   - name: {{ cacerts_dir }}/{{ cacert_file }}
   - contents: |
-      {{ ca_cert | indent(8) }}
+      {{ ca_cert|replace(' ', '')|indent(8) }}
   - makedirs: True
   - show_changes: True
   - follow_symlinks: True

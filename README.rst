@@ -1,24 +1,29 @@
 
-====
-Salt
-====
+============
+Salt Formula
+============
 
-Salt is a new approach to infrastructure management. Easy enough to get running in minutes, scalable enough to manage tens of thousands of servers, and fast enough to communicate with them in seconds.
+Salt is a new approach to infrastructure management. Easy enough to get
+running in minutes, scalable enough to manage tens of thousands of servers,
+and fast enough to communicate with them in seconds.
 
-Salt delivers a dynamic communication bus for infrastructures that can be used for orchestration, remote execution, configuration management and much more.
+Salt delivers a dynamic communication bus for infrastructures that can be used
+for orchestration, remote execution, configuration management and much more.
 
-Sample pillars
-==============
+
+Sample Metadata
+===============
+
 
 Salt master
 -----------
 
-Salt master with base production environment and pillar tree as metadata backend
+Salt master with base formulas and pillar metadata backend
 
 .. literalinclude:: tests/pillar/master_single_pillar.sls
    :language: yaml
 
-Salt master with reclass ENC as metadata backend
+Salt master with reclass ENC metadata backend
 
 .. literalinclude:: tests/pillar/master_single_reclass.sls
    :language: yaml
@@ -43,7 +48,7 @@ Salt master with preset minions
         minions:
         - name: 'node1.system.location.domain.com'
 
-Salt master with alternative installation source and version (optional) - pip
+Salt master with pip based installation (optional)
 
 .. code-block:: yaml
 
@@ -55,7 +60,7 @@ Salt master with alternative installation source and version (optional) - pip
           engine: pip
           version: 2016.3.0rc2
 
-Salt master with specified formula to install through apt-get
+Install formula through system package management
 
 .. code-block:: yaml
 
@@ -65,9 +70,21 @@ Salt master with specified formula to install through apt-get
         ...
         environment:
           prd:
-            keysone:
+            keystone:
               source: pkg
               name: salt-formula-keystone
+            nova:
+              source: pkg
+              name: salt-formula-keystone
+              version: 0.1+0~20160818133412.24~1.gbp6e1ebb
+            postresql:
+              source: pkg
+              name: salt-formula-postgresql
+              version: purged
+
+Formula keystone is installed latest version and the formulas without version are installed in one call to aptpkg module.
+If the version attribute is present sls iterates over formulas and take action to install specific version or remove it.
+The version attribute may have these values ``[latest|purged|removed|<VERSION>]``.
 
 Clone master branch of keystone formula as local feature branch
 
@@ -102,40 +119,7 @@ Salt master with specified formula refs (for example for Gerrit review)
                 address: https://git.openstack.org/openstack/salt-formula-keystone
                 revision: refs/changes/56/123456/1
 
-Salt syndic: Master of masters
-
-.. code-block:: yaml
-
-    salt:
-      master:
-        enabled: true
-        order_masters: True
-
-Salt syndic: Lower master
-
-.. code-block:: yaml
-
-    salt:
-      syndic:
-        enabled: true
-        master:
-          host: master-of-master-host
-        timeout: 5
-
-Salt syndic: Lower master with multi-master of masters
-
-.. code-block:: yaml
-
-    salt:
-      syndic:
-        enabled: true
-        masters:
-        - host: master-of-master-host1
-        - host: master-of-master-host2
-        timeout: 5
-
-
-Salt master with custom handlers
+Salt master with logging handlers
 
 .. code-block:: yaml
 
@@ -161,7 +145,7 @@ Salt master with custom handlers
               host: 127.0.0.1
               port: 9999
 
-Salt master peer for remote certificate sign.
+Salt master peer setup for remote certificate signing
 
 .. code-block:: yaml
 
@@ -171,8 +155,63 @@ Salt master peer for remote certificate sign.
           ".*":
           - x509.sign_remote_certificate
 
-Salt proxy
-----------
+Configure verbosity of state output (used for `salt` command)
+
+.. code-block:: yaml
+
+    salt:
+      master:
+        state_output: changes
+
+Salt Reactor system configuration
+
+.. code-block:: yaml
+
+    salt:
+      master:
+        reactor:
+          salt/minion/*/start:
+          - salt://reactor/minion-started.sls
+
+
+Salt syndic
+-----------
+
+The master of masters
+
+.. code-block:: yaml
+
+    salt:
+      master:
+        enabled: true
+        order_masters: True
+
+Lower syndicated master
+
+.. code-block:: yaml
+
+    salt:
+      syndic:
+        enabled: true
+        master:
+          host: master-of-master-host
+        timeout: 5
+
+Syndicated master with multiple master of masters
+
+.. code-block:: yaml
+
+    salt:
+      syndic:
+        enabled: true
+        masters:
+        - host: master-of-master-host1
+        - host: master-of-master-host2
+        timeout: 5
+
+
+Salt-minion proxy
+-----------------
 
 Salt proxy pillar
 
@@ -267,7 +306,7 @@ Salt minion with graphing dependencies
 .. literalinclude:: tests/pillar/minion_graph.sls
    :language: yaml
 
-Salt minion behind http proxy
+Salt minion behind HTTP proxy
 
 .. code-block:: yaml
 
@@ -277,15 +316,12 @@ Salt minion behind http proxy
           host: 127.0.0.1
           port: 3128
 
-PKI CA
-~~~~~~
-
-Salt minion with PKI CA
+Salt minion with PKI certificate authority (CA)
 
 .. literalinclude:: tests/pillar/minion_pki_ca.sls
    :language: yaml
 
-Salt minion with PKI certificate
+Salt minion using PKI certificate
 
 .. literalinclude:: tests/pillar/minion_pki_cert.sls
    :language: yaml
@@ -326,8 +362,8 @@ Debug LIBCLOUD for salt-cloud connection
     export LIBCLOUD_DEBUG=/dev/stderr; salt-cloud --list-sizes provider_name --log-level all
 
 
-Read more
-=========
+More Information
+================
 
 * http://salt.readthedocs.org/en/latest/
 * https://github.com/DanielBryan/salt-state-graph

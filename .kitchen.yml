@@ -15,6 +15,12 @@ provisioner:
   formula: salt
   grains:
     noservices: true
+  vendor_repo:
+    - type: apt
+      url: http://apt-mk.mirantis.com/trusty
+      key_url: http://apt-mk.mirantis.com/public.gpg
+      components: salt
+      distribution: testing
   state_top:
     base:
       "*":
@@ -103,8 +109,8 @@ suites:
               - master_ssh_key
               - master_ssh_password
               - master_ssh_root
-              - master_handler
               - minion_pki_cert
+              - master_formulas
       pillars-from-files:
         minion_pki.sls: tests/pillar/minion_pki_ca.sls
         minion_pki_cert.sls: tests/pillar/minion_pki_cert.sls
@@ -113,7 +119,7 @@ suites:
         master_ssh_key.sls: tests/pillar/master_ssh_minion_key.sls
         master_ssh_password.sls: tests/pillar/master_ssh_minion_password.sls
         master_ssh_root.sls: tests/pillar/master_ssh_minion_root.sls
-        master_handler.sls: tests/pillar/master_custom_handler.sls
+        master_formulas.sls: tests/pillar/master_formulas.sls
 
   - name: control-default
     provisioner:

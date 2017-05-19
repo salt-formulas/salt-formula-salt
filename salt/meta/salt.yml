@@ -1,10 +1,103 @@
 orchestrate:
   master:
     priority: 60
-  minion: 
+  minion:
     priority: 70
-  control: 
+  control:
     priority: 400
     require:
     - salt: salt.master
 
+minion:
+  {%- if pillar.get('salt', {}).get('minion', {}).get('ca') %}
+  pki:
+    {%- from "salt/map.jinja" import minion with context %}
+    x509_signing_policies:
+    {%- for ca_name,ca in minion.ca.items() %}
+    {%- for signing_policy_name, signing_policy in ca.signing_policy.iteritems() %}
+      {{ ca_name }}_{{ signing_policy_name }}:
+        - minions: '{{ signing_policy.minions }}'
+        - signing_private_key: /etc/pki/ca/{{ ca_name }}/ca.key
+        - signing_cert: /etc/pki/ca/{{ ca_name }}/ca.crt
+        {%- if ca.country is defined %}
+        - C: {{ ca.country }}
+        {%- endif %}
+        {%- if ca.state is defined %}
+        - ST: {{ ca.state }}
+        {%- endif %}
+        {%- if ca.locality is defined %}
+        - L: {{ ca.locality }}
+        {%- endif %}
+        {%- if ca.organization is defined %}
+        - O: {{ ca.organization }}
+        {%- endif %}
+        {%- if ca.organization_unit is defined %}
+        - OU: {{ ca.organization_unit }}
+        {%- endif %}
+        {%- if signing_policy.type == 'v3_edge_cert_client' %}
+        - basicConstraints: "CA:FALSE"
+        - keyUsage: "critical digitalSignature,nonRepudiation,keyEncipherment"
+        - extendedKeyUsage: "critical clientAuth"
+        {%- elif signing_policy.type == 'v3_edge_cert_server' %}
+        - basicConstraints: "CA:FALSE"
+        - keyUsage: "critical digitalSignature,nonRepudiation,keyEncipherment"
+        - extendedKeyUsage: "critical,serverAuth"
+        {%- elif signing_policy.type == 'v3_intermediate_ca' %}
+        - basicConstraints: "CA:TRUE"
+        - keyUsage: "critical cRLSign,keyCertSign"
+        {%- elif signing_policy.type == 'v3_edge_ca' %}
+        - basicConstraints: "CA:TRUE,pathlen:0"
+        - keyUsage: "critical cRLSign,keyCertSign"
+        {%- elif signing_policy.type == 'v3_edge_cert_open' %}
+        - basicConstraints: "CA:FALSE"
+        {%- endif %}
+        - subjectKeyIdentifier: hash
+        - authorityKeyIdentifier: keyid,issuer:always
+        - days_valid: {{ ca.days_valid.certificate }}
+        - copypath: /etc/pki/ca/{{ ca_name }}/certs/
+    {%- endfor %}
+    {%- endfor %}
+  {%- endif %}
+
+  {%- if pillar.salt.control is defined and pillar.salt.control.virt_enabled is defined %}
+  virt:
+    {% from "salt/map.jinja" import control with context %}
+    {%- if control.net_profile is defined or control.disk_profile is defined %}
+    virt:
+      {%- if control.net_profile is defined %}
+      nic:
+        {%- for item_name, item in control.net_profile.iteritems() %}
+        {{ item_name }}:
+          {%- for iface_name, iface in item.iteritems() %}
+          {{ iface_name }}:
+            {%- if iface.bridge is defined %}
+            bridge: {{ iface.bridge }}
+            {%- endif %}
+            {%- if iface.network is defined %}
+            network: {{ iface.network }}
+            {%- endif %}
+            {%- if iface.model is defined %}
+            model: {{ iface.model }}
+            {%- endif %}
+          {%- endfor %}
+        {%- endfor %}
+      {%- endif %}
+      {%- if control.disk_profile is defined %}
+      disk:
+        {%- for item_name, item in control.disk_profile.iteritems() %}
+        {{ item_name }}:
+          {%- for disk_name, disk in item.iteritems() %}
+          - {{ disk }}:
+              {%- if disk.size is defined %}
+              size: {{ disk.size }}
+              {%- endif %}
+          {%- endfor %}
+        {%- endfor %}
+      {%- endif %}
+    {%- endif %}
+    virt.images: /var/lib/libvirt/images
+  {%- endif %}
+
+{#-
+  vim: syntax=jinja
+-#}

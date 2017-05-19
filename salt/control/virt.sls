@@ -8,34 +8,13 @@ salt_control_virt_packages:
   pkg.installed:
     - names: {{ control.virt_pkgs }}
 
+{% if grains.oscodename == 'trusty' %}
+{#- This tool is not available in newer releases #}
 update-guestfs-appliance:
   cmd.wait:
     - watch:
       - pkg: salt_control_virt_packages
-
-{#
-{%- for package in control.virt_pips %}
-
-{{ package }}:
-  pip.installed:
-  - require:
-    - pkg: salt_control_virt_packages
-
-{%- endfor %}
-#}
-
-/etc/salt/minion.d/_virt.conf:
-  file.managed:
-  - source: salt://salt/files/_virt.conf
-  - user: root
-  - group: root
-  - template: jinja
-  - require:
-    - pkg: salt_control_virt_packages
-  {%- if not grains.get('noservices', False) %}
-  - watch_in:
-    - service: salt_minion_service
-  {%- endif %}
+{%- endif %}
 
 {%- for cluster_name, cluster in control.cluster.iteritems() %}
 
