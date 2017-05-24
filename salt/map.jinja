@@ -113,8 +113,8 @@ RedHat:
 {%- set raw_minion = salt['grains.filter_by'](minion_specific, merge=salt['pillar.get']('salt:minion')) %}
 {%- set minion = salt['grains.filter_by'](minion_common, merge=raw_minion) %}
 
-{%- if pillar.salt.minion.proxy is defined %}
-{% set proxy = salt['grains.filter_by']({
+{%- if pillar.salt.minion.proxy_minion is defined %}
+{% set proxy_minion = salt['grains.filter_by']({
     'Debian': {
         'napalm_pkgs': ['python-pip', 'libxml2-dev', 'libxslt1-dev', 'zlib1g-dev'],
         'napalm_pip_pkgs': ['napalm', 'oauth']
@@ -122,7 +122,7 @@ RedHat:
     'RedHat': {
         'napalm_pkgs': ['libxml2-dev', 'libxslt1-dev', 'zlib1g-dev']
     },
-}, merge=pillar.salt.minion.get('proxy', {})) %}
+}, merge=pillar.salt.minion.get('proxy_minion', {})) %}
 {%- endif %}
 
 {%- endif %}

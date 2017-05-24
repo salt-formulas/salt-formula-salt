@@ -219,7 +219,7 @@ Salt proxy pillar
 
     salt:
       minion:
-        proxy:
+        proxy_minion:
           master: localhost
           device:
             vsrx01.mydomain.local:
