@@ -1,3 +1,17 @@
+{%- set service_grains = {'salt': {'graph': []}} %}
+{%- for service_name, service in pillar.items() %}
+  {%- set grains_fragment_file = service_name+'/meta/meta.yml' %}
+  {%- macro load_grains_file() %}{% include grains_fragment_file ignore missing %}{% endmacro %}
+  {%- set grains_yaml = load_grains_file()|load_yaml %}
+  {%- if grains_yaml is mapping %}
+    {%- for node in grains_yaml.graph %}
+    {%- do service_grains.salt.graph.append(node) %}
+    {%- endfor %}
+  {%- endif %}
+{%- endfor %}
+grain:
+  salt:
+    {{ service_grains|yaml(False)|indent(4) }}
 orchestrate:
   master:
     priority: 60
@@ -7,7 +21,6 @@ orchestrate:
     priority: 400
     require:
     - salt: salt.master
-
 minion:
   {%- if pillar.get('salt', {}).get('minion', {}).get('ca') %}
   pki:
