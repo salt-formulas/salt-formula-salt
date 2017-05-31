@@ -18,10 +18,9 @@
 {%- set key_file  = cert.get('key_file', '/etc/ssl/private/' + cert.common_name + '.key') %}
 {%- set cert_file = cert.get('cert_file', '/etc/ssl/certs/' + cert.common_name + '.crt') %}
 {%- set ca_file = cert.get('ca_file', '/etc/ssl/certs/ca-' + cert.authority + '.crt') %}
-
-{%- set key_dir = salt['file.dirname'](key_file) %}
-{%- set cert_dir = salt['file.dirname'](cert_file) %}
-{%- set ca_dir = salt['file.dirname'](ca_file) %}
+{%- set key_dir = key_file|replace(key_file.split('/')[-1], "") %}
+{%- set cert_dir = cert_file|replace(cert_file.split('/')[-1], "") %}
+{%- set ca_dir = ca_file|replace(ca_file.split('/')[-1], "") %}
 
 {# Only ensure directories exists, don't touch permissions, etc. #}
 salt_minion_cert_{{ cert_name }}_dirs:
@@ -120,7 +119,6 @@ salt_minion_cert_{{ cert_name }}_dirs:
   file.symlink:
     - name: "{{ cacerts_dir }}/ca-{{ cert.authority }}.crt"
     - target: {{ ca_file }}
-    - force: True
     - watch_in:
       - cmd: salt_update_certificates
 
@@ -180,34 +178,31 @@ salt_update_certificates:
     - require:
       - pkg: salt_ca_certificates_packages
 
-{%- if minion.get('trust_salt_ca', True) %}
+{%- if minion.get('cert', {}).get('trust_salt_ca', 'True') %}
 
 {%- for trusted_ca_minion in minion.get('trusted_ca_minions', []) %}
 {%- for ca_host, certs in salt['mine.get'](trusted_ca_minion+'*', 'x509.get_pem_entries').iteritems() %}
+
 {%- for ca_path, ca_cert in certs.iteritems() %}
-{%- if ca_path.startswith('/etc/pki/ca/') and ca_path.endswith('ca.crt') %}
+{%- if not 'ca.crt' in  ca_path %}{% continue %}{% endif %}
 
-{# authority name can be obtained only from a cacert path in case of mine.get #}
-{%- set ca_authority = ca_path.split("/")[4] %}
-{%- set cacert_file="%s/ca-%s.crt" % (cacerts_dir,ca_authority) %}
+{%- set cacert_file="ca-"+ca_path.split("/")[4]+".crt" %}
 
-salt_trust_ca_{{ cacert_file }}:
-  x509.pem_managed:
-    - name: {{ cacert_file }}
-    - text: {{ ca_cert|replace('\n', '') }}
-    - watch_in:
-      - file: salt_trust_ca_{{ cacert_file }}_permissions
-      - cmd: salt_update_certificates
-
-salt_trust_ca_{{ cacert_file }}_permissions:
+salt_cert_{{ cacerts_dir }}/{{ cacert_file }}:
   file.managed:
-    - name: {{ cacert_file }}
-    - mode: 0444
+  - name: {{ cacerts_dir }}/{{ cacert_file }}
+  - contents: |
+      {{ ca_cert|replace('  ', '')|indent(6) }}
+  - makedirs: True
+  - show_changes: True
+  - follow_symlinks: True
+  - watch_in:
+    - cmd: salt_update_certificates
+
+{%- endfor %}
+{%- endfor %}
+{%- endfor %}
+{%- endif %}
 
 {%- endif %}
-{%- endfor %}
-{%- endfor %}
-{%- endfor %}
-{%- endif %}
 
-{%- endif %}
