@@ -326,6 +326,14 @@ Salt minion using PKI certificate
 .. literalinclude:: tests/pillar/minion_pki_cert.sls
    :language: yaml
 
+Salt minion trust CA certificates issued by salt CA on a specific host (ie: salt-master node)
+
+.. code-block:: yaml
+
+  salt:
+    minion:
+      trusted_ca_minions:
+        - cfg01
 
 Salt control (cloud/kvm/docker)
 -------------------------------
