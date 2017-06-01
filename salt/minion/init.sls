@@ -8,6 +8,6 @@ include:
 - salt.minion.ca
 {%- endif %}
 - salt.minion.cert
-{%- if pillar.salt.minion.proxy is defined %}
+{%- if pillar.salt.minion.proxy_minion is defined %}
 - salt.minion.proxy
 {%- endif %}

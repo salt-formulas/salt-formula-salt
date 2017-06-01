@@ -23,17 +23,17 @@
   - template: jinja
   - defaults:
       napalm: {{ napalm }}
-      proxy: {{ proxy|yaml }}
+      proxy_minion: {{ proxy_minion|yaml }}
 
 {%- if napalm %}
 
 network_proxy_packages:
   pkg.installed:
-  - names: {{ proxy.napalm_pkgs }}
+  - names: {{ proxy_minion.napalm_pkgs }}
 
 napalm:
   pip.installed:
-    - name: {{ proxy.napalm_pip_pkgs}}
+    - name: {{ proxy_minion.napalm_pip_pkgs}}
     - require:
       - pkg: python-pip
 
