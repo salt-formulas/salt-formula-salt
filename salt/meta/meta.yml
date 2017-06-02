@@ -6,7 +6,7 @@ graph:
   type: software-config
   relations:
   {%- if minion.master is defined %}
-  - service: salt-master
+  - service: salt.master
     {%- if minion.master.host in ['127.0.0.1', 'localhost'] %}
     host: {{ grains.id }}
     {%- else %}
