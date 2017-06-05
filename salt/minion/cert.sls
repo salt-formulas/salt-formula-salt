@@ -115,13 +115,6 @@ salt_minion_cert_{{ cert_name }}_dirs:
     - watch:
       - x509: {{ ca_file }}
 
-{{ ca_file }}_local_trusted_symlink:
-  file.symlink:
-    - name: "{{ cacerts_dir }}/ca-{{ cert.authority }}.crt"
-    - target: {{ ca_file }}
-    - watch_in:
-      - cmd: salt_update_certificates
-
 {%- endif %}
 
 {%- endfor %}
