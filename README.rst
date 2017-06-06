@@ -163,7 +163,7 @@ Configure verbosity of state output (used for `salt` command)
       master:
         state_output: changes
 
-Salt Reactor system configuration
+Salt Reactor system sample
 
 .. code-block:: yaml
 
@@ -172,6 +172,38 @@ Salt Reactor system configuration
         reactor:
           salt/minion/*/start:
           - salt://reactor/minion-started.sls
+
+Run any orchestration pipeline from custom event
+
+.. code-block:: yaml
+
+    salt:
+      master:
+        reactor:
+          salt/orchestrate/start:
+          - salt://salt/reactor/orchestrate_start.sls
+
+Sample event to trigger the basic orchestration pipeline
+
+.. code-block:: bash
+
+    salt-call event.send 'salt/orchestrate/start' "{'orchestrate': 'salt/orchestrate/infra_install.sls'}
+
+Classify node from custom event
+
+.. code-block:: yaml
+
+    salt:
+      master:
+        reactor:
+          reclass/minion/classify:
+          - salt://reclass/reactor/node_register.sls
+
+Sample event to trigger the classification
+
+.. code-block:: bash
+
+    salt-call event.send 'reclass/minion/classify' "{'node_master_ip': '$config_host', 'node_ip': '${node_ip}', 'node_domain': '$node_domain', 'node_cluster': '$node_cluster', 'node_hostname': '$node_hostname', 'node_os': '$node_os'}"
 
 
 Salt syndic
