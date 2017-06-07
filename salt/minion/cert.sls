@@ -35,8 +35,12 @@ salt_minion_cert_{{ cert_name }}_dirs:
 {{ key_file }}:
   x509.private_key_managed:
     - bits: {{ cert.get('bits', 4096) }}
-  require:
-    - file: salt_minion_cert_{{ cert_name }}_dirs
+    - require:
+      - file: salt_minion_cert_{{ cert_name }}_dirs
+    {%- if cert.all_file is defined %}
+    - watch_in:
+      - cmd: salt_minion_cert_{{ cert_name }}_all
+    {%- endif %}
 
 {{ key_file }}_key_permissions:
   file.managed:
@@ -81,6 +85,10 @@ salt_minion_cert_{{ cert_name }}_dirs:
     - backup: True
     - watch:
       - x509: {{ key_file }}
+    {%- if cert.all_file is defined %}
+    - watch_in:
+      - cmd: salt_minion_cert_{{ cert_name }}_all
+    {%- endif %}
 
 {{ cert_file }}_cert_permissions:
   file.managed:
@@ -107,6 +115,11 @@ salt_minion_cert_{{ cert_name }}_dirs:
     - text: {{ ca_cert|replace('\n', '') }}
     - watch:
       - x509: {{ cert_file }}
+    {%- if cert.all_file is defined %}
+    - watch_in:
+      - cmd: salt_minion_cert_{{ cert_name }}_all
+    {%- endif %}
+
 
 {{ ca_file }}_cert_permissions:
   file.managed:
@@ -115,13 +128,6 @@ salt_minion_cert_{{ cert_name }}_dirs:
     - watch:
       - x509: {{ ca_file }}
 
-{{ ca_file }}_local_trusted_symlink:
-  file.symlink:
-    - name: "{{ cacerts_dir }}/ca-{{ cert.authority }}.crt"
-    - target: {{ ca_file }}
-    - watch_in:
-      - cmd: salt_update_certificates
-
 {%- endif %}
 
 {%- endfor %}
@@ -129,13 +135,10 @@ salt_minion_cert_{{ cert_name }}_dirs:
 {%- endif %}
 
 {%- if cert.all_file is defined %}
+
 salt_minion_cert_{{ cert_name }}_all:
   cmd.wait:
     - name: cat {{ key_file }} {{ cert_file }} {{ ca_file }} > {{ cert.all_file }}
-    - watch:
-      - x509: {{ key_file }}
-      - x509: {{ cert_file }}
-      - x509: {{ ca_file }}
 
 {{ cert.all_file }}_cert_permissions:
   file.managed:
@@ -205,4 +208,3 @@ salt_cert_{{ cacerts_dir }}/{{ cacert_file }}:
 {%- endif %}
 
 {%- endif %}
-
