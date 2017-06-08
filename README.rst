@@ -163,7 +163,7 @@ Configure verbosity of state output (used for `salt` command)
       master:
         state_output: changes
 
-Salt Reactor system sample
+Salt synchronise node pillar and modules after start
 
 .. code-block:: yaml
 
@@ -171,9 +171,25 @@ Salt Reactor system sample
       master:
         reactor:
           salt/minion/*/start:
-          - salt://reactor/minion-started.sls
+          - salt://salt/reactor/node_start.sls
 
-Run any orchestration pipeline from custom event
+Trigger basic node install
+
+.. code-block:: yaml
+
+    salt:
+      master:
+        reactor:
+          salt/minion/install:
+          - salt://salt/reactor/node_install.sls
+
+Sample event to trigger the node installation
+
+.. code-block:: bash
+
+    salt-call event.send 'salt/minion/install'
+
+Run any orchestration pipeline
 
 .. code-block:: yaml
 
@@ -183,13 +199,13 @@ Run any orchestration pipeline from custom event
           salt/orchestrate/start:
           - salt://salt/reactor/orchestrate_start.sls
 
-Sample event to trigger the basic orchestration pipeline
+Event to trigger the orchestration pipeline
 
 .. code-block:: bash
 
-    salt-call event.send 'salt/orchestrate/start' "{'orchestrate': 'salt/orchestrate/infra_install.sls'}
+    salt-call event.send 'salt/orchestrate/start' "{'orchestrate': 'salt/orchestrate/infra_install.sls'}"
 
-Classify node from custom event
+Classify node after start
 
 .. code-block:: yaml
 
@@ -199,7 +215,7 @@ Classify node from custom event
           reclass/minion/classify:
           - salt://reclass/reactor/node_register.sls
 
-Sample event to trigger the classification
+Event to trigger the node classification
 
 .. code-block:: bash
 
