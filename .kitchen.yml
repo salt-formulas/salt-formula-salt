@@ -17,7 +17,7 @@ provisioner:
     noservices: true
   vendor_repo:
     - type: apt
-      url: http://apt-mk.mirantis.com/trusty
+      url: http://apt-mk.mirantis.com/xenial
       key_url: http://apt-mk.mirantis.com/public.gpg
       components: salt
       distribution: testing
@@ -60,21 +60,7 @@ platforms:
       image: <%=ENV['PLATFORM'] || 'trevorj/salty-whales:xenial'%>
       platform: ubuntu
 
-#  - name: ubuntu-xenial
-#    driver_config:
-#      image: trevorj/salty-whales:xenial
-#      platform: ubuntu
-
-#  - name: debian-jessie
-#    driver_config:
-#      image: debian:jessie
-
-#  - name: debian-stretch
-#    driver_config:
-#      image: debian:stretch
-
 suites:
-
   - name: minion-default
     provisioner:
       pillars:
@@ -143,18 +129,5 @@ suites:
       pillars-from-files:
         salt.sls: tests/pillar/minion_multi_master_failover.sls
 
-
-#  - name: minion-local
-#    provisioner:
-#      pillars:
-#        top.sls:
-#          base:
-#            "*":
-#              - common
-#              - minion_local_pillar
-#              - minion_local_reclass
-#      pillars-from-files:
-#        minion_local_pillar.sls: tests/pillar/minion_local_pillar.sls
-#        minion_local_reclass.sls: tests/pillar/minion_local_reclass.sls
 
   # vim: ft=yaml sw=2 ts=2 sts=2 tw=125

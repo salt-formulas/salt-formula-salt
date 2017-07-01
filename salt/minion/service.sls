@@ -4,7 +4,7 @@
 {%- if minion.source.get('engine', 'pkg') == 'pkg' %}
 
 salt_minion_packages:
-  pkg.latest:
+  pkg.installed:
   - names: {{ minion.pkgs }}
   {%- if minion.source.version is defined %}
   - version: {{ minion.source.version }}

@@ -4,7 +4,7 @@
 {%- if master.source.get('engine', 'pkg') == 'pkg' %}
 
 salt_master_packages:
-  pkg.latest:
+  pkg.installed:
   - names: {{ master.pkgs }}
   {%- if master.source.version is defined %}
   - version: {{ master.source.version }}
