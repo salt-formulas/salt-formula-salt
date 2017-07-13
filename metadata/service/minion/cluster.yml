@@ -6,6 +6,7 @@ parameters:
   salt:
     minion:
       enabled: true
+      max_event_size: 100000000
       source:
         engine: pkg
       masters:
