@@ -37,6 +37,10 @@ provisioner:
           enabled: true
           master:
             host: localhost
+          pkgs:
+            - python-m2crypto
+            - python-psutil
+            - python-yaml
       linux:
         system:
           enabled: true
@@ -97,6 +101,12 @@ suites:
               - master_ssh_root
               - minion_pki_cert
               - master_formulas
+        common.sls:
+          salt:
+            master:
+              #Use a useless package to avoid upgrading salt-master
+              pkgs:
+                - python-yaml
       pillars-from-files:
         minion_pki.sls: tests/pillar/minion_pki_ca.sls
         minion_pki_cert.sls: tests/pillar/minion_pki_cert.sls
