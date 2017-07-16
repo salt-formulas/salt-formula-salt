@@ -364,6 +364,17 @@ Salt minion behind HTTP proxy
           host: 127.0.0.1
           port: 3128
 
+Salt minion to specify non-default HTTP backend. The default tornado backend
+does not respect HTTP proxy settings set as environment variables. This is
+useful for cases where you need to set no_proxy lists.
+
+.. code-block:: yaml
+
+    salt:
+      minion:
+        backend: urllib2
+
+
 Salt minion with PKI certificate authority (CA)
 
 .. literalinclude:: tests/pillar/minion_pki_ca.sls
