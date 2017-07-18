@@ -55,6 +55,16 @@ salt_system_ca_mine_send_ca_{{ ca_name }}:
   - require:
     - x509: /etc/pki/ca/{{ ca_name }}/ca.crt
 
+salt_system_ca_mine_send_ca_key_{{ ca_name }}:
+  module.run:
+  - name: mine.send
+  - func: x509_get_private_key
+  - kwargs:
+      mine_function: x509.get_pem_entries
+      glob_path: /etc/pki/ca/{{ ca_name }}/ca.key
+  - require:
+    - x509: /etc/pki/ca/{{ ca_name }}/ca.key
+
 {%- endfor %}
 
 {%- endif %}

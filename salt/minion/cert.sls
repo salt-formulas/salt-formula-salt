@@ -11,6 +11,7 @@
 {%- if minion.cert is defined %}
 
 {%- set created_ca_files = [] %}
+{%- set created_ca_key_files = [] %}
 
 {%- for cert_name,cert in minion.get('cert', {}).iteritems() %}
 {%- set rowloop = loop %}
@@ -18,9 +19,11 @@
 {%- set key_file  = cert.get('key_file', '/etc/ssl/private/' + cert.common_name + '.key') %}
 {%- set cert_file = cert.get('cert_file', '/etc/ssl/certs/' + cert.common_name + '.crt') %}
 {%- set ca_file = cert.get('ca_file', '/etc/ssl/certs/ca-' + cert.authority + '.crt') %}
+{%- set ca_key_file = cert.get('ca_key_file', '/etc/ssl/certs/ca-' + cert.authority + '.key') %}
 {%- set key_dir = salt['file.dirname'](key_file) %}
 {%- set cert_dir = salt['file.dirname'](cert_file) %}
 {%- set ca_dir = salt['file.dirname'](ca_file) %}
+{%- set ca_key_dir = salt['file.dirname'](ca_key_file) %}
 
 {# Only ensure directories exists, don't touch permissions, etc. #}
 salt_minion_cert_{{ cert_name }}_dirs:
@@ -29,6 +32,7 @@ salt_minion_cert_{{ cert_name }}_dirs:
       - {{ key_dir }}
       - {{ cert_dir }}
       - {{ ca_dir }}
+      - {{ ca_key_dir }}
     - makedirs: true
     - replace: false
 
@@ -125,13 +129,52 @@ salt_minion_cert_{{ cert_name }}_dirs:
   file.managed:
     - name: {{ ca_file }}
     - mode: 0644
+    {%- if salt['user.info'](cert.get("user", "root")) %}
+    - user: {{ cert.get("user", "root") }}
+    {%- endif %}
+    {%- if salt['group.info'](cert.get("group", "root")) %}
+    - group: {{ cert.get("group", "root") }}
+    {%- endif %}
     - watch:
       - x509: {{ ca_file }}
 
 {%- endif %}
 
 {%- endfor %}
+
 {%- do created_ca_files.append(ca_file) %}
+{%- endif %}
+
+{%- if cert.host is defined and ca_key_file not in created_ca_key_files %}
+{%- for ca_key_path,ca_key in salt['mine.get'](cert.host, 'x509_get_private_key').get(cert.host, {}).iteritems() %}
+
+{%- if '/etc/pki/ca/'+cert.authority in ca_key_path %}
+
+{{ ca_key_file }}:
+  x509.pem_managed:
+    - name: {{ ca_key_file }}
+    - text: {{ ca_key|replace('\n', '') }}
+    - watch:
+      - x509: {{ cert_file }}
+
+{{ ca_key_file }}_cert_permissions:
+  file.managed:
+    - name: {{ ca_key_file }}
+    - mode: 0644
+    {%- if salt['user.info'](cert.get("user", "root")) %}
+    - user: {{ cert.get("user", "root") }}
+    {%- endif %}
+    {%- if salt['group.info'](cert.get("group", "root")) %}
+    - group: {{ cert.get("group", "root") }}
+    {%- endif %}
+    - watch:
+      - x509: {{ ca_key_file }}
+
+{%- endif %}
+
+{%- endfor %}
+
+{%- do created_ca_key_files.append(ca_key_file) %}
 {%- endif %}
 
 {%- if cert.all_file is defined %}
