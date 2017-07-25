@@ -22,6 +22,7 @@ default:
   pillar:
     engine: salt
   max_event_size: 100000000
+  minion_data_cache: 'localfs'
 {%- endload %}
 
 {%- load_yaml as master_specific %}
