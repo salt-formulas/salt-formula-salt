@@ -26,8 +26,6 @@ salt_minion_packages:
   - template: jinja
   - require:
     - {{ minion.install_state }}
-  - watch_in:
-    - service: salt_minion_service
 
 {%- for service_name, service in pillar.items() %}
     {%- set support_fragment_file = service_name+'/meta/salt.yml' %}
@@ -41,17 +39,15 @@ salt_minion_config_{{ service_name }}_{{ name }}:
     - name: /etc/salt/minion.d/_{{ name }}.conf
     - contents: |
         {{ conf|yaml(False)|indent(8) }}
-    - watch_in:
-      - cmd: salt_minion_service_restart
     - require:
       - {{ minion.install_state }}
 
 salt_minion_config_{{ service_name }}_{{ name }}_validity_check:
-  cmd.wait:
+  cmd.run:
     - name: python -c "import yaml; stream = file('/etc/salt/minion.d/_{{ name }}.conf', 'r'); yaml.load(stream); stream.close()"
-    - watch:
+    - onchanges:
       - file: salt_minion_config_{{ service_name }}_{{ name }}
-    - require_in:
+    - onchanges_in:
       - cmd: salt_minion_service_restart
       {%- endfor %}
     {%- endif %}
@@ -59,18 +55,21 @@ salt_minion_config_{{ service_name }}_{{ name }}_validity_check:
 
 salt_minion_service:
   service.running:
-  - name: {{ minion.service }}
-  - enable: true
-  {%- if grains.get('noservices') %}
-  - onlyif: /bin/false
-  {%- endif %}
+    - name: {{ minion.service }}
+    - enable: true
+    {%- if grains.get('noservices') %}
+    - onlyif: /bin/false
+    {%- endif %}
 
 {#- Restart salt-minion if needed but after all states are executed #}
 salt_minion_service_restart:
-  cmd.wait:
+  cmd.run:
     - name: 'while true; do salt-call saltutil.running|grep fun: && continue; salt-call --local service.restart {{ minion.service }}; break; done'
     - shell: /bin/bash
     - bg: true
+    - order: last
+    - onchanges:
+      - file: /etc/salt/minion.d/minion.conf
     {%- if grains.get('noservices') %}
     - onlyif: /bin/false
     {%- endif %}
@@ -80,7 +79,7 @@ salt_minion_service_restart:
 salt_minion_sync_all:
   module.run:
     - name: 'saltutil.sync_all'
-    - watch:
+    - onchanges:
       - service: salt_minion_service
 
 {%- endif %}
