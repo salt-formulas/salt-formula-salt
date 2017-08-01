@@ -27,11 +27,16 @@ minion:
     {%- from "salt/map.jinja" import minion with context %}
     x509_signing_policies:
     {%- for ca_name,ca in minion.ca.items() %}
+
+    {%- set ca_file = ca.get('ca_file', '/etc/pki/ca/' ~ ca_name ~ '/ca.crt') %}
+    {%- set ca_key_file = ca.get('ca_key_file', '/etc/pki/ca/' ~ ca_name ~ '/ca.key') %}
+    {%- set ca_certs_dir = salt['file.dirname'](ca_file) ~ '/certs/' %}
+
     {%- for signing_policy_name, signing_policy in ca.signing_policy.iteritems() %}
       {{ ca_name }}_{{ signing_policy_name }}:
         - minions: '{{ signing_policy.minions }}'
-        - signing_private_key: /etc/pki/ca/{{ ca_name }}/ca.key
-        - signing_cert: /etc/pki/ca/{{ ca_name }}/ca.crt
+        - signing_private_key: {{ ca_key_file }}
+        - signing_cert: {{ ca_file }}
         {%- if ca.country is defined %}
         - C: {{ ca.country }}
         {%- endif %}
@@ -67,7 +72,7 @@ minion:
         - subjectKeyIdentifier: hash
         - authorityKeyIdentifier: keyid,issuer:always
         - days_valid: {{ ca.days_valid.certificate }}
-        - copypath: /etc/pki/ca/{{ ca_name }}/certs/
+        - copypath: {{ ca_certs_dir }}
     {%- endfor %}
     {%- endfor %}
   {%- endif %}
