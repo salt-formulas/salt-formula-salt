@@ -1,0 +1,8 @@
+classes:
+- service.master.pillar.composite
+parameters:
+  salt:
+    master:
+      pillar:
+        saltclass:
+          path: /srv/salt/saltclass

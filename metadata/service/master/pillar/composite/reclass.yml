@@ -1,0 +1,14 @@
+classes:
+- service.master.pillar.composite
+parameters:
+  salt:
+    master:
+      pillar:
+        reclass:
+          index: 1
+          storage_type: yaml_fs
+          inventory_base_uri: /srv/salt/reclass
+          #class_mappings: []
+          propagate_pillar_data_to_reclass: False
+          ignore_class_notfound: False
+          #ignore_class_regexp: []

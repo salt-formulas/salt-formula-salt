@@ -12,4 +12,3 @@ parameters:
       local: true
       pillar:
         engine: reclass
-        data_dir: /srv/salt/reclass

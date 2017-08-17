@@ -1,0 +1,7 @@
+parameters:
+  salt:
+    master:
+      pillar:
+        engine: saltclass
+        saltclass:
+          path: /srv/salt/saltclass

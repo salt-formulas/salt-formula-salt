@@ -28,6 +28,11 @@ Salt master with reclass ENC metadata backend
 .. literalinclude:: tests/pillar/master_single_reclass.sls
    :language: yaml
 
+Salt master with multiple ext_pillars
+
+.. literalinclude:: tests/pillar/master_single_extpillars.sls
+   :language: yaml
+
 Salt master with API
 
 .. literalinclude:: tests/pillar/master_api.sls
@@ -163,6 +168,7 @@ Configure verbosity of state output (used for `salt` command)
       master:
         state_output: changes
 
+
 Salt synchronise node pillar and modules after start
 
 .. code-block:: yaml
@@ -221,6 +227,80 @@ Event to trigger the node classification
 
     salt-call event.send 'reclass/minion/classify' "{'node_master_ip': '$config_host', 'node_ip': '${node_ip}', 'node_domain': '$node_domain', 'node_cluster': '$node_cluster', 'node_hostname': '$node_hostname', 'node_os': '$node_os'}"
 
+
+
+Encrypted pillars
+-----------------
+
+Note: NACL + below configuration will be available in Salt > 2017.7.
+
+External resources:
+
+- Tutorial to configure salt + reclass ext_pillar and nacl: http://apealive.net/post/2017-09-salt-nacl-ext-pillar/
+- Saltstack documentation: https://docs.saltstack.com/en/latest/ref/modules/all/salt.modules.nacl.html
+
+Configure salt NACL module:
+
+.. code-block:: shell
+
+  pip install --upgrade libnacl===1.5.2
+  salt-call --local nacl.keygen /etc/salt/pki/master/nacl
+
+    local:
+        saved sk_file:/etc/salt/pki/master/nacl  pk_file: /etc/salt/pki/master/nacl.pub
+
+
+.. code-block:: yaml
+
+    salt:
+      master:
+        pillar:
+          reclass: *reclass
+          nacl:
+            index: 99
+        nacl:
+          box_type: sealedbox
+          sk_file: /etc/salt/pki/master/nacl
+          pk_file: /etc/salt/pki/master/nacl.pub
+          #sk: None
+          #pk: None
+
+NACL encrypt secrets:
+
+  salt-call --local nacl.enc 'my_secret_value' pk_file=/etc/salt/pki/master/nacl.pub
+    hXTkJpC1hcKMS7yZVGESutWrkvzusXfETXkacSklIxYjfWDlMJmR37MlmthdIgjXpg4f2AlBKb8tc9Woma7q
+  # or
+  salt-run nacl.enc 'myotherpass'
+    ADDFD0Rav6p6+63sojl7Htfrncp5rrDVyeE4BSPO7ipq8fZuLDIVAzQLf4PCbDqi+Fau5KD3/J/E+Pw=
+
+
+NACL encrypted values on pillar:
+
+Use Boxed syntax `NACL[CryptedValue=]` to encode value on pillar:
+
+.. code-block:: yaml
+
+  my_pillar:
+    my_nacl:
+        key0: unencrypted_value
+        key1: NACL[hXTkJpC1hcKMS7yZVGESutWrkvzusXfETXkacSklIxYjfWDlMJmR37MlmthdIgjXpg4f2AlBKb8tc9Woma7q]
+
+NACL large files:
+
+.. code-block:: shell
+  salt-call nacl.enc_file /tmp/cert.crt out=/srv/salt/env/dev/cert.nacl
+  # or more advanced
+  cert=$(cat /tmp/cert.crt)
+  salt-call --out=newline_values_only nacl.enc_pub data="$cert" > /srv/salt/env/dev/cert.nacl
+
+
+NACL within template/native pillars:
+
+  pillarexample:
+      user: root
+      password1: {{salt.nacl.dec('DRB7Q6/X5gGSRCTpZyxS6hlbWj0llUA+uaVyvou3vJ4=')|json}}
+      cert_key: {{salt.nacl.dec_file('/srv/salt/env/dev/certs/example.com/cert.nacl')|json}}
+      cert_key2: {{salt.nacl.dec_file('salt:///certs/example.com/cert2.nacl')|json}}
 
 Salt syndic
 -----------

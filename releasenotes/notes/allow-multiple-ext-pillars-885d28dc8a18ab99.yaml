@@ -1,0 +1,20 @@
+---
+features:
+  - |
+    Added option to define multiple ext_pillars.
+    Example usage:
+
+    .. code-block:: text
+
+      salt:
+        master:
+          pillar:
+            engine: composite
+            reclass:
+              storage_type: yaml_fs
+              inventory_base_uri: /srv/salt/reclass_encrypted
+            nacl:
+              index: 99
+        nacl:
+          sk_file: /etc/salt/pki/master/nacl
+          pk_file: /etc/salt/pki/master/nacl.pub

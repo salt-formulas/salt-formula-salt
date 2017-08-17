@@ -59,7 +59,13 @@ salt_master_packages:
 salt_master_service:
   service.running:
   - name: {{ master.service }}
-  - enable: true
+  - enable: True
+  {%- if grains['saltversioninfo'][0] >= 2017 and grains['saltversioninfo'][1] >= 7 %}
+  - retry:
+    attempts: 2
+    interval: 5
+    splay: 5
+  {%- endif %}
 
 /srv/salt/env:
   file.directory:

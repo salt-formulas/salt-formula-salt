@@ -1,0 +1,7 @@
+parameters:
+  salt:
+    master:
+      pillar:
+        engine: salt
+        salt:
+          path: /srv/salt/pillar

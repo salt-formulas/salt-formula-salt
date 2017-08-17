@@ -1,0 +1,18 @@
+---
+summary: >
+  Use "reno", an releasenotes configuration tool to record release notes.
+  Documentation: https://docs.openstack.org/reno/latest
+
+  To list/create/show release notes, run following commands:
+
+    .. code-block:: shell
+
+      reno list
+      reno new releasenote-slug-title --edit
+      # use favored $EDITOR to update the note
+      # git add/commit releasenotes/* as usual
+      reno report --no-show-source
+
+other:
+  - |
+    Added `reno <https://docs.openstack.org/reno/latest>_` configuration to the repository.
