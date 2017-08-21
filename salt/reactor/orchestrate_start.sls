@@ -1,5 +1,5 @@
 
-orchestrate_orchestrate_start:
+orchestrate_orchestrate_run:
   runner.state.orchestrate:
-    - mods: salt://{{ data.data.orchestrate }}
-    - queue: {{ data.data.get('queue', True) }}
+  - mods: salt://{{ data.data.orchestrate }}
+  - queue: {{ data.data.get('queue', True) }}
