@@ -171,13 +171,7 @@ salt_minion_cert_{{ cert_name }}_all:
 
 salt_ca_certificates_packages:
   pkg.installed:
-{%- if grains.os_family == 'Debian' %}
-    - name: ca-certificates
-{%- elif grains.os_family == 'RedHat' %}
-    - name: ca-certificates
-{%- else %}
-    - name: []
-{%- endif %}
+    - names: {{ minion.cert_pkgs }}
 
 salt_update_certificates:
   cmd.wait:
