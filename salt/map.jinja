@@ -98,6 +98,8 @@ Debian:
   - python-m2crypto
   - python-psutil
   - python-yaml
+  cert_pkgs:
+  - ca-certificates
 Gentoo:
   pkgs:
   - app-admin/salt
@@ -110,6 +112,8 @@ RedHat:
   - m2crypto
   - psutils
   - PyYAML
+  cert_pkgs:
+  - ca-certificates
 {%- endload %}
 
 {%- if pillar.salt.minion is defined %}
