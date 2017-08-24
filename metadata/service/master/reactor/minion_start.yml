@@ -1,0 +1,6 @@
+parameters:
+  salt:
+    master:
+      reactor:
+        'salt/minion/*/start':
+        - salt://salt/reactor/minion_start.sls

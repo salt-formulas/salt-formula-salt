@@ -205,6 +205,16 @@ Event to trigger the orchestration pipeline
 
     salt-call event.send 'salt/orchestrate/start' "{'orchestrate': 'salt/orchestrate/infra_install.sls'}"
 
+Synchronise modules and pillars on minion start.
+
+.. code-block:: yaml
+
+    salt:
+      master:
+        reactor:
+          'salt/minion/*/start':
+          - salt://salt/reactor/minion_start.sls
+
 Add and/or remove the minion key
 
 .. code-block:: yaml
