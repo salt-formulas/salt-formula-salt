@@ -3,4 +3,4 @@ suites:
   - name: <%= ENV['SUITE'] %>
     provisioner:
       pillars-from-files:
-        neutron.sls: tests/pillar/<%= ENV['SUITE'] %>.sls
+        salt.sls: tests/pillar/<%= ENV['SUITE'] %>.sls
