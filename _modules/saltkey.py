@@ -32,6 +32,9 @@ def key_create(id_, host, force=False):
     '''
     Generates minion keypair, accepts it on master and injects it to minion via SSH.
 
+    :param id_: expected minion ID of target node
+    :param host: IP address or resolvable hostname/FQDN of target node
+
     CLI Examples:
 
     .. code-block:: bash

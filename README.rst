@@ -231,7 +231,8 @@ Event to trigger the key creation
 
 .. code-block:: bash
 
-    salt-call event.send 'salt/key/create' "{'node_name': 'id-of-minion', 'orch_post_create': 'kubernetes/orchestrate/compute_install.sls'}"
+    salt-call event.send 'salt/key/create' \
+    > "{'node_id': 'id-of-minion', 'node_host': '172.16.10.100', 'orch_post_create': 'kubernetes.orchestrate.compute_install', 'post_create_pillar': {'node_name': 'id-of-minion'}}"
 
 .. note::
 

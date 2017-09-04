@@ -8,3 +8,4 @@ minion_refresh_pillar:
   local.saltutil.refresh_pillar:
   - tgt: {{ data.id }}
   - queue: True
+

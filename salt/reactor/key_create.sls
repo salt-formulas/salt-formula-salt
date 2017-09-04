@@ -3,27 +3,26 @@
 
 orchestrate_node_key_pre_create:
   runner.state.orchestrate:
-  - mods: salt://{{ data.data.orch_pre_create }}
+  - mods: {{ data.data.orch_pre_create }}
   - queue: True
-  - pillar:
-      node_name: {{ data.data['node_name'] }}
+  - pillar: {{ data.data.get('orch_pre_create_pillar', {}) }}
 
 {% endif %}
 
 node_key_create:
   runner.state.orchestrate:
-  - mods: salt://salt/orchestrate/key_create.sls
+  - mods: salt.orchestrate.reactor.key_create
   - queue: True
   - pillar:
-      node_name: {{ data.data['node_name'] }}
+      node_id: {{ data.data['node_id'] }}
+      node_host: {{ data.data['node_host'] }}
 
 {% if data.data.orch_post_create is defined %}
 
 orchestrate_node_key_post_create:
   runner.state.orchestrate:
-  - mods: salt://{{ data.data.orch_post_create }}
+  - mods: {{ data.data.orch_post_create }}
   - queue: True
-  - pillar:
-      node_name: {{ data.data['node_name'] }}
+  - pillar: {{ data.data.get('orch_post_create_pillar', {}) }}
 
 {% endif %}

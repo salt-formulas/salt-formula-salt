@@ -14,3 +14,4 @@ reclass_state_config_nodes
     - queue: True
     - require:
       - salt: salt_state_config_node
+

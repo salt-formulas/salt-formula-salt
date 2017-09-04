@@ -21,3 +21,4 @@ misc_states:
   - queue: True
   - require:
     - salt: salt_state
+
