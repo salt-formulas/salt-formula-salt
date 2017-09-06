@@ -42,6 +42,20 @@ salt_master_packages:
 
 {%- endif %}
 
+{%- if master.engine is defined %}
+
+/etc/salt/master.d/_engine.conf:
+  file.managed:
+  - source: salt://salt/files/_engine.conf
+  - user: root
+  - template: jinja
+  - require:
+    - {{ master.install_state }}
+  - watch_in:
+    - service: salt_master_service
+
+{%- endif %}
+
 {%- if master.peer is defined %}
 
 /etc/salt/master.d/_peer.conf:

@@ -145,6 +145,32 @@ Salt master with logging handlers
               host: 127.0.0.1
               port: 9999
 
+
+Salt engine definition for saltgraph metadata collector
+
+.. code-block:: yaml
+
+    salt:
+      master:
+        engine:
+          graph_metadata:
+            engine: saltgraph
+            host: 127.0.0.1
+            port: 5432
+            user: salt
+            password: salt
+            database: salt
+
+Salt engine definition for sending events from docker events
+
+.. code-block:: yaml
+
+    salt:
+      master:
+        engine:
+          docker_events:
+            docker_url: unix://var/run/docker.sock
+
 Salt master peer setup for remote certificate signing
 
 .. code-block:: yaml

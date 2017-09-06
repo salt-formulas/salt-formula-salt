@@ -13,6 +13,7 @@ salt_env_{{ master.system.environment }}_dirs_obsolete:
     - /srv/salt/env/{{ master.system.environment }}/_modules
     - /srv/salt/env/{{ master.system.environment }}/_states
     - /srv/salt/env/{{ master.system.environment }}/_grains
+    - /srv/salt/env/{{ master.system.environment }}/_engines
     - /srv/salt/env/{{ master.system.environment }}
   - makedirs: True
 
@@ -324,6 +325,17 @@ salt_master_{{ environment_name }}_{{ state_name }}_state:
   file.symlink:
   - name: /srv/salt/env/{{ environment_name }}/_grains/{{ state_name }}
   - target: /srv/salt/env/{{ environment_name }}/_formulas/{{ formula_name }}/_grains/{{ state_name }}
+  - force: True
+  - makedirs: True
+
+{%- endfor %}
+
+{%- for engine_name, engine in formula.get('engine', {}).iteritems() %}
+
+salt_master_{{ environment_name }}_{{ engine_name }}_state:
+  file.symlink:
+  - name: /srv/salt/env/{{ environment_name }}/_engines/{{ engine_name }}
+  - target: /srv/salt/env/{{ environment_name }}/_formulas/{{ formula_name }}/_engines/{{ engine_name }}
   - force: True
   - makedirs: True
 
