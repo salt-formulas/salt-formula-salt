@@ -1,12 +1,12 @@
 check:
   local_salt_master_proc:
-    command: "PATH=$PATH:/usr/lib64/nagios/plugins:/usr/lib/nagios/plugins check_procs -C salt-master -u root -c 1:50"
+    command: "PATH=$PATH:/usr/lib64/nagios/plugins:/usr/lib/nagios/plugins check_procs -a salt-master -u root -c 1:50"
     interval: 60
     occurrences: 1
     subscribers:
     - local-salt-master
   local_salt_minion_proc:
-    command: "PATH=$PATH:/usr/lib64/nagios/plugins:/usr/lib/nagios/plugins check_procs -C salt-minion -u root -c 1:10"
+    command: "PATH=$PATH:/usr/lib64/nagios/plugins:/usr/lib/nagios/plugins check_procs -a salt-minion -u root -c 1:10"
     interval: 60
     occurrences: 1
     subscribers:
