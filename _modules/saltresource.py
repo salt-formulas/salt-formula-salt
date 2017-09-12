@@ -16,30 +16,30 @@ try:
 except ImportError:
     HAS_POSTGRES = False
 
+__virtualname__ = 'saltresource'
 LOG = logging.getLogger(__name__)
 
 
 def __virtual__():
     if not HAS_POSTGRES:
         return False, 'Could not import saltresource module; psycopg2 is not installed.'
-    return 'saltresource'
+    return __virtualname__
 
 
 def _get_options(ret=None):
     '''
     Get the postgres options from salt.
     '''
-    attrs = {'host': 'host',
-             'user': 'user',
-             'passwd': 'passwd',
-             'db': 'db',
-             'port': 'port'}
+    defaults = {'host': '127.0.0.1',
+                'user': 'salt',
+                'passwd': 'salt',
+                'db': 'salt',
+                'port': '5432'}
 
-    _options = salt.returners.get_returner_options('returner.postgres_graph_db',
-                                                   ret,
-                                                   attrs,
-                                                   __salt__=__salt__,
-                                                   __opts__=__opts__)
+    _options = {}
+    for key, default in defaults.items():
+        _options[key] = __salt__['config.get']('%s.%s' % (__virtualname__, key), default)
+
     return _options
 
 
