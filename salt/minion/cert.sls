@@ -200,7 +200,6 @@ salt_trust_ca_{{ cacert_file }}:
   x509.pem_managed:
     - name: {{ cacert_file }}
     - text: {{ ca_cert|replace('\n', '') }}
-    - makedirs: True
     - watch_in:
       - file: salt_trust_ca_{{ cacert_file }}_permissions
       - cmd: salt_update_certificates
