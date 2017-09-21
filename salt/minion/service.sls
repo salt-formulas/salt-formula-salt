@@ -63,11 +63,11 @@ salt_minion_config_{{ service_name }}_{{ name }}_validity_check:
 
 salt_minion_service:
   service.running:
-  - name: {{ minion.service }}
-  - enable: true
-  - require:
-    - pkg: salt_minion_packages
-    - pkg: salt_minion_dependency_packages
+    - name: {{ minion.service }}
+    - enable: true
+    - require:
+      - pkg: salt_minion_packages
+      - pkg: salt_minion_dependency_packages
     {%- if grains.get('noservices') %}
     - onlyif: /bin/false
     {%- endif %}
