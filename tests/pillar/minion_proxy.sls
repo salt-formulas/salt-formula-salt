@@ -1,7 +1,7 @@
 salt:
   minion:
     enabled: true
-    proxy:
+    proxy_minion:
       master: localhost
       device:
         vsrx01.mydomain.local:

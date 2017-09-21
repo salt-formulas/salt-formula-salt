@@ -1,0 +1,31 @@
+graph:
+{%- if pillar.get('salt', {}).minion is defined %}
+{%- from "salt/map.jinja" import minion with context %}
+- host: {{ grains.id }}
+  service: salt.minion
+  type: software-config
+  relations:
+  {%- if minion.master is defined %}
+  - service: salt.master
+    {%- if minion.master.host in ['127.0.0.1', 'localhost'] %}
+    host: {{ grains.id }}
+    {%- else %}
+    host_from_target: {{ minion.master.host }}
+    {%- endif %}
+    direction: source
+    type: tcp-0mq
+  {%- endif %}
+{%- endif %}
+{%- if pillar.get('salt', {}).master is defined %}
+{%- from "salt/map.jinja" import master with context %}
+- host: {{ grains.id }}
+  service: salt.master
+  type: software-config
+  relations:
+  {%- if master.pillar.engine == 'reclass' %}
+  - host: {{ grains.id }}
+    service: reclass.storage
+    direction: source
+    type: local-file
+  {%- endif %}
+{%- endif %}

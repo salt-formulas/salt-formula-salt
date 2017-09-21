@@ -1,0 +1,6 @@
+suites:
+
+  - name: <%= ENV['SUITE'] %>
+    provisioner:
+      pillars-from-files:
+        salt.sls: tests/pillar/<%= ENV['SUITE'] %>.sls

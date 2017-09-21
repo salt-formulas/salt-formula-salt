@@ -1,8 +1,8 @@
-{%- from "salt/map.jinja" import proxy with context %}
+{%- from "salt/map.jinja" import proxy_minion with context %}
 
 {%- set napalm = false %}
 
-{%- for proxy_name, proxy_device in proxy.get('device', {}).iteritems() %}
+{%- for proxy_name, proxy_device in proxy_minion.get('device', {}).iteritems() %}
 
 {%- if proxy_device.engine == 'napalm' %}
 
@@ -23,23 +23,23 @@
   - template: jinja
   - defaults:
       napalm: {{ napalm }}
-      proxy: {{ proxy|yaml }}
+      proxy_minion: {{ proxy_minion|yaml }}
 
 {%- if napalm %}
 
 network_proxy_packages:
   pkg.installed:
-  - names: {{ proxy.napalm_pkgs }}
+  - names: {{ proxy_minion.napalm_pkgs }}
 
 napalm:
   pip.installed:
-    - name: {{ proxy.napalm_pip_pkgs}}
+    - name: {{ proxy_minion.napalm_pip_pkgs}}
     - require:
       - pkg: python-pip
 
 {%- endif %}
 
-{%- for proxy_name, proxy_device in proxy.get('device', {}).iteritems() %}
+{%- for proxy_name, proxy_device in proxy_minion.get('device', {}).iteritems() %}
 
 salt_proxy_{{ proxy_name }}_service:
   service.running:

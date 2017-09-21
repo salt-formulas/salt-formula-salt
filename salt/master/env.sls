@@ -13,6 +13,7 @@ salt_env_{{ master.system.environment }}_dirs_obsolete:
     - /srv/salt/env/{{ master.system.environment }}/_modules
     - /srv/salt/env/{{ master.system.environment }}/_states
     - /srv/salt/env/{{ master.system.environment }}/_grains
+    - /srv/salt/env/{{ master.system.environment }}/_engines
     - /srv/salt/env/{{ master.system.environment }}
   - makedirs: True
 
@@ -240,6 +241,8 @@ salt_env_{{ environment_name }}_{{ formula_name }}_link:
   - target: /usr/share/salt-formulas/env/_formulas/{{ formula_name }}/{{ formula_name }}
   - require:
     - file: salt_env_{{ environment_name }}_dirs
+  - force: True
+  - makedirs: True
 
 {%- for grain_name, grain in formula.get('grain', {}).iteritems() %}
 
@@ -247,6 +250,8 @@ salt_master_{{ environment_name }}_{{ grain_name }}_grain:
   file.symlink:
   - name: /usr/share/salt-formulas/env/_grains/{{ grain_name }}
   - target: /usr/share/salt-formulas/env/_formulas/{{ formula_name }}/_grains/{{ grain_name }}
+  - force: True
+  - makedirs: True
 
 {%- endfor %}
 
@@ -256,6 +261,8 @@ salt_master_{{ environment_name }}_{{ module_name }}_module:
   file.symlink:
   - name: /usr/share/salt-formulas/env/_modules/{{ module_name }}
   - target: /usr/share/salt-formulas/env/_formulas/{{ formula_name }}/_modules/{{ module_name }}
+  - force: True
+  - makedirs: True
 
 {%- endfor %}
 
@@ -265,6 +272,8 @@ salt_master_{{ environment_name }}_{{ state_name }}_state:
   file.symlink:
   - name: /usr/share/salt-formulas/env/_states/{{ state_name }}
   - target: /usr/share/salt-formulas/env/_formulas/{{ formula_name }}/_states/{{ state_name }}
+  - force: True
+  - makedirs: True
 
 {%- endfor %}
 
@@ -285,6 +294,8 @@ salt_env_{{ environment_name }}_{{ formula_name }}_link:
   - target: /srv/salt/env/{{ environment_name }}/_formulas/{{ formula_name }}/{{ formula_name }}
   - require:
     - file: salt_env_{{ environment_name }}_dirs
+  - force: True
+  - makedirs: True
 
 {%- for grain_name, grain in formula.get('grain', {}).iteritems() %}
 
@@ -292,6 +303,8 @@ salt_master_{{ environment_name }}_{{ grain_name }}_grain:
   file.symlink:
   - name: /srv/salt/env/{{ environment_name }}/_grains/{{ grain_name }}
   - target: /srv/salt/env/{{ environment_name }}/_formulas/{{ formula_name }}/_grains/{{ grain_name }}
+  - force: True
+  - makedirs: True
 
 {%- endfor %}
 
@@ -301,6 +314,8 @@ salt_master_{{ environment_name }}_{{ module_name }}_module:
   file.symlink:
   - name: /srv/salt/env/{{ environment_name }}/_grains/{{ module_name }}
   - target: /srv/salt/env/{{ environment_name }}/_formulas/{{ formula_name }}/_grains/{{ module_name }}
+  - force: True
+  - makedirs: True
 
 {%- endfor %}
 
@@ -310,6 +325,19 @@ salt_master_{{ environment_name }}_{{ state_name }}_state:
   file.symlink:
   - name: /srv/salt/env/{{ environment_name }}/_grains/{{ state_name }}
   - target: /srv/salt/env/{{ environment_name }}/_formulas/{{ formula_name }}/_grains/{{ state_name }}
+  - force: True
+  - makedirs: True
+
+{%- endfor %}
+
+{%- for engine_name, engine in formula.get('engine', {}).iteritems() %}
+
+salt_master_{{ environment_name }}_{{ engine_name }}_state:
+  file.symlink:
+  - name: /srv/salt/env/{{ environment_name }}/_engines/{{ engine_name }}
+  - target: /srv/salt/env/{{ environment_name }}/_formulas/{{ formula_name }}/_engines/{{ engine_name }}
+  - force: True
+  - makedirs: True
 
 {%- endfor %}
 

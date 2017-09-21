@@ -145,6 +145,32 @@ Salt master with logging handlers
               host: 127.0.0.1
               port: 9999
 
+
+Salt engine definition for saltgraph metadata collector
+
+.. code-block:: yaml
+
+    salt:
+      master:
+        engine:
+          graph_metadata:
+            engine: saltgraph
+            host: 127.0.0.1
+            port: 5432
+            user: salt
+            password: salt
+            database: salt
+
+Salt engine definition for sending events from docker events
+
+.. code-block:: yaml
+
+    salt:
+      master:
+        engine:
+          docker_events:
+            docker_url: unix://var/run/docker.sock
+
 Salt master peer setup for remote certificate signing
 
 .. code-block:: yaml
@@ -163,7 +189,7 @@ Configure verbosity of state output (used for `salt` command)
       master:
         state_output: changes
 
-Salt Reactor system configuration
+Salt synchronise node pillar and modules after start
 
 .. code-block:: yaml
 
@@ -171,8 +197,84 @@ Salt Reactor system configuration
       master:
         reactor:
           salt/minion/*/start:
-          - salt://reactor/minion-started.sls
+          - salt://salt/reactor/node_start.sls
 
+Trigger basic node install
+
+.. code-block:: yaml
+
+    salt:
+      master:
+        reactor:
+          salt/minion/install:
+          - salt://salt/reactor/node_install.sls
+
+Sample event to trigger the node installation
+
+.. code-block:: bash
+
+    salt-call event.send 'salt/minion/install'
+
+Run any defined orchestration pipeline
+
+.. code-block:: yaml
+
+    salt:
+      master:
+        reactor:
+          salt/orchestrate/start:
+          - salt://salt/reactor/orchestrate_start.sls
+
+Event to trigger the orchestration pipeline
+
+.. code-block:: bash
+
+    salt-call event.send 'salt/orchestrate/start' "{'orchestrate': 'salt/orchestrate/infra_install.sls'}"
+
+Synchronise modules and pillars on minion start.
+
+.. code-block:: yaml
+
+    salt:
+      master:
+        reactor:
+          'salt/minion/*/start':
+          - salt://salt/reactor/minion_start.sls
+
+Add and/or remove the minion key
+
+.. code-block:: yaml
+
+    salt:
+      master:
+        reactor:
+          salt/key/create:
+          - salt://salt/reactor/key_create.sls
+          salt/key/remove:
+          - salt://salt/reactor/key_remove.sls
+
+Event to trigger the key creation
+
+.. code-block:: bash
+
+    salt-call event.send 'salt/key/create' \
+    > "{'node_id': 'id-of-minion', 'node_host': '172.16.10.100', 'orch_post_create': 'kubernetes.orchestrate.compute_install', 'post_create_pillar': {'node_name': 'id-of-minion'}}"
+
+.. note::
+
+    You can add pass additional `orch_pre_create`, `orch_post_create`,
+    `orch_pre_remove` or `orch_post_remove` parameters to the event to call
+    extra orchestrate files. This can be useful for example for
+    registering/unregistering nodes from the monitoring alarms or dashboards.
+
+    The key creation event needs to be run from other machine than the one
+    being registered.
+
+Event to trigger the key removal
+
+.. code-block:: bash
+
+    salt-call event.send 'salt/key/remove'
 
 Salt syndic
 -----------
@@ -219,7 +321,7 @@ Salt proxy pillar
 
     salt:
       minion:
-        proxy:
+        proxy_minion:
           master: localhost
           device:
             vsrx01.mydomain.local:
@@ -316,6 +418,17 @@ Salt minion behind HTTP proxy
           host: 127.0.0.1
           port: 3128
 
+Salt minion to specify non-default HTTP backend. The default tornado backend
+does not respect HTTP proxy settings set as environment variables. This is
+useful for cases where you need to set no_proxy lists.
+
+.. code-block:: yaml
+
+    salt:
+      minion:
+        backend: urllib2
+
+
 Salt minion with PKI certificate authority (CA)
 
 .. literalinclude:: tests/pillar/minion_pki_ca.sls
@@ -326,6 +439,14 @@ Salt minion using PKI certificate
 .. literalinclude:: tests/pillar/minion_pki_cert.sls
    :language: yaml
 
+Salt minion trust CA certificates issued by salt CA on a specific host (ie: salt-master node)
+
+.. code-block:: yaml
+
+  salt:
+    minion:
+      trusted_ca_minions:
+        - cfg01
 
 Salt control (cloud/kvm/docker)
 -------------------------------

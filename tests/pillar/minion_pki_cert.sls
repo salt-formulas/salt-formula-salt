@@ -59,3 +59,23 @@ salt:
           #   salt.ci.local
           #signing_policy:
           #   cert_server
+      test_cert:
+          alternative_names:
+              IP:127.0.0.1,DNS:salt.ci.local,DNS:test.ci.local
+          cert_file:
+              /srv/salt/pki/ci/test.ci.local.crt
+          common_name:
+              test.ci.local
+          key_file:
+              /srv/salt/pki/ci/test.ci.local.key
+          country: CZ
+          state: Prague
+          locality: Cesky Krumlov
+          signing_cert:
+              /etc/test/ca.crt
+          signing_private_key:
+              /etc/test/ca.key
+          # Kitchen-Salt CI trigger `salt-call --local`, below attributes
+          # can't be used as there is no required SaltMaster connectivity
+          authority:
+             salt-ca-alt

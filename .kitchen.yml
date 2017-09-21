@@ -17,7 +17,7 @@ provisioner:
     noservices: true
   vendor_repo:
     - type: apt
-      url: http://apt-mk.mirantis.com/trusty
+      url: http://apt-mk.mirantis.com/xenial
       key_url: http://apt-mk.mirantis.com/public.gpg
       components: salt
       distribution: testing
@@ -37,6 +37,10 @@ provisioner:
           enabled: true
           master:
             host: localhost
+          pkgs:
+            - python-m2crypto
+            - python-psutil
+            - python-yaml
       linux:
         system:
           enabled: true
@@ -60,21 +64,7 @@ platforms:
       image: <%=ENV['PLATFORM'] || 'trevorj/salty-whales:xenial'%>
       platform: ubuntu
 
-#  - name: ubuntu-xenial
-#    driver_config:
-#      image: trevorj/salty-whales:xenial
-#      platform: ubuntu
-
-#  - name: debian-jessie
-#    driver_config:
-#      image: debian:jessie
-
-#  - name: debian-stretch
-#    driver_config:
-#      image: debian:stretch
-
 suites:
-
   - name: minion-default
     provisioner:
       pillars:
@@ -95,6 +85,7 @@ suites:
         minion_handler.sls: tests/pillar/minion_custom_handler.sls
         minion_local_pillar.sls: tests/pillar/minion_local_pillar.sls
         minion_local_reclass.sls: tests/pillar/minion_local_reclass.sls
+        minion_backend_urllib.sls: tests/pillar/minion_backend_urllib.sls
 
   - name: master-default
     provisioner:
@@ -111,6 +102,12 @@ suites:
               - master_ssh_root
               - minion_pki_cert
               - master_formulas
+        common.sls:
+          salt:
+            master:
+              #Use a useless package to avoid upgrading salt-master
+              pkgs:
+                - python-yaml
       pillars-from-files:
         minion_pki.sls: tests/pillar/minion_pki_ca.sls
         minion_pki_cert.sls: tests/pillar/minion_pki_cert.sls
@@ -143,18 +140,5 @@ suites:
       pillars-from-files:
         salt.sls: tests/pillar/minion_multi_master_failover.sls
 
-
-#  - name: minion-local
-#    provisioner:
-#      pillars:
-#        top.sls:
-#          base:
-#            "*":
-#              - common
-#              - minion_local_pillar
-#              - minion_local_reclass
-#      pillars-from-files:
-#        minion_local_pillar.sls: tests/pillar/minion_local_pillar.sls
-#        minion_local_reclass.sls: tests/pillar/minion_local_reclass.sls
 
   # vim: ft=yaml sw=2 ts=2 sts=2 tw=125

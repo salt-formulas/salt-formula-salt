@@ -4,7 +4,7 @@
 {%- if master.source.get('engine', 'pkg') == 'pkg' %}
 
 salt_master_packages:
-  pkg.latest:
+  pkg.installed:
   - names: {{ master.pkgs }}
   {%- if master.source.version is defined %}
   - version: {{ master.source.version }}
@@ -33,6 +33,20 @@ salt_master_packages:
 /etc/salt/master.d/_acl.conf:
   file.managed:
   - source: salt://salt/files/_acl.conf
+  - user: root
+  - template: jinja
+  - require:
+    - {{ master.install_state }}
+  - watch_in:
+    - service: salt_master_service
+
+{%- endif %}
+
+{%- if master.engine is defined %}
+
+/etc/salt/master.d/_engine.conf:
+  file.managed:
+  - source: salt://salt/files/_engine.conf
   - user: root
   - template: jinja
   - require:
