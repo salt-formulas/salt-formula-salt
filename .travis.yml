@@ -17,23 +17,24 @@ install:
   - bundle install
 
 env:
-  - PLATFORM=trevorj/salty-whales:trusty SUITE=minion_default
-  - PLATFORM=trevorj/salty-whales:xenial SUITE=minion_default
-  - PLATFORM=trevorj/salty-whales:trusty SUITE=master_default
-  - PLATFORM=trevorj/salty-whales:xenial SUITE=master_default
-  - PLATFORM=trevorj/salty-whales:trusty SUITE=minion_default
-  - PLATFORM=trevorj/salty-whales:xenial SUITE=minion_default
-  - PLATFORM=trevorj/salty-whales:trusty SUITE=control_default
-  - PLATFORM=trevorj/salty-whales:xenial SUITE=control_default
-  - PLATFORM=trevorj/salty-whales:trusty SUITE=minion_multi_master_failover
-  - PLATFORM=trevorj/salty-whales:xenial SUITE=minion_multi_master_failover
+  - PLATFORM=trevorj/salty-whales:trusty SUITE=minion-default
+  - PLATFORM=trevorj/salty-whales:xenial SUITE=minion-default
+  - PLATFORM=trevorj/salty-whales:trusty SUITE=master-default
+  - PLATFORM=trevorj/salty-whales:xenial SUITE=master-default
+  - PLATFORM=trevorj/salty-whales:trusty SUITE=minion-default
+  - PLATFORM=trevorj/salty-whales:xenial SUITE=minion-default
+  - PLATFORM=trevorj/salty-whales:trusty SUITE=control-default
+  - PLATFORM=trevorj/salty-whales:xenial SUITE=control-default
+  - PLATFORM=trevorj/salty-whales:trusty SUITE=minion-multi-master-failover
+  - PLATFORM=trevorj/salty-whales:xenial SUITE=minion-multi-master-failover
 
 before_script:
   - set -o pipefail
   - make test | tail
 
 script:
-  - KITCHEN_LOCAL_YAML=.kitchen.travis.yml bundle exec kitchen test -t tests/integration
+  - test ! -e .kitchen.yml || bundle exec kitchen converge ${SUITE} || true
+  - test ! -e .kitchen.yml || bundle exec kitchen verify ${SUITE} -t tests/integration
 
 notifications:
   webhooks:
