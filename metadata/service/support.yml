@@ -3,6 +3,8 @@ parameters:
     _orchestrate:
       priority: 20
     _support:
+      telegraf:
+        enabled: true
       collectd:
         enabled: false
       heka:

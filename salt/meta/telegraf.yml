@@ -1,0 +1,16 @@
+{%- if pillar.salt is defined %}
+agent:
+  input:
+  {%- if pillar.salt.get('master', {}).get('enabled', False) or pillar.salt.get('minion', {}).get('enabled', False) %}
+    procstat:
+      process:
+        {%- if pillar.salt.get('master', {}).get('enabled', False)  %}
+        salt-master:
+          pattern: salt-master
+        {%- endif %}
+        {%- if pillar.salt.get('minion', {}).get('enabled', False)  %}
+        salt-minion:
+          pattern: salt-minion
+        {%- endif %}
+  {%- endif %}
+{%- endif %}
