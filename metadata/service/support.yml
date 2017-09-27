@@ -5,6 +5,8 @@ parameters:
     _support:
       telegraf:
         enabled: true
+      prometheus:
+        enabled: true
       collectd:
         enabled: false
       heka:

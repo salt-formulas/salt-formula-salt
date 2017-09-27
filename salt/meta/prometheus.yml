@@ -1,0 +1,32 @@
+{%- if pillar.salt is defined %}
+{%- if pillar.salt.get('master', {}).get('enabled', False) or pillar.salt.get('minion', {}).get('enabled', False) %}
+server:
+  alert:
+  {%- if pillar.salt.get('master', {}).get('enabled', False)  %}
+    SaltMasterProcessDown:
+      if: >-
+        procstat_running{process_name="salt-master"} == 0
+      {%- raw %}
+      labels:
+        severity: warning
+        service: salt-master
+      annotations:
+        summary: 'Salt-master service is down'
+        description: 'Salt-master service is down on node {{ $labels.host }}'
+      {%- endraw %}
+  {%- endif %}
+  {%- if pillar.salt.get('minion', {}).get('enabled', False)  %}
+    SaltMinionProcessDown:
+      if: >-
+        procstat_running{process_name="salt-minion"} == 0
+      {%- raw %}
+      labels:
+        severity: warning
+        service: salt-minion
+      annotations:
+        summary: 'Salt-minion service is down'
+        description: 'Salt-minion service is down on node {{ $labels.host }}'
+      {%- endraw %}
+  {%- endif %}
+{%- endif %}
+{%- endif %}
