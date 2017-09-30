@@ -1,0 +1,5 @@
+backup:
+  salt:
+    fs_includes:
+    - /srv/salt/reclass/nodes/_generated
+    fs_excludes: []

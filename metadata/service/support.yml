@@ -11,3 +11,5 @@ parameters:
         enabled: true
       sphinx:
         enabled: true
+      backupninja:
+        enabled: false
