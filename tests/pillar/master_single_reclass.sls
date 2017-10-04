@@ -29,4 +29,8 @@ salt:
             name: salt-formula-service02
     pillar:
       engine: reclass
-      data_dir: /srv/salt/reclass
+      reclass:
+        storage_type: yaml_fs
+        inventory_base_uri: /srv/salt/reclass
+        propagate_pillar_data_to_reclass: False
+        reclass_source_path: /tmp/reclass

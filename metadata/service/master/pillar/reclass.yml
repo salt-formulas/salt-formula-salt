@@ -1,0 +1,8 @@
+parameters:
+  salt:
+    master:
+      pillar:
+        engine: reclass
+        reclass:
+          storage_type: yaml_fs
+          inventory_base_uri: /srv/salt/reclass

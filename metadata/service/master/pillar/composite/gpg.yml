@@ -1,0 +1,9 @@
+classes:
+- service.master.pillar.composite
+parameters:
+  salt:
+    master:
+      pillar:
+        gpg:
+          index: 99
+

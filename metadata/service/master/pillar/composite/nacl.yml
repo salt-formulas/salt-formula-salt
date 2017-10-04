@@ -1,0 +1,11 @@
+classes:
+- service.master.nacl
+- service.master.pillar.composite
+parameters:
+  salt:
+    master:
+      pillar:
+        nacl:
+          # if order is provided 99 is used to compose "99-nacl" key name which is later used to order entries
+          index: 99
+

@@ -1,0 +1,5 @@
+parameters:
+  salt:
+    master:
+      pillar:
+        engine: composite

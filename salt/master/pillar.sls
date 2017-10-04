@@ -1,4 +1,4 @@
-{%- from "salt/map.jinja" import master with context %}
+{%- from "salt/map.jinja" import master,storage with context %}
 {%- if master.enabled %}
 
 {%- if master.pillar.engine == 'salt' %}
@@ -38,6 +38,7 @@ include:
 
 /srv/salt/reclass/classes/service:
   file.directory:
+  - makedirs: true
   - require:
     - file: reclass_data_dir
 
@@ -47,6 +48,7 @@ include:
 
 /srv/salt/reclass/classes/service/{{ formula_name }}:
   file.symlink:
+  - makedirs: true
   - target: /srv/salt/env/{{ master.system.environment }}/{{ formula_name }}/metadata/service
   - require:
     - file: /srv/salt/reclass/classes/service
@@ -55,7 +57,7 @@ include:
 
 {%- else %}
 
-{%- for environment_name, environment in master.environment.iteritems() %}
+{%- for environment_name, environment in master.get('environment', {}).iteritems() %}
 
 {%- for formula_name, formula in environment.get('formula', {}).iteritems() %}
 
@@ -63,6 +65,7 @@ include:
 
 /srv/salt/reclass/classes/service/{{ formula_name }}:
   file.symlink:
+  - makedirs: true
   {%- if formula.source == 'pkg' %}
   - target: /usr/share/salt-formulas/reclass/service/{{ formula_name }}
   {%- else %}

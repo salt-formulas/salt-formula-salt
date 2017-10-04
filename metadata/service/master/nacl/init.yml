@@ -1,0 +1,6 @@
+salt:
+  master:
+    nacl:
+      box_type: sealedbox
+      sk_file: /etc/salt/pki/master/nacl
+      pk_file: /etc/salt/pki/master/nacl.pub
