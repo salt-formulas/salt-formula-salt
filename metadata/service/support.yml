@@ -12,4 +12,4 @@ parameters:
       sphinx:
         enabled: true
       backupninja:
-        enabled: false
+        enabled: true
