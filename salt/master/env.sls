@@ -114,6 +114,8 @@ salt_env_{{ environment_name }}_pre_dirs:
     - /usr/share/salt-formulas/env/_states
     - /usr/share/salt-formulas/env/_grains
     - /usr/share/salt-formulas/env/_formulas
+    - /usr/share/salt-formulas/env/_engines
+    - /usr/share/salt-formulas/env/_runners
   - makedirs: True
 
 salt_env_{{ environment_name }}_dirs:
@@ -132,6 +134,8 @@ salt_env_{{ environment_name }}_dirs:
     - /srv/salt/env/{{ environment_name }}/_states
     - /srv/salt/env/{{ environment_name }}/_grains
     - /srv/salt/env/{{ environment_name }}/_formulas
+    - /srv/salt/env/{{ environment_name }}/_engines
+    - /srv/salt/env/{{ environment_name }}/_runners
   - makedirs: True
 
 {%- endif %}
@@ -332,10 +336,21 @@ salt_master_{{ environment_name }}_{{ state_name }}_state:
 
 {%- for engine_name, engine in formula.get('engine', {}).iteritems() %}
 
-salt_master_{{ environment_name }}_{{ engine_name }}_state:
+salt_master_{{ environment_name }}_{{ engine_name }}_engine:
   file.symlink:
   - name: /srv/salt/env/{{ environment_name }}/_engines/{{ engine_name }}
   - target: /srv/salt/env/{{ environment_name }}/_formulas/{{ formula_name }}/_engines/{{ engine_name }}
+  - force: True
+  - makedirs: True
+
+{%- endfor %}
+
+{%- for runner_name, runner in formula.get('runner', {}).iteritems() %}
+
+salt_master_{{ environment_name }}_{{ runner_name }}_runner:
+  file.symlink:
+  - name: /srv/salt/env/{{ environment_name }}/_engines/{{ runner_name }}
+  - target: /srv/salt/env/{{ environment_name }}/_formulas/{{ formula_name }}/_engines/{{ runner_name }}
   - force: True
   - makedirs: True
 

@@ -194,7 +194,7 @@ def start(host='salt', user='salt', password='salt', database='salt', port=5432,
             opts=__opts__,
             sock_dir=__opts__['sock_dir'],
             listen=True)
-        log.debug('Saltgraph engine started')
+    log.debug('Saltgraph engine started')
 
     while True:
         event = event_bus.get_event()
