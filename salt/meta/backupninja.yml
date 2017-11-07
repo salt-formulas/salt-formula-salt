@@ -1,5 +1,10 @@
+{%- if pillar.salt.master is defined %}
+  {%- from "salt/map.jinja" import master with context %}
 backup:
   salt:
     fs_includes:
-    - /srv/salt/reclass
+      {%- if master.pillar.engine == 'reclass' or (master.pillar.engine == 'composite' and master.pillar.reclass is defined) %}
+      - {{ master.pillar.get('reclass', {}).get('inventory_base_uri', '/srv/salt/reclass') }}
+      {%- endif %}
     fs_excludes: []
+{%- endif %}
