@@ -1,0 +1,26 @@
+%YAML 1.1
+---
+title: Salt minion role
+description: |
+  Salt service in client role.
+type: object
+additionalProperties: false
+
+properties:
+  enabled:
+    description: |
+      Enables the Salt minion role.
+    type: boolean
+  masters:
+    description: |
+      List of Salt masters to connect to.
+    type: array
+    items:
+      $ref: "#/definitions/master"
+
+definitions:
+  master:
+    description: |
+      Hostname or IP address of the masters server
+    type: string
+    format: hostname-ip

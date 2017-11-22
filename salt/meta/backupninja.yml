@@ -3,8 +3,7 @@
 backup:
   salt:
     fs_includes:
-      {%- if master.pillar.engine == 'reclass' or (master.pillar.engine == 'composite' and master.pillar.reclass is defined) %}
-      - {{ master.pillar.get('reclass', {}).get('inventory_base_uri', '/srv/salt/reclass') }}
-      {%- endif %}
+    - /srv/salt
+    - /etc/salt
     fs_excludes: []
 {%- endif %}
