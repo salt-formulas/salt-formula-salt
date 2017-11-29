@@ -206,6 +206,7 @@ salt_master_{{ environment_name }}_{{ formula_name }}_formula:
   - branch: {{ formula.branch|default(formula.revision) }}
   {%- endif %}
   {% endif %}
+  - submodules: {{ formula.submodules|default(False) }}
   - force_reset: {{ formula.force_reset|default(False) }}
   - require:
     - file: salt_env_{{ environment_name }}_dirs
