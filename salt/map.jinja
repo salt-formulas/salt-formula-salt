@@ -179,7 +179,7 @@ Debian:
   virt_pkgs:
   - libvirt-dev
   - pkg-config
-{% if grains.oscodename == 'trusty' %}
+{% if grains.get('oscodename') == 'trusty' %}
   - libguestfs-tools
 {% endif %}
 
