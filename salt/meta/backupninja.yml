@@ -2,8 +2,14 @@
   {%- from "salt/map.jinja" import master with context %}
 backup:
   salt:
+    {%- if master.get('backup', False) %}
     fs_includes:
-    - /srv/salt
-    - /etc/salt
+    {%- if master.pillar.engine == 'reclass' or (master.pillar.engine == 'composite' and master.pillar.reclass is defined) %}
+    - /srv/salt/reclass/nodes/_generated
+    {%- endif %}
+    - /etc/salt/pki
+    {%- else %}
+    fs_includes: []
+    {%- endif %}
     fs_excludes: []
 {%- endif %}
