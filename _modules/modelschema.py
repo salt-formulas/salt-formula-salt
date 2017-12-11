@@ -70,7 +70,7 @@ def schema_list():
 
     """
     output = {}
-    schemas = glob.glob('{}/*/*/schemas/*.yaml'.format(_get_base_dir()))
+    schemas = glob.glob('{}/*/schemas/*.yaml'.format(_get_base_dir()))
     for schema in schemas:
         if os.path.exists(schema):
             role_name = schema.split('/')[-1].replace('.yaml', '')
