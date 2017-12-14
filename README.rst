@@ -186,6 +186,19 @@ Salt master peer setup for remote certificate signing
           ".*":
           - x509.sign_remote_certificate
 
+
+Salt master backup configuration
+
+.. code-block:: yaml
+
+    salt:
+      master:
+        backup: true
+        initial_data:
+          engine: backupninja
+          source: backup-node-host
+          host: original-salt-master-id
+
 Configure verbosity of state output (used for `salt` command)
 
 .. code-block:: yaml
