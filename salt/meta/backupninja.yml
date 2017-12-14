@@ -1,5 +1,6 @@
-{%- if pillar.salt.master is defined %}
-  {%- from "salt/map.jinja" import master with context %}
+{%- if pillar.salt is defined %}
+{%- if pillar.salt.get('master', {}).get('enabled', False) or (pillar.salt.get('minion', {}).get('enabled', False) and pillar.salt.get('minion', {}).ca is defined) %}
+  {%- from "salt/map.jinja" import master, minion with context %}
 backup:
   salt:
     {%- if master.get('backup', False) %}
@@ -8,8 +9,15 @@ backup:
     - /srv/salt/reclass/nodes/_generated
     {%- endif %}
     - /etc/salt/pki
+    {%- if minion.get('backup', False) %}
+    - /etc/pki/ca
+    {%- endif %}
+    {%- elif minion.get('backup', False) %}
+    fs_includes:
+    - /etc/pki/ca
     {%- else %}
     fs_includes: []
     {%- endif %}
     fs_excludes: []
+{%- endif %}
 {%- endif %}
