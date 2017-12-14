@@ -256,8 +256,10 @@ def _install(mpt):
     boot_, tmppath = (prep_bootstrap(mpt)
              or salt.syspaths.BOOTSTRAP)
     # Exec the chroot command
+    arg = 'stable {0}'.format('.'.join(salt.version.__version__.split('.')[:2]))
     cmd = 'if type salt-minion; then exit 0; '
-    cmd += 'else sh {0} -c /tmp; fi'.format(os.path.join(tmppath, 'bootstrap-salt.sh'))
+    cmd += 'else sh {0} -c /tmp {1}; fi'.format(
+        os.path.join(tmppath, 'bootstrap-salt.sh'), arg)
     return not __salt__['cmd.run_chroot'](mpt, cmd, python_shell=True)['retcode']
 
 
