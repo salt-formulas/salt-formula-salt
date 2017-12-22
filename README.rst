@@ -521,6 +521,15 @@ useful for cases where you need to set no_proxy lists.
       minion:
         backend: urllib2
 
+Salt minion using environment variables defined in /etc/default/salt-minion for
+upstart based Ubuntu and in /etc/environment for Ubuntu with systemd.
+
+.. code-block:: yaml
+
+    salt:
+      minion:
+        env_vars:
+          engine: file
 
 Salt minion with PKI certificate authority (CA)
 

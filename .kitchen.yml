@@ -86,6 +86,7 @@ suites:
         minion_local_pillar.sls: tests/pillar/minion_local_pillar.sls
         minion_local_reclass.sls: tests/pillar/minion_local_reclass.sls
         minion_backend_urllib.sls: tests/pillar/minion_backend_urllib.sls
+        minion_env_vars.sls: tests/pillar/minion_env_vars.sls
 
   - name: master-default
     provisioner:

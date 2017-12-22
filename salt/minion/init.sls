@@ -11,3 +11,6 @@ include:
 {%- if pillar.salt.minion.proxy_minion is defined %}
 - salt.minion.proxy
 {%- endif %}
+{%- if pillar.salt.minion.env_vars is defined %}
+- salt.minion.env_vars
+{%- endif %}
