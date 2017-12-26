@@ -132,7 +132,7 @@ def schema_validate(service, role):
         data = 'Schema is valid'
     except SchemaError as exc:
         LOG.error("SchemaError:{}".format(exc))
-        data = repr(exc)
+        raise Exception("SchemaError")
     return {'{}-{}'.format(service, role): data}
 
 
@@ -154,10 +154,15 @@ def model_validate(service=None, role=None):
         data = 'Model is valid'
     except SchemaError as exc:
         LOG.error("SchemaError:{}".format(exc))
-        data = repr(exc)
+        raise Exception("SchemaError")
     except ValidationError as exc:
         LOG.error("ValidationError:{}\nInstance:{}\n"
-                  "SchemaPath:{}".format(exc.message, exc.instance,
+                  "Schema title:{}\n"
+                  "SchemaPath:{}".format(exc.message,
+                                         exc.instance,
+                                         exc.schema.get(
+                                             "title",
+                                             "Schema title not set!"),
                                          exc.schema_path))
         raise Exception("ValidationError")
     return {'{}-{}'.format(service, role): data}
@@ -176,10 +181,15 @@ def data_validate(model, schema):
         data = 'Model is valid'
     except SchemaError as exc:
         LOG.error("SchemaError:{}".format(exc))
-        data = str(exc)
+        raise Exception("SchemaError")
     except ValidationError as exc:
         LOG.error("ValidationError:{}\nInstance:{}\n"
-                  "SchemaPath:{}".format(exc.message, exc.instance,
+                  "Schema title:{}\n"
+                  "SchemaPath:{}".format(exc.message,
+                                         exc.instance,
+                                         exc.schema.get(
+                                             "title",
+                                             "Schema title not set!"),
                                          exc.schema_path))
         raise Exception("ValidationError")
     return data
@@ -214,9 +224,10 @@ def schema_from_tests(service):
             except Exception as exc:
                 LOG.error('{}: {}'.format(pillar, repr(exc)))
     if service not in raw_data.keys():
-        raise Exception(
-            "Could not find applicable  data "
-            "for:{}\n at:{}".format(service, _get_base_dir()))
+        LOG.error("Could not find applicable  data "
+                  "for:{}\n at:{}".format(service, _get_base_dir()))
+        raise Exception("DataError")
+
     data = raw_data[service]
     output = {}
     for role_name, role in data.items():
