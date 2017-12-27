@@ -69,6 +69,7 @@ salt_minion_cert_{{ cert_name }}_dirs:
     {% if cert.country is defined %}- C: {{ cert.country }}{%- endif %}
     {% if cert.locality is defined %}- L: {{ cert.locality }}{%- endif %}
     {% if cert.organization is defined %}- O: {{ cert.organization }}{%- endif %}
+    {% if cert.organization_name is defined %}- organizationName: {{ cert.organization_name }}{%- endif %}
     {% if cert.signing_private_key is defined and cert.signing_cert is defined %}
     - signing_private_key: "{{ cert.signing_private_key }}"
     - signing_cert: "{{ cert.signing_cert }}"
