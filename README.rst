@@ -476,6 +476,21 @@ Salt SSH with root using password
    :language: yaml
 
 
+Common salt config options
+--------------------------
+
+Pass pillar render error to minion log.
+
+.. Note: When set to `False` this option is great for debuging. However it is not recomended for
+         any production environment as it may contain templating data as passwords, etc...,
+         that minion should not have.
+
+.. code-block:: yaml
+
+    salt:
+      master:
+        pillar_safe_render_error: False
+
 Salt minion
 -----------
 

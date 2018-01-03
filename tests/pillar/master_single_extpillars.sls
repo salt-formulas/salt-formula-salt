@@ -17,6 +17,7 @@ salt:
     command_timeout: 5
     worker_threads: 2
     base_environment: prd
+    pillar_safe_render_error: False
     #environment:
     # prd:
     #   formula:

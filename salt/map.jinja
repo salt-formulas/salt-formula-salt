@@ -19,6 +19,7 @@ default:
   base_environment: dev
   dir:
     files: /srv/salt/env
+  pillar_safe_render_error: true
   pillar:
     engine: salt
   max_event_size: 100000000
