@@ -354,7 +354,10 @@ def _get_image_info(hypervisor, name, **kwargs):
     elif hypervisor in ['kvm', 'qemu']:
         ret['disktype'] = 'qcow2'
         ret['filename'] = '{0}{1}'.format(name, '.qcow2')
-        ret['pool'] = __salt__['config.option']('virt.images')
+        if 'img_dest' in kwargs:
+            ret['pool'] = kwargs['img_dest']
+        else:
+            ret['pool'] = __salt__['config.option']('virt.images')
     return ret
 
 
@@ -408,10 +411,11 @@ def _disk_profile(profile, hypervisor, **kwargs):
                    'pool': '[{0}] '.format(kwargs.get('pool', '0'))
                   }
     elif hypervisor in ['qemu', 'kvm']:
-        overlay = {'format': 'qcow2',
-                   'model': 'virtio',
-                   'pool': __salt__['config.option']('virt.images')
-                  }
+        if 'img_dest' in kwargs:
+            pool = kwargs['img_dest']
+        else:
+            pool = __salt__['config.option']('virt.images')
+        overlay = {'format': 'qcow2', 'model': 'virtio', 'pool': pool}
     else:
         overlay = {}
 
@@ -589,7 +593,8 @@ def init(name,
                     xml = _gen_vol_xml(name,
                                        disk_name,
                                        args['size'],
-                                       hypervisor)
+                                       hypervisor,
+                                       **kwargs)
                     define_vol_xml_str(xml)
 
             elif hypervisor in ['qemu', 'kvm']:
@@ -599,7 +604,10 @@ def init(name,
                 # disk size TCP cloud
                 disk_size = args['size']
 
-                img_dir = __salt__['config.option']('virt.images')
+                if 'img_dest' in kwargs:
+                    img_dir = kwargs['img_dest']
+                else:
+                    img_dir = __salt__['config.option']('virt.images')
                 img_dest = os.path.join(
                     img_dir,
                     name,

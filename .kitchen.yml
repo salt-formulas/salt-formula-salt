@@ -149,6 +149,7 @@ suites:
         control_cloud_digitalocean.sls: tests/pillar/control_cloud_digitalocean.sls
         control_cloud_openstack.sls: tests/pillar/control_cloud_openstack.sls
         control_virt.sls: tests/pillar/control_virt.sls
+        control_virt_custom.sls: tests/pillar/control_virt_custom.sls
 
   - name: minion_multi_master_failover
     provisioner:

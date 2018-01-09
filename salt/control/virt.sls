@@ -30,6 +30,7 @@ update-guestfs-appliance:
 
 {%- set size = control.size.get(node.size) %}
 
+
 salt_control_virt_{{ cluster_name }}_{{ node_name }}:
   module.run:
   - name: virtng.init
@@ -44,6 +45,9 @@ salt_control_virt_{{ cluster_name }}_{{ node_name }}:
       seed: True
       serial_type: pty
       console: True
+      {%- if node.img_dest is defined %}
+      img_dest: {{ node.img_dest }}
+      {%- endif %}
   - unless: virsh list --all --name| grep -E "^{{ node_name }}.{{ cluster.domain }}$"
 
 #salt_control_seed_{{ cluster_name }}_{{ node_name }}:
@@ -61,9 +65,9 @@ salt_virt_autostart_{{ cluster_name }}_{{ node_name }}:
   - vm_: {{ node_name }}.{{ cluster.domain }}
   - state: true
   - unless: virsh list --autostart --name| grep -E "^{{ node_name }}.{{ cluster.domain }}$"
-  
+
 {%- endif %}
-  
+
 {%- endif %}
 
 {%- endfor %}

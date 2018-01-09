@@ -574,6 +574,11 @@ Salt virt with KVM cluster
 .. literalinclude:: tests/pillar/control_virt.sls
    :language: yaml
 
+salt virt with custom destination for image file
+
+.. literalinclude:: tests/pillar/control_virt_custom.sls
+   :language: yaml
+
 
 Usage
 =====
