@@ -1,0 +1,7 @@
+parameters:
+  salt:
+    syndic:
+      enabled: true
+      masters:
+      - host: ${_param:salt_syndic_master_address_01}
+      - host: ${_param:salt_syndic_master_address_02}
