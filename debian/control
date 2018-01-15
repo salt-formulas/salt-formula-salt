@@ -11,7 +11,7 @@ Vcs-Git: https://github.com/tcpcloud/salt-formula-salt.git
 
 Package: salt-formula-salt
 Architecture: all
-Depends: ${misc:Depends}, salt-master, reclass,
+Depends: ${misc:Depends},
  salt-formula-git, salt-formula-reclass
 Description: Salt salt formula
  Install and configure Salt masters and minions.
