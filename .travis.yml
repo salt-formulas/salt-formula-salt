@@ -17,16 +17,18 @@ install:
   - bundle install
 
 env:
-  - PLATFORM=trevorj/salty-whales:trusty SUITE=minion-default
-  - PLATFORM=trevorj/salty-whales:xenial SUITE=minion-default
-  - PLATFORM=trevorj/salty-whales:trusty SUITE=master-default
-  - PLATFORM=trevorj/salty-whales:xenial SUITE=master-default
-  - PLATFORM=trevorj/salty-whales:trusty SUITE=minion-default
-  - PLATFORM=trevorj/salty-whales:xenial SUITE=minion-default
+
   - PLATFORM=trevorj/salty-whales:trusty SUITE=control-default
-  - PLATFORM=trevorj/salty-whales:xenial SUITE=control-default
+  - PLATFORM=trevorj/salty-whales:trusty SUITE=master-default
+  - PLATFORM=trevorj/salty-whales:trusty SUITE=minion-default
   - PLATFORM=trevorj/salty-whales:trusty SUITE=minion-multi-master-failover
+  - PLATFORM=trevorj/salty-whales:xenial SUITE=control-default
+  - PLATFORM=trevorj/salty-whales:xenial SUITE=master-default
+  - PLATFORM=trevorj/salty-whales:xenial SUITE=minion-default
   - PLATFORM=trevorj/salty-whales:xenial SUITE=minion-multi-master-failover
+# TODO, once 18.04 LTS Bionic Beaver is released, rename trusty to bionic
+  - PLATFORM=trevorj/salty-whales:bionic SUITE=master-default
+  - PLATFORM=trevorj/salty-whales:bionic SUITE=minion-default
 
 before_script:
   - set -o pipefail
