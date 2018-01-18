@@ -1,0 +1,8 @@
+{% from "salt/map.jinja" import master with context %}
+project: {{ master.pillar.project }}
+host: {{ master.pillar.host }}
+port: {{ master.pillar.port }}
+{%- if master.pillar.username is defined %}
+username: {{ master.pillar.username }}
+password: {{ master.pillar.password }}
+{%- endif %}

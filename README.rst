@@ -28,6 +28,21 @@ Salt master with reclass ENC metadata backend
 .. literalinclude:: tests/pillar/master_single_reclass.sls
    :language: yaml
 
+Salt master with Architect ENC metadata backend
+
+.. code-block:: yaml
+
+    salt:
+      master:
+        enabled: true
+        pillar:
+          engine: architect
+          project: project-name
+          host: architect-api
+          port: 8181
+          username: salt
+          password: password
+
 Salt master with multiple ext_pillars
 
 .. literalinclude:: tests/pillar/master_single_extpillars.sls
@@ -150,7 +165,6 @@ Salt master with logging handlers
               host: 127.0.0.1
               port: 9999
 
-
 Salt engine definition for saltgraph metadata collector
 
 .. code-block:: yaml
@@ -165,6 +179,21 @@ Salt engine definition for saltgraph metadata collector
             user: salt
             password: salt
             database: salt
+
+Salt engine definition for Architect service
+
+.. code-block:: yaml
+
+    salt:
+      master:
+        engine:
+          architect:
+            engine: architect
+            project: project-name
+            host: architect-api
+            port: 8181
+            username: salt
+            password: password
 
 Salt engine definition for sending events from docker events
 

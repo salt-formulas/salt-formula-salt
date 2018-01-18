@@ -31,6 +31,25 @@ include:
 
 {%- endif %}
 
+{%- elif master.pillar.engine == 'architect' %}
+
+salt_pillar_architect_package:
+  pip.installed:
+    - name: architect-client
+
+salt_pillar_architect_package_config_dir:
+  file.directory:
+  - name: /etc/architect
+
+salt_pillar_architect_package_config_file:
+  file.managed:
+  - name: /etc/architect/client.yml
+  - source: salt://salt/files/architect.yml
+  - user: root
+  - template: jinja
+  - require:
+    - file: salt_pillar_architect_package_config_dir
+
 {%- elif master.pillar.engine == 'reclass' %}
 
 include:
