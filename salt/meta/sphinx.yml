@@ -8,7 +8,7 @@ doc:
       name: minion
       param:
         version:
-          value: {{ salt['cmd.run']('salt-minion --version')|replace('salt-minion ', '') }}
+          value: {{ salt['cmd.shell']('salt-minion --version')|replace('salt-minion ', '') }}
   {%- endif %}
   {%- if pillar.salt.master is defined %}
   {%- from "salt/map.jinja" import master with context %}
@@ -16,5 +16,5 @@ doc:
       name: master
       param:
         version:
-          value: {{ salt['cmd.run']('salt --version')|replace('salt ', '') }}
+          value: {{ salt['cmd.shell']('salt --version')|replace('salt ', '') }}
   {%- endif %}
