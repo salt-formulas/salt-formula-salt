@@ -59,6 +59,34 @@ salt_minion_config_{{ service_name }}_{{ name }}_validity_check:
       - cmd: salt_minion_service_restart
       {%- endfor %}
     {%- endif %}
+
+    {%- if support_yaml and support_yaml.get('dependency', {}) %}
+      {%- if support_yaml.get('engine', 'pkg') == 'pkg' %}
+
+salt_minion_{{ service_name }}_dependencies:
+  pkg.installed:
+    - names: {{ support_yaml.pkgs }}
+    - onchanges_in:
+      - cmd: salt_minion_service_restart
+      {%- elif support_yaml.engine == 'pip' %}
+        {%- if support_yaml.get('pkgs') %}
+salt_minion_{{ service_name }}_dependencies:
+  pip.installed:
+    - names: {{ support_yaml.pkgs }}
+    - onchanges_in:
+      - cmd: salt_minion_service_restart
+    - require_in:
+      - pip: salt_minion_{{ service_name }}_dependencies_pip
+        {%- endif %}
+
+salt_minion_{{ service_name }}_dependencies_pip:
+  pip.installed:
+    - names: {{ support_yaml.python_pkgs }}
+    - onchanges_in:
+      - cmd: salt_minion_service_restart
+
+      {%- endif %}
+    {%- endif %}
 {%- endfor %}
 
 salt_minion_service:
