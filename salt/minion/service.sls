@@ -60,19 +60,21 @@ salt_minion_config_{{ service_name }}_{{ name }}_validity_check:
       {%- endfor %}
     {%- endif %}
 
-    {%- if support_yaml and support_yaml.get('dependency', {}) %}
-      {%- if support_yaml.get('engine', 'pkg') == 'pkg' %}
+    {%- if support_yaml %}
+    {%- set dependency = support_yaml.get('dependency') %}
+    {%- if dependency %}
+      {%- if dependency.get('engine', 'pkg') == 'pkg' %}
 
 salt_minion_{{ service_name }}_dependencies:
   pkg.installed:
-    - names: {{ support_yaml.pkgs }}
+    - names: {{ dependency.get('pkgs') }}
     - onchanges_in:
       - cmd: salt_minion_service_restart
-      {%- elif support_yaml.engine == 'pip' %}
-        {%- if support_yaml.get('pkgs') %}
+      {%- elif dependency.get('engine', 'pkg') == 'pip' %}
+        {%- if dependency.get('pkgs') %}
 salt_minion_{{ service_name }}_dependencies:
   pip.installed:
-    - names: {{ support_yaml.pkgs }}
+    - names: {{ dependency.get('pkgs') }}
     - onchanges_in:
       - cmd: salt_minion_service_restart
     - require_in:
@@ -81,11 +83,12 @@ salt_minion_{{ service_name }}_dependencies:
 
 salt_minion_{{ service_name }}_dependencies_pip:
   pip.installed:
-    - names: {{ support_yaml.python_pkgs }}
+    - names: {{ dependency.get('python_pkgs') }}
     - onchanges_in:
       - cmd: salt_minion_service_restart
 
       {%- endif %}
+    {%- endif %}
     {%- endif %}
 {%- endfor %}
 
