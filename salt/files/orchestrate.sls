@@ -30,7 +30,7 @@ args: {{ args }}
 
         {%- if salt['file.directory_exists']('/srv/salt/env/'+environment_name+'/'+formula.0+'/orchestrate') and formula|length > 1 and salt['file.file_exists']('/srv/salt/env/'+environment_name+'/'+formula.0+'/orchestrate/'+formula.1+'.sls') %}
 
-{{ salt['cmd.run']('cat /srv/salt/env/'+environment_name+'/'+formula.0+'/orchestrate/'+formula.1+'.sls') }}
+{{ salt['cmd.shell']('cat /srv/salt/env/'+environment_name+'/'+formula.0+'/orchestrate/'+formula.1+'.sls') }}
 
         {%- else %}
           {%- if args[ state.0 ] is defined %}

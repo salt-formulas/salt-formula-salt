@@ -313,7 +313,7 @@ def _qemu_image_info(path):
     Detect information for the image at path
     '''
     ret = {}
-    out = __salt__['cmd.run']('qemu-img info {0}'.format(path))
+    out = __salt__['cmd.shell']('qemu-img info {0}'.format(path))
 
     match_map = {'size': r'virtual size: \w+ \((\d+) byte[s]?\)',
                  'format': r'file format: (\w+)'}
@@ -332,7 +332,7 @@ def _image_type(vda):
     '''
     Detect what driver needs to be used for the given image
     '''
-    out = __salt__['cmd.run']('qemu-img info {0}'.format(vda))
+    out = __salt__['cmd.shell']('qemu-img info {0}'.format(vda))
     if 'file format: qcow2' in out:
         return 'qcow2'
     else:
@@ -1599,7 +1599,7 @@ def is_kvm_hyper():
     except IOError:
         # No /proc/modules? Are we on Windows? Or Solaris?
         return False
-    return 'libvirtd' in __salt__['cmd.run'](__grains__['ps'])
+    return 'libvirtd' in __salt__['cmd.shell'](__grains__['ps'])
 
 
 def is_xen_hyper():
@@ -1624,7 +1624,7 @@ def is_xen_hyper():
     except IOError:
         # No /proc/modules? Are we on Windows? Or Solaris?
         return False
-    return 'libvirtd' in __salt__['cmd.run'](__grains__['ps'])
+    return 'libvirtd' in __salt__['cmd.shell'](__grains__['ps'])
 
 
 def is_hyper():

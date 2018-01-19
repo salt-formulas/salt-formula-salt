@@ -18,6 +18,17 @@ install:
 
 env:
 
+  - PLATFORM=trevorj/salty-whales:trusty-2017.7 SUITE=control-default
+  - PLATFORM=trevorj/salty-whales:trusty-2017.7 SUITE=master-default
+  - PLATFORM=trevorj/salty-whales:trusty-2017.7 SUITE=minion-default
+  - PLATFORM=trevorj/salty-whales:trusty-2017.7 SUITE=minion-multi-master-failover
+  - PLATFORM=trevorj/salty-whales:xenial-2017.7 SUITE=control-default
+  - PLATFORM=trevorj/salty-whales:xenial-2017.7 SUITE=master-default
+  - PLATFORM=trevorj/salty-whales:xenial-2017.7 SUITE=minion-default
+  - PLATFORM=trevorj/salty-whales:xenial-2017.7 SUITE=minion-multi-master-failover
+# TODO, once 18.04 LTS Bionic Beaver is released, rename trusty to bionic
+  - PLATFORM=trevorj/salty-whales:bionic-2017.7 SUITE=master-default
+  - PLATFORM=trevorj/salty-whales:bionic-2017.7 SUITE=minion-default
   - PLATFORM=trevorj/salty-whales:trusty SUITE=control-default
   - PLATFORM=trevorj/salty-whales:trusty SUITE=master-default
   - PLATFORM=trevorj/salty-whales:trusty SUITE=minion-default
