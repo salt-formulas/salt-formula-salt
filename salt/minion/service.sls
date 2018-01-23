@@ -73,7 +73,7 @@ salt_minion_{{ service_name }}_dependencies:
       {%- elif dependency.get('engine', 'pkg') == 'pip' %}
         {%- if dependency.get('pkgs') %}
 salt_minion_{{ service_name }}_dependencies:
-  pip.installed:
+  pkg.installed:
     - names: {{ dependency.get('pkgs') }}
     - onchanges_in:
       - cmd: salt_minion_service_restart
