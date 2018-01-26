@@ -1,0 +1,7 @@
+{%- from "salt/map.jinja" import minion with context -%}
+{%- if minion.env_vars.variables is defined -%}
+{%- for envvar_name, envvar_value in minion.env_vars.get('variables', {}).iteritems() %}
+export {{ envvar_name }}={% if envvar_value is string -%}{{ envvar_value }}{%- else -%}{{ envvar_value|join(',') }}
+{%- endif %}
+{%- endfor %}
+{%- endif %}

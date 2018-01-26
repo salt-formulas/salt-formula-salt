@@ -148,6 +148,17 @@ RedHat:
 }, merge=pillar.salt.minion.get('proxy_minion', {})) %}
 {%- endif %}
 
+{%- if pillar.salt.minion.env_vars is defined %}
+{% set env_vars = salt['grains.filter_by']({
+    'Debian': {
+        'engine': 'file'
+    },
+    'RedHat': {
+        'engine': 'file'
+    },
+}, merge=pillar.salt.minion.get('env_vars', {})) %}
+{%- endif %}
+
 {%- endif %}
 
 
