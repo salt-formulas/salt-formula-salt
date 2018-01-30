@@ -15,7 +15,7 @@ Sample Metadata
 ===============
 
 
-Salt master
+Salt Master
 -----------
 
 Salt master with base formulas and pillar metadata backend
@@ -236,6 +236,21 @@ Configure verbosity of state output (used for `salt` command)
       master:
         state_output: changes
 
+Pass pillar render error to minion log
+
+.. note:: When set to `False` this option is great for debuging.
+   However it is not recomended for any production environment as it may contain
+   templating data as passwords, etc... ,  that minion should not expose.
+
+.. code-block:: yaml
+
+    salt:
+      master:
+        pillar_safe_render_error: False
+
+
+Event/Reactor Systems
+~~~~~~~~~~~~~~~~~~~~~
 
 Salt synchronise node pillar and modules after start
 
@@ -325,8 +340,8 @@ Event to trigger the key removal
     salt-call event.send 'salt/key/remove'
 
 
-Encrypted pillars
------------------
+Encrypted Pillars
+~~~~~~~~~~~~~~~~~
 
 Note: NACL + below configuration will be available in Salt > 2017.7.
 
@@ -398,7 +413,8 @@ NACL within template/native pillars:
       cert_key: {{salt.nacl.dec_file('/srv/salt/env/dev/certs/example.com/cert.nacl')|json}}
       cert_key2: {{salt.nacl.dec_file('salt:///certs/example.com/cert2.nacl')|json}}
 
-Salt syndic
+
+Salt Syndic
 -----------
 
 The master of masters
@@ -434,8 +450,74 @@ Syndicated master with multiple master of masters
         timeout: 5
 
 
-Salt-minion proxy
------------------
+Salt Minion
+-----------
+
+Simplest Salt minion setup with central configuration node
+
+.. code-block:: yaml
+
+.. literalinclude:: tests/pillar/minion_master.sls
+   :language: yaml
+
+Multi-master Salt minion setup
+
+.. literalinclude:: tests/pillar/minion_multi_master.sls
+   :language: yaml
+
+Salt minion with salt mine options
+
+.. literalinclude:: tests/pillar/minion_mine.sls
+   :language: yaml
+
+Salt minion with graphing dependencies
+
+.. literalinclude:: tests/pillar/minion_graph.sls
+   :language: yaml
+
+Salt minion behind HTTP proxy
+
+.. code-block:: yaml
+
+    salt:
+      minion:
+        proxy:
+          host: 127.0.0.1
+          port: 3128
+
+Salt minion to specify non-default HTTP backend. The default tornado backend
+does not respect HTTP proxy settings set as environment variables. This is
+useful for cases where you need to set no_proxy lists.
+
+.. code-block:: yaml
+
+    salt:
+      minion:
+        backend: urllib2
+
+
+Salt minion with PKI certificate authority (CA)
+
+.. literalinclude:: tests/pillar/minion_pki_ca.sls
+   :language: yaml
+
+Salt minion using PKI certificate
+
+.. literalinclude:: tests/pillar/minion_pki_cert.sls
+   :language: yaml
+
+Salt minion trust CA certificates issued by salt CA on a specific host (ie: salt-master node)
+
+.. code-block:: yaml
+
+  salt:
+    minion:
+      trusted_ca_minions:
+        - cfg01
+
+
+Salt Minion Proxy
+~~~~~~~~~~~~~~~~~
 
 Salt proxy pillar
 
@@ -487,7 +569,7 @@ Proxy pillar for JunOS device
 
 
 Salt SSH
---------
+~~~~~~~~
 
 Salt SSH with sudoer using key
 
@@ -503,96 +585,6 @@ Salt SSH with root using password
 
 .. literalinclude:: tests/pillar/master_ssh_minion_root.sls
    :language: yaml
-
-
-Common salt config options
---------------------------
-
-Pass pillar render error to minion log.
-
-.. Note: When set to `False` this option is great for debuging. However it is not recomended for
-         any production environment as it may contain templating data as passwords, etc...,
-         that minion should not have.
-
-.. code-block:: yaml
-
-    salt:
-      master:
-        pillar_safe_render_error: False
-
-Salt minion
------------
-
-Simplest Salt minion setup with central configuration node
-
-.. code-block:: yaml
-
-.. literalinclude:: tests/pillar/minion_master.sls
-   :language: yaml
-
-Multi-master Salt minion setup
-
-.. literalinclude:: tests/pillar/minion_multi_master.sls
-   :language: yaml
-
-Salt minion with salt mine options
-
-.. literalinclude:: tests/pillar/minion_mine.sls
-   :language: yaml
-
-Salt minion with graphing dependencies
-
-.. literalinclude:: tests/pillar/minion_graph.sls
-   :language: yaml
-
-Salt minion behind HTTP proxy
-
-.. code-block:: yaml
-
-    salt:
-      minion:
-        proxy:
-          host: 127.0.0.1
-          port: 3128
-
-Salt minion to specify non-default HTTP backend. The default tornado backend
-does not respect HTTP proxy settings set as environment variables. This is
-useful for cases where you need to set no_proxy lists.
-
-.. code-block:: yaml
-
-    salt:
-      minion:
-        backend: urllib2
-
-Salt minion using environment variables defined in /etc/default/salt-minion for
-upstart based Ubuntu and in /etc/environment for Ubuntu with systemd.
-
-.. code-block:: yaml
-
-    salt:
-      minion:
-        env_vars:
-          engine: file
-
-Salt minion with PKI certificate authority (CA)
-
-.. literalinclude:: tests/pillar/minion_pki_ca.sls
-   :language: yaml
-
-Salt minion using PKI certificate
-
-.. literalinclude:: tests/pillar/minion_pki_cert.sls
-   :language: yaml
-
-Salt minion trust CA certificates issued by salt CA on a specific host (ie: salt-master node)
-
-.. code-block:: yaml
-
-  salt:
-    minion:
-      trusted_ca_minions:
-        - cfg01
 
 Salt control (cloud/kvm/docker)
 -------------------------------
@@ -634,8 +626,8 @@ Debug LIBCLOUD for salt-cloud connection
     export LIBCLOUD_DEBUG=/dev/stderr; salt-cloud --list-sizes provider_name --log-level all
 
 
-More Information
-================
+References
+==========
 
 * http://salt.readthedocs.org/en/latest/
 * https://github.com/DanielBryan/salt-state-graph
