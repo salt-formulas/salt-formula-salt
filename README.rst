@@ -340,7 +340,60 @@ Event to trigger the key removal
     salt-call event.send 'salt/key/remove'
 
 
-Encrypted Pillars
+Jinja options
+-------------
+
+Use following options to update default jinja renderer options. Salt recognize Jinja options for templates and for sls files.
+
+For full list of options check jinja documentation: http://jinja.pocoo.org/docs/api/#high-level-api.
+
+.. code-block:: yaml
+
+
+  salt:
+    renderer:
+      # for templates
+      jinja: &jina_env
+        # Default Jinja environment options
+        block_start_string: '{%'
+        block_end_string: '%}'
+        variable_start_string: '{{'
+        variable_end_string: '}}'
+        comment_start_string: '{#'
+        comment_end_string: '#}'
+        keep_trailing_newline: False
+        newline_sequence: '\n'
+
+        # Next two are enabled by default in Salt
+        trim_blocks: True
+        lstrip_blocks: True
+
+        # Next two are not enabled by default in Salt
+        # but worth to consider to enable in future for salt-formulas
+        line_statement_prefix: '%'
+        line_comment_prefix: '##'
+
+      # for .sls state files
+      jinja_sls: *jinja_env
+
+
+
+With the line_statement/comment* _prefix options enabled following code statements are valid:
+
+.. code-block:: yaml
+   %- set myvar = 'one'
+
+   ## You can mix even with '{%'
+   {%- set myvar = 'two' %} ## comment
+   %- set mylist = ['one', 'two', 'three'] ## comment
+
+   ## comment
+   %- for item in mylist:  ## comment
+   {{- item }}
+   %- endfor
+
+
+Encrypted pillars
 ~~~~~~~~~~~~~~~~~
 
 Note: NACL + below configuration will be available in Salt > 2017.7.

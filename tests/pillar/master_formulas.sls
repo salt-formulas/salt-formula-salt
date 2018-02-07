@@ -49,3 +49,30 @@ salt:
             source: git
             address: 'https://github.com/salt-formulas/salt-formula-bind.git'
             revision: master
+  renderer:
+    jinja:
+      block_start_string: {{ '"{%"' }}
+      block_end_string: {{ '"%}"' }}
+      variable_start_string: {{ '"{{"' }}
+      variable_end_string: {{ '"}}"' }}
+      comment_start_string: {{ '"{#"' }}
+      comment_end_string: {{ '"#}"' }}
+      keep_trailing_newline: False
+      newline_sequence: '\n'
+      trim_blocks: True
+      lstrip_blocks: True
+      line_statement_prefix: "%"
+      line_comment_prefix: "##"
+    jinja_sls:
+      block_start_string: {{ '"{%"' }}
+      block_end_string: {{ '"%}"' }}
+      variable_start_string: {{ '"{{"' }}
+      variable_end_string: {{ '"}}"' }}
+      comment_start_string: {{ '"{#"' }}
+      comment_end_string: {{ '"#}"' }}
+      keep_trailing_newline: False
+      newline_sequence: '\n'
+      trim_blocks: True
+      lstrip_blocks: True
+      line_statement_prefix: "%"
+      line_comment_prefix: "##"

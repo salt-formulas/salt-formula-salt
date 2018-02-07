@@ -13,7 +13,7 @@ install:
     gem 'kitchen-docker'
     gem 'kitchen-inspec'
     gem 'inspec'
-    gem 'kitchen-salt', :git => 'https://github.com/salt-formulas/kitchen-salt.git'
+    gem 'kitchen-salt' #, :git => 'https://github.com/salt-formulas/kitchen-salt.git'
   - bundle install
 
 env:

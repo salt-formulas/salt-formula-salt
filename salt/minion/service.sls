@@ -1,4 +1,4 @@
-{%- from "salt/map.jinja" import minion with context %}
+{%- from "salt/map.jinja" import minion,renderer with context %}
 {%- if minion.enabled %}
 
 {%- if minion.source.get('engine', 'pkg') == 'pkg' %}
@@ -91,6 +91,22 @@ salt_minion_{{ service_name }}_dependencies_pip:
     {%- endif %}
     {%- endif %}
 {%- endfor %}
+
+
+{%- if renderer | length > 0 %}
+
+/etc/salt/minion.d/_renderer.conf:
+  file.managed:
+  - source: salt://salt/files/_renderer.conf
+  - user: root
+  - template: jinja
+  - require:
+    - {{ minion.install_state }}
+  - watch_in:
+    - service: salt_minion_service
+
+{%- endif %}
+
 
 salt_minion_service:
   service.running:

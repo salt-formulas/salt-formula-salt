@@ -201,6 +201,12 @@ RedHat:
   - pkg-config
 {%- endload %}
 
+{%- load_yaml as renderer_defaults %}
+default:
+  renderer: {}
+{%- endload %}
+{%- set renderer = salt['grains.filter_by'](renderer_defaults, merge=salt['pillar.get']('salt:renderer')) %}
+
 {%- if pillar.salt.control is defined %}
 {%- set raw_control = salt['grains.filter_by'](control_specific, merge=salt['pillar.get']('salt:control')) %}
 {%- set control = salt['grains.filter_by'](control_common, merge=raw_control) %}
