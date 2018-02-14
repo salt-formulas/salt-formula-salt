@@ -69,6 +69,7 @@ def collect_minion_info():
     data = {
         'pillar': __salt__['pillar.data'](),
         'grain': __salt__['grains.items'](),
+        'lowstate': __salt__['state.show_lowstate'](),
     }
     output = _client().push_salt_minion({data['grain']['id']: data})
     return output
