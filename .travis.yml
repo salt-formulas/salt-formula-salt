@@ -18,28 +18,18 @@ install:
 
 env:
 
-  - PLATFORM=trevorj/salty-whales:trusty-2017.7 SUITE=control-default
-  - PLATFORM=trevorj/salty-whales:trusty-2017.7 SUITE=master-default
-  - PLATFORM=trevorj/salty-whales:trusty-2017.7 SUITE=minion-default
-  - PLATFORM=trevorj/salty-whales:trusty-2017.7 SUITE=minion-multi-master-failover
-  - PLATFORM=trevorj/salty-whales:xenial-2017.7 SUITE=control-default
-  - PLATFORM=trevorj/salty-whales:xenial-2017.7 SUITE=master-default
-  - PLATFORM=trevorj/salty-whales:xenial-2017.7 SUITE=minion-default
-  - PLATFORM=trevorj/salty-whales:xenial-2017.7 SUITE=minion-multi-master-failover
-# TODO, once 18.04 LTS Bionic Beaver is released, rename trusty to bionic
-  - PLATFORM=trevorj/salty-whales:bionic-2017.7 SUITE=master-default
-  - PLATFORM=trevorj/salty-whales:bionic-2017.7 SUITE=minion-default
-  - PLATFORM=trevorj/salty-whales:trusty SUITE=control-default
-  - PLATFORM=trevorj/salty-whales:trusty SUITE=master-default
-  - PLATFORM=trevorj/salty-whales:trusty SUITE=minion-default
-  - PLATFORM=trevorj/salty-whales:trusty SUITE=minion-multi-master-failover
-  - PLATFORM=trevorj/salty-whales:xenial SUITE=control-default
-  - PLATFORM=trevorj/salty-whales:xenial SUITE=master-default
-  - PLATFORM=trevorj/salty-whales:xenial SUITE=minion-default
-  - PLATFORM=trevorj/salty-whales:xenial SUITE=minion-multi-master-failover
-# TODO, once 18.04 LTS Bionic Beaver is released, rename trusty to bionic
-  - PLATFORM=trevorj/salty-whales:bionic SUITE=master-default
-  - PLATFORM=trevorj/salty-whales:bionic SUITE=minion-default
+  - PLATFORM=epcim/salt-formulas:saltstack-ubuntu-xenial-salt-2017.7 SUITE=control-default
+  - PLATFORM=epcim/salt-formulas:saltstack-ubuntu-xenial-salt-2017.7 SUITE=master-default
+  - PLATFORM=epcim/salt-formulas:saltstack-ubuntu-xenial-salt-2017.7 SUITE=minion-default
+  - PLATFORM=epcim/salt-formulas:saltstack-ubuntu-xenial-salt-2017.7 SUITE=minion-multi-master-failover
+  - PLATFORM=epcim/salt-formulas:saltstack-ubuntu-xenial-salt-2016.3 SUITE=control-default
+  - PLATFORM=epcim/salt-formulas:saltstack-ubuntu-xenial-salt-2016.3 SUITE=master-default
+  - PLATFORM=epcim/salt-formulas:saltstack-ubuntu-xenial-salt-2016.3 SUITE=minion-default
+  - PLATFORM=epcim/salt-formulas:saltstack-ubuntu-xenial-salt-2016.3 SUITE=minion-multi-master-failover
+#  - PLATFORM=epcim/salt-formulas:saltstack-ubuntu-bionic-salt-2017.7 SUITE=control-default
+#  - PLATFORM=epcim/salt-formulas:saltstack-ubuntu-bionic-salt-2017.7 SUITE=master-default
+#  - PLATFORM=epcim/salt-formulas:saltstack-ubuntu-bionic-salt-2017.7 SUITE=minion-default
+#  - PLATFORM=epcim/salt-formulas:saltstack-ubuntu-bionic-salt-2017.7 SUITE=minion-multi-master-failover
 
 before_script:
   - set -o pipefail

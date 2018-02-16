@@ -17,10 +17,10 @@ provisioner:
     noservices: true
   vendor_repo:
     - type: apt
-      url: http://apt-mk.mirantis.com/xenial
-      key_url: http://apt-mk.mirantis.com/public.gpg
+      url: http://apt.mirantis.com/xenial
+      key_url: http://apt.mirantis.com/public.gpg
       components: salt
-      distribution: testing
+      distribution: nightly
   state_top:
     base:
       "*":
@@ -59,9 +59,9 @@ verifier:
   sudo: true
 
 platforms:
-  - name: <%=ENV['PLATFORM'] || 'ubuntu-xenial'%>
+  - name: <%=ENV['PLATFORM'] ||  'saltstack-ubuntu-xenial-salt-stable' %>
     driver_config:
-      image: <%=ENV['PLATFORM'] || 'trevorj/salty-whales:xenial'%>
+      image: <%=ENV['PLATFORM'] || 'epcim/salt-formulas:saltstack-ubuntu-xenial-salt-stable'%>
       platform: ubuntu
 
 suites:
