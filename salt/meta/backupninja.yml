@@ -6,7 +6,7 @@ backup:
     {%- if master.get('backup', False) %}
     fs_includes:
     {%- if master.pillar.engine == 'reclass' or (master.pillar.engine == 'composite' and master.pillar.reclass is defined) %}
-    - /srv/salt/reclass/nodes/_generated
+    - /srv/salt/reclass
     {%- endif %}
     - /etc/salt/pki
     {%- if minion.get('backup', False) %}
