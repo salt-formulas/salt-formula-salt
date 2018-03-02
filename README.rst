@@ -225,6 +225,7 @@ Salt master backup configuration
         backup: true
         initial_data:
           engine: backupninja
+          home_dir: remote-backup-home-dir
           source: backup-node-host
           host: original-salt-master-id
 
