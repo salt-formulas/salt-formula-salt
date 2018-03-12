@@ -1,4 +1,4 @@
-{%- from "salt/map.jinja" import master with context %}
+{%- from "salt/map.jinja" import master, renderer with context %}
 {%- if master.enabled %}
 
 {%- if master.source.get('engine', 'pkg') == 'pkg' %}
@@ -61,6 +61,20 @@ salt_master_packages:
 /etc/salt/master.d/_peer.conf:
   file.managed:
   - source: salt://salt/files/_peer.conf
+  - user: root
+  - template: jinja
+  - require:
+    - {{ master.install_state }}
+  - watch_in:
+    - service: salt_master_service
+
+{%- endif %}
+
+{%- if renderer | length > 0 %}
+
+/etc/salt/master.d/_renderer.conf:
+  file.managed:
+  - source: salt://salt/files/_renderer.conf
   - user: root
   - template: jinja
   - require:
