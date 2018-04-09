@@ -41,6 +41,9 @@ salt_control_virt_{{ cluster_name }}_{{ node_name }}:
   - start: True
   - disk: {{ size.disk_profile }}
   - nic: {{ size.net_profile }}
+  {%- if node.rng is defined %}
+  - rng: {{ node.rng }}
+  {%- endif %}
   - kwargs:
       seed: True
       serial_type: pty

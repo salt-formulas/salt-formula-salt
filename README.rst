@@ -340,6 +340,47 @@ Event to trigger the key removal
 
     salt-call event.send 'salt/key/remove'
 
+Control VM provisioning
+
+.. code-block:: yaml
+
+    virt:
+      disk:
+        three_disks:
+          - system:
+              size: 4096
+              image: ubuntu.qcow
+          - repository_snapshot:
+              size: 8192
+              image: snapshot.qcow
+          - cinder-volume:
+              size: 2048
+
+    salt:
+      control:
+        enabled: true
+        virt_enabled: true
+        size:
+          medium_three_disks:
+            cpu: 2
+            ram: 4
+            disk_profile: three_disks
+        cluster:
+          mycluster:
+            domain: neco.virt.domain.com
+            engine: virt
+            node:
+              ubuntu1:
+                provider: node01.domain.com
+                image: ubuntu.qcow
+                size: medium
+                img_dest: /var/lib/libvirt/ssdimages
+                rng:
+                  backend: /dev/urandom
+                  model: random
+                  rate:
+                    period: '1800'
+                    bytes: '1500'
 
 Jinja options
 -------------

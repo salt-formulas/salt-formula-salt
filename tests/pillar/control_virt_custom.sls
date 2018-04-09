@@ -53,3 +53,9 @@ salt:
             provider: node03.domain.com
             image: meowbuntu.qcom2
             size: medium_three_disks
+            rng:
+              backend: /dev/urandom
+              model: random
+              rate:
+                period: '1800'
+                bytes: '1500'

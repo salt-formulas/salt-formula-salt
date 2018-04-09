@@ -550,6 +550,7 @@ def init(name,
          start=True,  # pylint: disable=redefined-outer-name
          disk='default',
          saltenv='base',
+         rng={},
          **kwargs):
     '''
     Initialize a new vm
@@ -667,6 +668,28 @@ def init(name,
                                           .format(hypervisor))
 
     xml = _gen_xml(name, cpu, mem, diskp, nicp, hypervisor, **kwargs)
+
+    # TODO: Remove this code and refactor module, when salt-common would have updated libvirt_domain.jinja template
+    if rng:
+        rng_model = rng.get('model', 'random')
+        rng_backend = rng.get('backend', '/dev/urandom')
+        xml_doc = minidom.parseString(xml)
+        rng_xml = xml_doc.createElement("rng")
+        rng_xml.setAttribute("model", "virtio")
+        backend = xml_doc.createElement("backend")
+        backend.setAttribute("model", rng_model)
+        backend.appendChild(xml_doc.createTextNode(rng_backend))
+        rng_xml.appendChild(backend)
+        if 'rate' in rng:
+            rng_rate_period = rng['rate'].get('period', '2000')
+            rng_rate_bytes = rng['rate'].get('bytes', '1234')
+            rate = xml_doc.createElement("rate")
+            rate.setAttribute("period", rng_rate_period)
+            rate.setAttribute("bytes", rng_rate_bytes)
+            rng_xml.appendChild(rate)
+        xml_doc.getElementsByTagName("domain")[0].getElementsByTagName("devices")[0].appendChild(rng_xml)
+        xml = xml_doc.toxml()
+
     define_xml_str(xml)
 
     if start:
