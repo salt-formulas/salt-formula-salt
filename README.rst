@@ -355,6 +355,21 @@ Control VM provisioning
               image: snapshot.qcow
           - cinder-volume:
               size: 2048
+      nic:
+        control:
+        - name: nic01
+          bridge: br-pxe
+          model: virtio
+        - name: nic02
+          bridge: br-cp
+          model: virtio
+        - name: nic03
+          bridge: br-store-front
+          model: virtio
+        - name: nic04
+          bridge: br-public
+          model: virtio
+
 
     salt:
       control:
@@ -381,6 +396,11 @@ Control VM provisioning
                   rate:
                     period: '1800'
                     bytes: '1500'
+                mac:
+                  nic01: AC:DE:48:AA:AA:AA
+                  nic02: AC:DE:48:AA:AA:BB
+
+
 
 Jinja options
 -------------

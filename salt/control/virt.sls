@@ -51,6 +51,11 @@ salt_control_virt_{{ cluster_name }}_{{ node_name }}:
       {%- if node.img_dest is defined %}
       img_dest: {{ node.img_dest }}
       {%- endif %}
+      {%- if node.mac is defined %}
+      {%- for mac_name, mac in node.mac.items() %}
+      {{ mac_name }}_mac: {{ mac }}
+      {%- endfor %}
+      {%- endif %}
   - unless: virsh list --all --name| grep -E "^{{ node_name }}.{{ cluster.domain }}$"
 
 #salt_control_seed_{{ cluster_name }}_{{ node_name }}:
