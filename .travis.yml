@@ -17,19 +17,26 @@ install:
   - bundle install
 
 env:
-
-  - PLATFORM=epcim/salt-formulas:saltstack-ubuntu-xenial-salt-2017.7 SUITE=control-default
-  - PLATFORM=epcim/salt-formulas:saltstack-ubuntu-xenial-salt-2017.7 SUITE=master-default
-  - PLATFORM=epcim/salt-formulas:saltstack-ubuntu-xenial-salt-2017.7 SUITE=minion-default
-  - PLATFORM=epcim/salt-formulas:saltstack-ubuntu-xenial-salt-2017.7 SUITE=minion-multi-master-failover
-  - PLATFORM=epcim/salt-formulas:saltstack-ubuntu-xenial-salt-2016.3 SUITE=control-default
-  - PLATFORM=epcim/salt-formulas:saltstack-ubuntu-xenial-salt-2016.3 SUITE=master-default
-  - PLATFORM=epcim/salt-formulas:saltstack-ubuntu-xenial-salt-2016.3 SUITE=minion-default
-  - PLATFORM=epcim/salt-formulas:saltstack-ubuntu-xenial-salt-2016.3 SUITE=minion-multi-master-failover
-#  - PLATFORM=epcim/salt-formulas:saltstack-ubuntu-bionic-salt-2017.7 SUITE=control-default
-#  - PLATFORM=epcim/salt-formulas:saltstack-ubuntu-bionic-salt-2017.7 SUITE=master-default
-#  - PLATFORM=epcim/salt-formulas:saltstack-ubuntu-bionic-salt-2017.7 SUITE=minion-default
-#  - PLATFORM=epcim/salt-formulas:saltstack-ubuntu-bionic-salt-2017.7 SUITE=minion-multi-master-failover
+  - PLATFORM=epcim/salt:saltstack-ubuntu-xenial-salt-2016.3 SUITE=control-default
+  - PLATFORM=epcim/salt:saltstack-ubuntu-xenial-salt-2016.3 SUITE=master-default
+  - PLATFORM=epcim/salt:saltstack-ubuntu-xenial-salt-2016.3 SUITE=minion-default
+  - PLATFORM=epcim/salt:saltstack-ubuntu-xenial-salt-2016.3 SUITE=minion-multi-master-failover
+  - PLATFORM=epcim/salt:saltstack-ubuntu-xenial-salt-2017.7 SUITE=control-default
+  - PLATFORM=epcim/salt:saltstack-ubuntu-xenial-salt-2017.7 SUITE=master-default
+  - PLATFORM=epcim/salt:saltstack-ubuntu-xenial-salt-2017.7 SUITE=minion-default
+  - PLATFORM=epcim/salt:saltstack-ubuntu-xenial-salt-2017.7 SUITE=minion-multi-master-failover
+  - PLATFORM=epcim/salt:saltstack-ubuntu-xenial-salt-2018.3 SUITE=control-default
+  - PLATFORM=epcim/salt:saltstack-ubuntu-xenial-salt-2018.3 SUITE=master-default
+  - PLATFORM=epcim/salt:saltstack-ubuntu-xenial-salt-2018.3 SUITE=minion-default
+  - PLATFORM=epcim/salt:saltstack-ubuntu-xenial-salt-2018.3 SUITE=minion-multi-master-failover
+#  - PLATFORM=epcim/salt:saltstack-ubuntu-bionic-salt-2017.7 SUITE=control-default
+#  - PLATFORM=epcim/salt:saltstack-ubuntu-bionic-salt-2017.7 SUITE=master-default
+#  - PLATFORM=epcim/salt:saltstack-ubuntu-bionic-salt-2017.7 SUITE=minion-default
+#  - PLATFORM=epcim/salt:saltstack-ubuntu-bionic-salt-2017.7 SUITE=minion-multi-master-failover
+#  - PLATFORM=epcim/salt:saltstack-ubuntu-bionic-salt-2018.3 SUITE=control-default
+#  - PLATFORM=epcim/salt:saltstack-ubuntu-bionic-salt-2018.3 SUITE=master-default
+#  - PLATFORM=epcim/salt:saltstack-ubuntu-bionic-salt-2018.3 SUITE=minion-default
+#  - PLATFORM=epcim/salt:saltstack-ubuntu-bionic-salt-2018.3 SUITE=minion-multi-master-failover
 
 before_script:
   - set -o pipefail
