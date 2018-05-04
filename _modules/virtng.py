@@ -550,7 +550,7 @@ def init(name,
          start=True,  # pylint: disable=redefined-outer-name
          disk='default',
          saltenv='base',
-         rng={},
+         rng=None,
          **kwargs):
     '''
     Initialize a new vm
@@ -563,6 +563,7 @@ def init(name,
         salt 'hypervisor' virt.init vm_name 4 512 nic=profile disk=profile
     '''
 
+    rng = rng or {'backend':'/dev/urandom'}
     hypervisor = __salt__['config.get']('libvirt:hypervisor', hypervisor)
 
     nicp = _nic_profile(nic, hypervisor, **kwargs)
