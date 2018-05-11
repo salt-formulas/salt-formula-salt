@@ -139,6 +139,30 @@ Salt master with specified formula refs (for example for Gerrit review)
                 address: https://git.openstack.org/openstack/salt-formula-keystone
                 revision: refs/changes/56/123456/1
 
+Salt master logging configuration
+
+.. code-block:: yaml
+
+    salt:
+      master:
+        enabled: true
+        log:
+          level: warning
+          file: '/var/log/salt/master'
+          level_logfile: warning
+
+Salt minion logging configuration
+
+.. code-block:: yaml
+
+    salt:
+      minion:
+        enabled: true
+        log:
+          level: info
+          file: '/var/log/salt/minion'
+          level_logfile: warning
+
 Salt master with logging handlers
 
 .. code-block:: yaml
