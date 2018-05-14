@@ -3,30 +3,30 @@
 server:
   alert:
   {%- if pillar.salt.get('master', {}).get('enabled', False)  %}
-    SaltMasterProcessDown:
+    {%- raw %}
+    SaltMasterServiceDown:
       if: >-
         procstat_running{process_name="salt-master"} == 0
-      {%- raw %}
       labels:
-        severity: warning
-        service: salt-master
+        severity: critical
+        service: salt
       annotations:
-        summary: 'Salt-master service is down'
-        description: 'Salt-master service is down on node {{ $labels.host }}'
-      {%- endraw %}
+        summary: "Salt-master service is down"
+        description: "The salt-master service on the {{ $labels.host }} node is down."
+    {%- endraw %}
   {%- endif %}
   {%- if pillar.salt.get('minion', {}).get('enabled', False)  %}
-    SaltMinionProcessDown:
+    {%- raw %}
+    SaltMinionServiceDown:
       if: >-
         procstat_running{process_name="salt-minion"} == 0
-      {%- raw %}
       labels:
-        severity: warning
-        service: salt-minion
+        severity: critical
+        service: salt
       annotations:
-        summary: 'Salt-minion service is down'
-        description: 'Salt-minion service is down on node {{ $labels.host }}'
-      {%- endraw %}
+        summary: "Salt-minion service is down"
+        description: "The salt-minion service on the {{ $labels.host }} node is down."
+    {%- endraw %}
   {%- endif %}
 {%- endif %}
 {%- endif %}
