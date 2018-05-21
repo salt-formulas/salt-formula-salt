@@ -408,12 +408,15 @@ Control VM provisioning
           mycluster:
             domain: neco.virt.domain.com
             engine: virt
+            #Option to set rng globaly
+            rng: false
             node:
               ubuntu1:
                 provider: node01.domain.com
                 image: ubuntu.qcow
                 size: medium
                 img_dest: /var/lib/libvirt/ssdimages
+                #Rng defined on node will have higher priority then global one
                 rng:
                   backend: /dev/urandom
                   model: random

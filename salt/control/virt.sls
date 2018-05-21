@@ -20,6 +20,11 @@ update-guestfs-appliance:
 
 {%- if cluster.engine == "virt" %}
 
+##Posibility to disable rng device globally for old libvirt version
+{%- if cluster.rng is defined %}
+{%- set rng = cluster.rng %}
+{%- endif %}
+
 {%- for node_name, node in cluster.node.iteritems() %}
 
 {%- if node.name is defined %}
@@ -29,7 +34,6 @@ update-guestfs-appliance:
 {%- if node.provider == grains.id %}
 
 {%- set size = control.size.get(node.size) %}
-
 
 salt_control_virt_{{ cluster_name }}_{{ node_name }}:
   module.run:
@@ -41,8 +45,10 @@ salt_control_virt_{{ cluster_name }}_{{ node_name }}:
   - start: True
   - disk: {{ size.disk_profile }}
   - nic: {{ size.net_profile }}
-  {%- if node.rng is defined %}
-  - rng: {{ node.rng }}
+  {%- if  node.rng is defined %}
+  - rng: {{  node.rng }}
+  {%- elif rng is defined %}
+  - rng: {{ rng }}
   {%- endif %}
   - kwargs:
       seed: True
