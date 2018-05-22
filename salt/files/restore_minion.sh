@@ -6,6 +6,6 @@
 mkdir -p /etc/pki/pki_ca.bak
 mkdir -p /etc/pki/ca
 mv /etc/pki/ca/* /etc/pki/pki_ca.bak
-scp -r backupninja@{{ minion.initial_data.source }}:/srv/backupninja/{{ minion.initial_data.host }}/etc/pki/ca/ca.0/* /etc/pki/ca
+scp -r backupninja@{{ minion.initial_data.source }}:{{ minion.initial_data.get('home_dir', '/srv/backupninja') }}/{{ minion.initial_data.host }}/etc/pki/ca/ca.0/* /etc/pki/ca
 {%- endif %}
 {%- endif %}
