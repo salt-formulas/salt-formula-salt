@@ -3,7 +3,7 @@
   {%- set grains_fragment_file = service_name+'/meta/meta.yml' %}
   {%- macro load_grains_file() %}{% include grains_fragment_file ignore missing %}{% endmacro %}
   {%- set grains_yaml = load_grains_file()|load_yaml %}
-  {%- if grains_yaml is mapping %}
+  {%- if grains_yaml is mapping and grains_yaml.graph %}
     {%- for node in grains_yaml.graph if grains_yaml.graph %}
     {%- do service_grains.salt.graph.append(node) %}
     {%- endfor %}
