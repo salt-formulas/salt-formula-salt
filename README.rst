@@ -273,6 +273,17 @@ Pass pillar render error to minion log
       master:
         pillar_safe_render_error: False
 
+Enable Windows repo support
+
+.. code-block:: yaml
+
+    salt:
+      master:
+        win_repo:
+          source: git
+          address: https://github.com/saltstack/salt-winrepo-ng
+          revision: master
+
 
 Event/Reactor Systems
 ~~~~~~~~~~~~~~~~~~~~~

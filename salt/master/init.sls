@@ -6,7 +6,7 @@ include:
 - salt.master.env
 - salt.master.pillar
 - salt.master.minion
-{%- if pillar.salt.master.windows_repo is defined %}
+{%- if pillar.salt.master.win_repo is defined %}
 - salt.master.win_repo
 {%- endif %}
 {%- if pillar.salt.master.ssh is defined %}
