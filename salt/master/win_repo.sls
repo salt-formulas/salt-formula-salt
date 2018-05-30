@@ -15,8 +15,8 @@ include:
 
 {{ master.win_repo.address }}:
   git.latest:
-  - target: /srv/salt/win/repo
-  - rev: {{ master.win_repo.branch }}
+  - target: /srv/salt/win/repo-ng
+  - rev: {{ master.windows_repo.get('revision', 'master') }}
   - require:
     - file: /srv/salt/win
     - pkg: git_packages
