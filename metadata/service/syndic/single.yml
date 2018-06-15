@@ -1,6 +1,8 @@
 parameters:
+  _param:
+    salt_syndic_enabled: true
   salt:
     syndic:
-      enabled: true
+      enabled: ${_param:salt_syndic_enabled}
       master:
         host: ${_param:salt_syndic_master_address}
