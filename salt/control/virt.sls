@@ -20,6 +20,14 @@ update-guestfs-appliance:
 
 {%- if cluster.engine == "virt" %}
 
+libvirt_service:
+  service.running:
+  - name: {{ control.virt_service }}
+  - enable: true
+  {%- if grains.get('noservices') %}
+  - onlyif: /bin/false
+  {%- endif %}
+
 ##Posibility to disable rng device globally for old libvirt version
 {%- if cluster.rng is defined %}
 {%- set rng = cluster.rng %}
@@ -63,6 +71,8 @@ salt_control_virt_{{ cluster_name }}_{{ node_name }}:
       {%- endfor %}
       {%- endif %}
   - unless: virsh list --all --name| grep -E "^{{ node_name }}.{{ cluster.domain }}$"
+  - require:
+    - libvirt_service
 
 #salt_control_seed_{{ cluster_name }}_{{ node_name }}:
 #  module.run:
