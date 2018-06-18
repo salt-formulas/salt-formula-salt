@@ -195,11 +195,13 @@ Debian:
 {% if grains.get('oscodename') == 'trusty' %}
   - libguestfs-tools
 {% endif %}
+  virt_service: 'libvirt-bin'
 
 RedHat:
   virt_pkgs:
   - libvirt-dev
   - pkg-config
+  virt_service: 'libvirtd'
 {%- endload %}
 
 {%- load_yaml as renderer_defaults %}
