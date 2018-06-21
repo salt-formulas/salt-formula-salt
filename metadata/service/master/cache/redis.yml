@@ -1,0 +1,18 @@
+parameters:
+  _param:
+    salt_cache_redis_host: 127.0.0.1
+    salt_cache_redis_port: 6379
+    salt_cache_redis_db: '0'
+    salt_cache_redis_password: ''
+  salt:
+    master:
+      cache:
+        plugin: redis
+        host: ${_param:salt_cache_redis_host}
+        port: ${_param:salt_cache_redis_port}
+        db: ${_param:salt_cache_redis_db}
+        password: ${_param:salt_cache_redis_password}
+        bank_prefix: 'MCP'
+        bank_keys_prefix: 'MCPKEY'
+        key_prefix: 'KEY'
+        separator: '@'

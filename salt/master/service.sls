@@ -28,6 +28,20 @@ salt_master_packages:
   - watch_in:
     - service: salt_master_service
 
+{%- if master.cache is defined %}
+
+/etc/salt/master.d/_{{ master.cache.plugin }}.conf:
+  file.managed:
+  - source: salt://salt/files/cache/_{{ master.cache.plugin }}.conf
+  - user: root
+  - template: jinja
+  - require:
+    - {{ master.install_state }}
+  - watch_in:
+    - service: salt_master_service
+
+{%- endif %}
+
 {%- if master.user is defined %}
 
 /etc/salt/master.d/_acl.conf:

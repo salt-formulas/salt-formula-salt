@@ -438,6 +438,22 @@ Control VM provisioning
                   nic01: AC:DE:48:AA:AA:AA
                   nic02: AC:DE:48:AA:AA:BB
 
+To enable Redis plugin for the Salt caching subsystem. The below pillar structure should be used
+
+.. code-block:: yaml
+
+  salt:
+    master:
+      cache:
+        plugin: redis
+        host: localhost
+        port: 6379
+        db: '0'
+        password: pass_word
+        bank_prefix: 'MCP'
+        bank_keys_prefix: 'MCPKEY'
+        key_prefix: 'KEY'
+        separator: '@'
 
 
 Jinja options
