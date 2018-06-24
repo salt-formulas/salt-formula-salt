@@ -96,11 +96,17 @@ salt:
             image: ubuntu.qcow
             size: medium
             img_dest: /var/lib/libvirt/ssdimages
+            machine: virt-2.11
+            cpu_mode: host-passthrough
           ubuntu2:
             provider: node02.domain.com
             image: bubuntu.qcomw
             size: small
             img_dest: /var/lib/libvirt/hddimages
+            loader:
+              readonly: yes
+              type: pflash
+              path: /usr/share/AAVMF/AAVMF_CODE.fd
           ubuntu3:
             provider: node03.domain.com
             image: meowbuntu.qcom2

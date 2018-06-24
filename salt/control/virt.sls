@@ -61,6 +61,15 @@ salt_control_virt_{{ cluster_name }}_{{ node_name }}:
   {%- elif rng is defined %}
   - rng: {{ rng }}
   {%- endif %}
+  {%- if  node.loader is defined %}
+  - loader: {{  node.loader }}
+  {%- endif %}
+  {%- if  node.machine is defined %}
+  - machine: {{ node.machine }}
+  {%- endif %}
+  {%- if  node.cpu_mode is defined %}
+  - cpu_mode: {{ node.cpu_mode }}
+  {%- endif %}
   - kwargs:
       {%- if cloud_init is defined %}
       cloud_init: {{ cloud_init }}
