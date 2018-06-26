@@ -1,5 +1,6 @@
 salt:
   minion:
+    id: salt.ci.local
     enabled: true
     masters:
     - host: config01.dc01.domain.com

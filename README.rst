@@ -622,6 +622,18 @@ Syndicated master with multiple master of masters
 Salt Minion
 -----------
 
+Minion ID by default trigger dependency on linux formula, as it uses fqdn configured from `linux.system.name` and
+`linux.system.domain` pillar. To override, provide exact minion ID you require. The same can be sate for master id rendered
+at `master.conf`.
+
+.. code-block:: yaml
+
+    salt:
+      minion:
+        id: minion1.production
+      master:
+        id: master.production
+
 Simplest Salt minion setup with central configuration node
 
 .. code-block:: yaml
