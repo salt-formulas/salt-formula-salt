@@ -430,66 +430,10 @@ def _disk_profile(profile, hypervisor, **kwargs):
 
 def _nic_profile(profile_name, hypervisor, **kwargs):
 
-    default = [{'eth0': {}}]
-    vmware_overlay = {'type': 'bridge', 'source': 'DEFAULT', 'model': 'e1000'}
-    kvm_overlay = {'type': 'bridge', 'source': 'br0', 'model': 'virtio'}
-    overlays = {
-            'kvm': kvm_overlay,
-            'qemu': kvm_overlay,
-            'esxi': vmware_overlay,
-            'vmware': vmware_overlay,
-            }
-
-    # support old location
-    config_data = __salt__['config.option']('virt.nic', {}).get(
-        profile_name, None
-    )
-
-    if config_data is None:
-        config_data = __salt__['config.get']('virt:nic', {}).get(
-            profile_name, default
-        )
-
-    interfaces = []
-
     def append_dict_profile_to_interface_list(profile_dict):
         for interface_name, attributes in profile_dict.items():
             attributes['name'] = interface_name
             interfaces.append(attributes)
-
-    # old style dicts (top-level dicts)
-    #
-    # virt:
-    #    nic:
-    #        eth0:
-    #            bridge: br0
-    #        eth1:
-    #            network: test_net
-    if isinstance(config_data, dict):
-        append_dict_profile_to_interface_list(config_data)
-
-    # new style lists (may contain dicts)
-    #
-    # virt:
-    #   nic:
-    #     - eth0:
-    #         bridge: br0
-    #     - eth1:
-    #         network: test_net
-    #
-    # virt:
-    #   nic:
-    #     - name: eth0
-    #       bridge: br0
-    #     - name: eth1
-    #       network: test_net
-    elif isinstance(config_data, list):
-        for interface in config_data:
-            if isinstance(interface, dict):
-                if len(interface) == 1:
-                    append_dict_profile_to_interface_list(interface)
-                else:
-                    interfaces.append(interface)
 
     def _normalize_net_types(attributes):
         '''
@@ -514,6 +458,7 @@ def _nic_profile(profile_name, hypervisor, **kwargs):
 
         attributes['type'] = attributes.get('type', None)
         attributes['source'] = attributes.get('source', None)
+        attributes['virtualport'] = attributes.get('virtualport', None)
 
     def _apply_default_overlay(attributes):
         for key, value in overlays[hypervisor].items():
@@ -531,6 +476,40 @@ def _nic_profile(profile_name, hypervisor, **kwargs):
                 raise CommandExecutionError(msg)
         else:
             attributes['mac'] = salt.utils.gen_mac()
+
+
+    default = [{'eth0': {}}]
+    vmware_overlay = {'type': 'bridge', 'source': 'DEFAULT', 'model': 'e1000'}
+    kvm_overlay = {'type': 'bridge', 'source': 'br0', 'model': 'virtio'}
+    overlays = {
+            'kvm': kvm_overlay,
+            'qemu': kvm_overlay,
+            'esxi': vmware_overlay,
+            'vmware': vmware_overlay,
+            }
+
+    # support old location
+    config_data = __salt__['config.option']('virt.nic', {}).get(
+        profile_name, None
+    )
+
+    if config_data is None:
+        config_data = __salt__['config.get']('virt:nic', {}).get(
+            profile_name, default
+        )
+
+    interfaces = []
+
+    if isinstance(config_data, dict):
+        append_dict_profile_to_interface_list(config_data)
+
+    elif isinstance(config_data, list):
+        for interface in config_data:
+            if isinstance(interface, dict):
+                if len(interface) == 1:
+                    append_dict_profile_to_interface_list(interface)
+                else:
+                    interfaces.append(interface)
 
     for interface in interfaces:
         _normalize_net_types(interface)
@@ -669,6 +648,18 @@ def init(name,
                                           .format(hypervisor))
 
     xml = _gen_xml(name, cpu, mem, diskp, nicp, hypervisor, **kwargs)
+
+    # TODO: Remove this code and refactor module, when salt-common would have updated libvirt_domain.jinja template
+    for _nic in nicp:
+        if _nic['virtualport']:
+            xml_doc = minidom.parseString(xml)
+            interfaces = xml_doc.getElementsByTagName("domain")[0].getElementsByTagName("devices")[0].getElementsByTagName("interface")
+            for interface in interfaces:
+                if interface.getElementsByTagName('mac')[0].getAttribute('address').lower() == _nic['mac'].lower():
+                    vport_xml = xml_doc.createElement("virtualport")
+                    vport_xml.setAttribute("type", _nic['virtualport']['type'])
+                    interface.appendChild(vport_xml)
+            xml = xml_doc.toxml()
 
     # TODO: Remove this code and refactor module, when salt-common would have updated libvirt_domain.jinja template
     if rng:

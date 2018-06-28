@@ -9,6 +9,25 @@ virt:
           image: snapshot.qcow
       - cinder-volume:
           size: 2048
+  nic:
+    control:
+    - name: nic01
+      bridge: br-pxe
+      model: virtio
+    - name: nic02
+      bridge: br-cp
+      model: virtio
+    - name: nic03
+      bridge: br-store-front
+      model: virtio
+    - name: nic04
+      bridge: br-public
+      model: virtio
+    - name: nic05
+      bridge: br-prv
+      model: virtio
+      virtualport:
+        type: openvswitch
 salt:
   minion:
     enabled: true

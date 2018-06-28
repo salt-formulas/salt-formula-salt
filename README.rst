@@ -404,6 +404,11 @@ Control VM provisioning
         - name: nic04
           bridge: br-public
           model: virtio
+        - name: nic05
+          bridge: br-prv
+          model: virtio
+          virtualport:
+            type: openvswitch
 
 
     salt:
