@@ -20,7 +20,7 @@ update-guestfs-appliance:
 
 {%- if cluster.engine == "virt" %}
 
-libvirt_service:
+salt_libvirt_service:
   service.running:
   - name: {{ control.virt_service }}
   - enable: true
@@ -72,7 +72,7 @@ salt_control_virt_{{ cluster_name }}_{{ node_name }}:
       {%- endif %}
   - unless: virsh list --all --name| grep -E "^{{ node_name }}.{{ cluster.domain }}$"
   - require:
-    - libvirt_service
+    - salt_libvirt_service
 
 #salt_control_seed_{{ cluster_name }}_{{ node_name }}:
 #  module.run:
