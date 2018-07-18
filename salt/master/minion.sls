@@ -4,6 +4,15 @@
 include:
 - salt.master.service
 
+/etc/salt/minion.d/_orchestration.conf:
+  file.managed:
+  - source: salt://salt/files/_orchestration.conf
+  - user: root
+  - template: jinja
+  - makedirs: true
+  - require:
+    - {{ master.install_state }}
+
 {%- if master.minion is defined %}
 
 /srv/salt/minion_keys:
