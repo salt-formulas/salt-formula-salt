@@ -20,6 +20,7 @@ salt:
         formula: {}
   api:
     enabled: true
+    rest_timeout: 7200
     ssl:
       engine: salt
     bind:
