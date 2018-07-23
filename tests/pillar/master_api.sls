@@ -8,6 +8,7 @@ salt:
   master:
     command_timeout: 5
     worker_threads: 2
+    reactor_worker_threads: 2
     enabled: true
     source:
       engine: pkg
