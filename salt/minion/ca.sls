@@ -4,6 +4,8 @@
 include:
 - salt.minion.service
 
+{%- set all_ca_certs_dir = '/etc/pki/all_cas' %}
+
 {%- for ca_name,ca in minion.ca.iteritems() %}
 
 {%- set ca_file = ca.get('ca_file', '/etc/pki/ca/' ~ ca_name ~ '/ca.crt') %}
@@ -87,15 +89,25 @@ salt_minion_cert_{{ ca_name }}_dirs:
     - require:
       - x509: {{ ca_file }}
 
-salt_system_ca_mine_send_ca_{{ ca_name }}:
-  module.run:
-  - name: mine.send
-  - func: x509.get_pem_entries
-  - kwargs:
-      glob_path: {{ ca_file }}
+copy_to_{{all_ca_certs_dir}}/{{ ca_name }}:
+  file.copy:
+  - name: {{ all_ca_certs_dir }}/{{ ca_name }}.crt
+  - source: {{ ca_file }}
+  - makedirs: True
+  - force: True
+  - unless:
+    - diff -q {{ ca_file }} {{ all_ca_certs_dir }}/{{ ca_name }}.crt
   - require:
     - x509: {{ ca_file }}
 
 {%- endfor %}
+
+salt_system_ca_mine_send_ca:
+  module.run:
+  - name: mine.send
+  - func: x509.get_pem_entries
+  - kwargs:
+      mine_function: x509.get_pem_entries
+      glob_path: {{ all_ca_certs_dir }}/*
 
 {%- endif %}
