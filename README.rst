@@ -1,7 +1,7 @@
 
-============
-Salt Formula
-============
+=====
+Usage
+=====
 
 Salt is a new approach to infrastructure management. Easy enough to get
 running in minutes, scalable enough to manage tens of thousands of servers,
@@ -10,25 +10,23 @@ and fast enough to communicate with them in seconds.
 Salt delivers a dynamic communication bus for infrastructures that can be used
 for orchestration, remote execution, configuration management and much more.
 
-
 Sample Metadata
 ===============
-
 
 Salt Master
 -----------
 
-Salt master with base formulas and pillar metadata backend
+Salt master with base formulas and pillar metadata back end:
 
 .. literalinclude:: tests/pillar/master_single_pillar.sls
    :language: yaml
 
-Salt master with reclass ENC metadata backend
+Salt master with reclass ENC metadata back end:
 
 .. literalinclude:: tests/pillar/master_single_reclass.sls
    :language: yaml
 
-Salt master with Architect ENC metadata backend
+Salt master with Architect ENC metadata back end:
 
 .. code-block:: yaml
 
@@ -43,22 +41,22 @@ Salt master with Architect ENC metadata backend
           username: salt
           password: password
 
-Salt master with multiple ext_pillars
+Salt master with multiple ``ext_pillars``:
 
 .. literalinclude:: tests/pillar/master_single_extpillars.sls
    :language: yaml
 
-Salt master with API
+Salt master with API:
 
 .. literalinclude:: tests/pillar/master_api.sls
    :language: yaml
 
-Salt master with defined user ACLs
+Salt master with defined user ACLs:
 
 .. literalinclude:: tests/pillar/master_acl.sls
    :language: yaml
 
-Salt master with preset minions
+Salt master with preset minions:
 
 .. code-block:: yaml
 
@@ -68,7 +66,7 @@ Salt master with preset minions
         minions:
         - name: 'node1.system.location.domain.com'
 
-Salt master with pip based installation (optional)
+Salt master with pip based installation (optional):
 
 .. code-block:: yaml
 
@@ -80,7 +78,7 @@ Salt master with pip based installation (optional)
           engine: pip
           version: 2016.3.0rc2
 
-Install formula through system package management
+Install formula through system package management:
 
 .. code-block:: yaml
 
@@ -102,11 +100,14 @@ Install formula through system package management
               name: salt-formula-postgresql
               version: purged
 
-Formula keystone is installed latest version and the formulas without version are installed in one call to aptpkg module.
-If the version attribute is present sls iterates over formulas and take action to install specific version or remove it.
-The version attribute may have these values ``[latest|purged|removed|<VERSION>]``.
+Formula keystone is installed latest version and the formulas
+without version are installed in one call to aptpkg module.
+If the version attribute is present sls iterates over formulas
+and take action to install specific version or remove it.
+The version attribute may have these values
+``[latest|purged|removed|<VERSION>]``.
 
-Clone master branch of keystone formula as local feature branch
+Clone master branch of keystone formula as local feature branch:
 
 .. code-block:: yaml
 
@@ -123,7 +124,8 @@ Clone master branch of keystone formula as local feature branch
                 revision: master
                 branch: feature
 
-Salt master with specified formula refs (for example for Gerrit review)
+Salt master with specified formula refs (for example, for Gerrit
+review):
 
 .. code-block:: yaml
 
@@ -139,7 +141,7 @@ Salt master with specified formula refs (for example for Gerrit review)
                 address: https://git.openstack.org/openstack/salt-formula-keystone
                 revision: refs/changes/56/123456/1
 
-Salt master logging configuration
+Salt master logging configuration:
 
 .. code-block:: yaml
 
@@ -151,7 +153,7 @@ Salt master logging configuration
           file: '/var/log/salt/master'
           level_logfile: warning
 
-Salt minion logging configuration
+Salt minion logging configuration:
 
 .. code-block:: yaml
 
@@ -163,7 +165,7 @@ Salt minion logging configuration
           file: '/var/log/salt/minion'
           level_logfile: warning
 
-Salt master with logging handlers
+Salt master with logging handlers:
 
 .. code-block:: yaml
 
@@ -189,7 +191,7 @@ Salt master with logging handlers
               host: 127.0.0.1
               port: 9999
 
-Salt engine definition for saltgraph metadata collector
+Salt engine definition for saltgraph metadata collector:
 
 .. code-block:: yaml
 
@@ -204,7 +206,7 @@ Salt engine definition for saltgraph metadata collector
             password: salt
             database: salt
 
-Salt engine definition for Architect service
+Salt engine definition for Architect service:
 
 .. code-block:: yaml
 
@@ -219,7 +221,7 @@ Salt engine definition for Architect service
             username: salt
             password: password
 
-Salt engine definition for sending events from docker events
+Salt engine definition for sending events from docker events:
 
 .. code-block:: yaml
 
@@ -229,7 +231,7 @@ Salt engine definition for sending events from docker events
           docker_events:
             docker_url: unix://var/run/docker.sock
 
-Salt master peer setup for remote certificate signing
+Salt master peer setup for remote certificate signing:
 
 .. code-block:: yaml
 
@@ -239,8 +241,7 @@ Salt master peer setup for remote certificate signing
           ".*":
           - x509.sign_remote_certificate
 
-
-Salt master backup configuration
+Salt master backup configuration:
 
 .. code-block:: yaml
 
@@ -253,7 +254,8 @@ Salt master backup configuration
           source: backup-node-host
           host: original-salt-master-id
 
-Configure verbosity of state output (used for `salt` command)
+Configure verbosity of state output (used for :command:`salt`
+command):
 
 .. code-block:: yaml
 
@@ -261,11 +263,11 @@ Configure verbosity of state output (used for `salt` command)
       master:
         state_output: changes
 
-Pass pillar render error to minion log
+Pass pillar render error to minion log:
 
 .. note:: When set to `False` this option is great for debuging.
    However it is not recomended for any production environment as it may contain
-   templating data as passwords, etc... ,  that minion should not expose.
+   templating data as passwords, and so on, that minion should not expose.
 
 .. code-block:: yaml
 
@@ -273,7 +275,7 @@ Pass pillar render error to minion log
       master:
         pillar_safe_render_error: False
 
-Enable Windows repo support
+Enable Windows repository support:
 
 .. code-block:: yaml
 
@@ -284,11 +286,10 @@ Enable Windows repo support
           address: https://github.com/saltstack/salt-winrepo-ng
           revision: master
 
-
-Event/Reactor Systems
+Event/Reactor systems
 ~~~~~~~~~~~~~~~~~~~~~
 
-Salt synchronise node pillar and modules after start
+Salt to synchronize node pillar and modules after start:
 
 .. code-block:: yaml
 
@@ -298,7 +299,7 @@ Salt synchronise node pillar and modules after start
           salt/minion/*/start:
           - salt://salt/reactor/node_start.sls
 
-Trigger basic node install
+Trigger basic node install:
 
 .. code-block:: yaml
 
@@ -308,13 +309,13 @@ Trigger basic node install
           salt/minion/install:
           - salt://salt/reactor/node_install.sls
 
-Sample event to trigger the node installation
+Sample event to trigger the node installation:
 
 .. code-block:: bash
 
     salt-call event.send 'salt/minion/install'
 
-Run any defined orchestration pipeline
+Run any defined orchestration pipeline:
 
 .. code-block:: yaml
 
@@ -324,13 +325,13 @@ Run any defined orchestration pipeline
           salt/orchestrate/start:
           - salt://salt/reactor/orchestrate_start.sls
 
-Event to trigger the orchestration pipeline
+Event to trigger the orchestration pipeline:
 
 .. code-block:: bash
 
     salt-call event.send 'salt/orchestrate/start' "{'orchestrate': 'salt/orchestrate/infra_install.sls'}"
 
-Synchronise modules and pillars on minion start.
+Synchronise modules and pillars on minion start:
 
 .. code-block:: yaml
 
@@ -340,7 +341,7 @@ Synchronise modules and pillars on minion start.
           'salt/minion/*/start':
           - salt://salt/reactor/minion_start.sls
 
-Add and/or remove the minion key
+Add and/or remove the minion key:
 
 .. code-block:: yaml
 
@@ -352,7 +353,7 @@ Add and/or remove the minion key
           salt/key/remove:
           - salt://salt/reactor/key_remove.sls
 
-Event to trigger the key creation
+Event to trigger the key creation:
 
 .. code-block:: bash
 
@@ -361,21 +362,21 @@ Event to trigger the key creation
 
 .. note::
 
-    You can add pass additional `orch_pre_create`, `orch_post_create`,
-    `orch_pre_remove` or `orch_post_remove` parameters to the event to call
-    extra orchestrate files. This can be useful for example for
+    You can add pass additional ``orch_pre_create``, ``orch_post_create``,
+    ``orch_pre_remove`` or ``orch_post_remove`` parameters to the event
+    to call extra orchestrate files. This can be useful for example for
     registering/unregistering nodes from the monitoring alarms or dashboards.
 
     The key creation event needs to be run from other machine than the one
     being registered.
 
-Event to trigger the key removal
+Event to trigger the key removal:
 
 .. code-block:: bash
 
     salt-call event.send 'salt/key/remove'
 
-Control VM provisioning
+Control VM provisioning:
 
 .. code-block:: yaml
 
@@ -410,7 +411,6 @@ Control VM provisioning
           virtualport:
             type: openvswitch
 
-
     salt:
       control:
         enabled: true
@@ -443,7 +443,8 @@ Control VM provisioning
                   nic01: AC:DE:48:AA:AA:AA
                   nic02: AC:DE:48:AA:AA:BB
 
-To enable Redis plugin for the Salt caching subsystem. The below pillar structure should be used
+To enable Redis plugin for the Salt caching subsystem, use the
+below pillar structure:
 
 .. code-block:: yaml
 
@@ -460,16 +461,16 @@ To enable Redis plugin for the Salt caching subsystem. The below pillar structur
         key_prefix: 'KEY'
         separator: '@'
 
-
 Jinja options
 -------------
 
-Use following options to update default jinja renderer options. Salt recognize Jinja options for templates and for sls files.
+Use the following options to update default Jinja renderer options.
+Salt recognize Jinja options for templates and for the ``sls`` files.
 
-For full list of options check jinja documentation: http://jinja.pocoo.org/docs/api/#high-level-api.
+For full list of options, see Jinja documentation:
+http://jinja.pocoo.org/docs/api/#high-level-api
 
 .. code-block:: yaml
-
 
   salt:
     renderer:
@@ -497,11 +498,11 @@ For full list of options check jinja documentation: http://jinja.pocoo.org/docs/
       # for .sls state files
       jinja_sls: *jinja_env
 
-
-
-With the line_statement/comment* _prefix options enabled following code statements are valid:
+With the ``line_statement/comment* _prefix`` options enabled following
+code statements are valid:
 
 .. code-block:: yaml
+
    %- set myvar = 'one'
 
    ## You can mix even with '{%'
@@ -513,27 +514,27 @@ With the line_statement/comment* _prefix options enabled following code statemen
    {{- item }}
    %- endfor
 
-
 Encrypted pillars
 ~~~~~~~~~~~~~~~~~
 
-Note: NACL + below configuration will be available in Salt > 2017.7.
+.. note:: NACL and the below configuration will be available in Salt > 2017.7.
 
 External resources:
 
-- Tutorial to configure salt + reclass ext_pillar and nacl: http://apealive.net/post/2017-09-salt-nacl-ext-pillar/
-- Saltstack documentation: https://docs.saltstack.com/en/latest/ref/modules/all/salt.modules.nacl.html
+- Tutorial to configure the Salt and Reclass ``ext_pillar`` and NACL:
+  http://apealive.net/post/2017-09-salt-nacl-ext-pillar/
+- SaltStack documentation:
+  https://docs.saltstack.com/en/latest/ref/modules/all/salt.modules.nacl.html
 
 Configure salt NACL module:
 
-.. code-block:: shell
+.. code-block:: bash
 
   pip install --upgrade libnacl===1.5.2
   salt-call --local nacl.keygen /etc/salt/pki/master/nacl
 
     local:
         saved sk_file:/etc/salt/pki/master/nacl  pk_file: /etc/salt/pki/master/nacl.pub
-
 
 .. code-block:: yaml
 
@@ -552,12 +553,13 @@ Configure salt NACL module:
 
 NACL encrypt secrets:
 
+.. code-block:: bash
+
   salt-call --local nacl.enc 'my_secret_value' pk_file=/etc/salt/pki/master/nacl.pub
     hXTkJpC1hcKMS7yZVGESutWrkvzusXfETXkacSklIxYjfWDlMJmR37MlmthdIgjXpg4f2AlBKb8tc9Woma7q
   # or
   salt-run nacl.enc 'myotherpass'
     ADDFD0Rav6p6+63sojl7Htfrncp5rrDVyeE4BSPO7ipq8fZuLDIVAzQLf4PCbDqi+Fau5KD3/J/E+Pw=
-
 
 NACL encrypted values on pillar:
 
@@ -572,14 +574,16 @@ Use Boxed syntax `NACL[CryptedValue=]` to encode value on pillar:
 
 NACL large files:
 
-.. code-block:: shell
+.. code-block:: bash
+
   salt-call nacl.enc_file /tmp/cert.crt out=/srv/salt/env/dev/cert.nacl
   # or more advanced
   cert=$(cat /tmp/cert.crt)
   salt-call --out=newline_values_only nacl.enc_pub data="$cert" > /srv/salt/env/dev/cert.nacl
 
-
 NACL within template/native pillars:
+
+.. code-block:: yaml
 
   pillarexample:
       user: root
@@ -587,11 +591,10 @@ NACL within template/native pillars:
       cert_key: {{salt.nacl.dec_file('/srv/salt/env/dev/certs/example.com/cert.nacl')|json}}
       cert_key2: {{salt.nacl.dec_file('salt:///certs/example.com/cert2.nacl')|json}}
 
-
 Salt Syndic
 -----------
 
-The master of masters
+The master of masters:
 
 .. code-block:: yaml
 
@@ -600,7 +603,7 @@ The master of masters
         enabled: true
         order_masters: True
 
-Lower syndicated master
+Lower syndicated master:
 
 .. code-block:: yaml
 
@@ -611,7 +614,7 @@ Lower syndicated master
           host: master-of-master-host
         timeout: 5
 
-Syndicated master with multiple master of masters
+Syndicated master with multiple master of masters:
 
 .. code-block:: yaml
 
@@ -623,15 +626,15 @@ Syndicated master with multiple master of masters
         - host: master-of-master-host2
         timeout: 5
 
-
 Salt Minion
 -----------
 
-Minion ID by default trigger dependency on linux formula, as it uses fqdn configured from `linux.system.name` and
-`linux.system.domain` pillar. To override, provide exact minion ID you require. The same can be sate for master id rendered
-at `master.conf`.
+Minion ID by default triggers dependency on Linux formula, as it uses fqdn
+configured from `linux.system.name` and `linux.system.domain` pillar.
+To override, provide exact minion ID you require. The same can be set for
+master ID rendered at ``master.conf``.
 
-.. code-block:: yaml
+ .. code-block:: yaml
 
     salt:
       minion:
@@ -639,29 +642,27 @@ at `master.conf`.
       master:
         id: master.production
 
-Simplest Salt minion setup with central configuration node
-
-.. code-block:: yaml
+Simplest Salt minion setup with central configuration node:
 
 .. literalinclude:: tests/pillar/minion_master.sls
    :language: yaml
 
-Multi-master Salt minion setup
+Multi-master Salt minion setup:
 
 .. literalinclude:: tests/pillar/minion_multi_master.sls
    :language: yaml
 
-Salt minion with salt mine options
+Salt minion with salt mine options:
 
 .. literalinclude:: tests/pillar/minion_mine.sls
    :language: yaml
 
-Salt minion with graphing dependencies
+Salt minion with graphing dependencies:
 
 .. literalinclude:: tests/pillar/minion_graph.sls
    :language: yaml
 
-Salt minion behind HTTP proxy
+Salt minion behind HTTP proxy:
 
 .. code-block:: yaml
 
@@ -671,9 +672,10 @@ Salt minion behind HTTP proxy
           host: 127.0.0.1
           port: 3128
 
-Salt minion to specify non-default HTTP backend. The default tornado backend
-does not respect HTTP proxy settings set as environment variables. This is
-useful for cases where you need to set no_proxy lists.
+Salt minion to specify non-default HTTP backend. The default
+tornado backend does not respect HTTP proxy settings set as
+environment variables. This is useful for cases where you need
+to set no_proxy lists.
 
 .. code-block:: yaml
 
@@ -681,8 +683,7 @@ useful for cases where you need to set no_proxy lists.
       minion:
         backend: urllib2
 
-
-Salt minion with PKI certificate authority (CA)
+Salt minion with PKI certificate authority (CA):
 
 .. literalinclude:: tests/pillar/minion_pki_ca.sls
    :language: yaml
@@ -692,7 +693,8 @@ Salt minion using PKI certificate
 .. literalinclude:: tests/pillar/minion_pki_cert.sls
    :language: yaml
 
-Salt minion trust CA certificates issued by salt CA on a specific host (ie: salt-master node)
+Salt minion trust CA certificates issued by salt CA on a
+specific host (ie: salt-master node):
 
 .. code-block:: yaml
 
@@ -701,11 +703,10 @@ Salt minion trust CA certificates issued by salt CA on a specific host (ie: salt
       trusted_ca_minions:
         - cfg01
 
-
 Salt Minion Proxy
 ~~~~~~~~~~~~~~~~~
 
-Salt proxy pillar
+Salt proxy pillar:
 
 .. code-block:: yaml
 
@@ -723,8 +724,7 @@ Salt proxy pillar
 
 .. note:: This is pillar of the the real salt-minion
 
-
-Proxy pillar for IOS device
+Proxy pillar for IOS device:
 
 .. code-block:: yaml
 
@@ -735,10 +735,10 @@ Proxy pillar for IOS device
       username: root
       passwd: r00tme
 
-.. note:: This is pillar of the node thats not able to run salt-minion itself
+.. note:: This is pillar of the node thats not able to run
+   salt-minion itself.
 
-
-Proxy pillar for JunOS device
+Proxy pillar for JunOS device:
 
 .. code-block:: yaml
 
@@ -751,23 +751,23 @@ Proxy pillar for JunOS device
       optional_args:
         config_format: set
 
-.. note:: This is pillar of the node thats not able to run salt-minion itself
-
+.. note:: This pillar applies to the node that can not run
+   salt-minion itself.
 
 Salt SSH
 ~~~~~~~~
 
-Salt SSH with sudoer using key
+Salt SSH with sudoer using key:
 
 .. literalinclude:: tests/pillar/master_ssh_minion_key.sls
    :language: yaml
 
-Salt SSH with sudoer using password
+Salt SSH with sudoer using password:
 
 .. literalinclude:: tests/pillar/master_ssh_minion_password.sls
    :language: yaml
 
-Salt SSH with root using password
+Salt SSH with root using password:
 
 .. literalinclude:: tests/pillar/master_ssh_minion_root.sls
    :language: yaml
@@ -775,45 +775,43 @@ Salt SSH with root using password
 Salt control (cloud/kvm/docker)
 -------------------------------
 
-Salt cloud with local OpenStack provider
+Salt cloud with local OpenStack provider:
 
 .. literalinclude:: tests/pillar/control_cloud_openstack.sls
    :language: yaml
 
-Salt cloud with Digital Ocean provider
+Salt cloud with Digital Ocean provider:
 
 .. literalinclude:: tests/pillar/control_cloud_digitalocean.sls
    :language: yaml
 
-Salt virt with KVM cluster
+Salt virt with KVM cluster:
 
 .. literalinclude:: tests/pillar/control_virt.sls
    :language: yaml
 
-salt virt with custom destination for image file
+Salt virt with custom destination for image file:
 
 .. literalinclude:: tests/pillar/control_virt_custom.sls
    :language: yaml
 
-
 Usage
 =====
 
-Working with salt-cloud
+Working with salt-cloud:
 
 .. code-block:: bash
 
     salt-cloud -m /path/to/map --assume-yes
 
-Debug LIBCLOUD for salt-cloud connection
+Debug LIBCLOUD for salt-cloud connection:
 
 .. code-block:: bash
 
     export LIBCLOUD_DEBUG=/dev/stderr; salt-cloud --list-sizes provider_name --log-level all
 
-
-References
-==========
+Read more
+=========
 
 * http://salt.readthedocs.org/en/latest/
 * https://github.com/DanielBryan/salt-state-graph
@@ -822,7 +820,6 @@ References
 * http://russell.ballestrini.net/replace-the-nagios-scheduler-and-nrpe-with-salt-stack/
 * https://github.com/saltstack-formulas/salt-formula
 * http://docs.saltstack.com/en/latest/topics/tutorials/multimaster.html
-
 
 salt-cloud
 ----------
@@ -835,36 +832,29 @@ salt-cloud
 * http://salt-cloud.readthedocs.org/en/latest/topics/map.html
 * http://docs.saltstack.com/en/latest/topics/tutorials/multimaster.html
 
-
 Documentation and Bugs
 ======================
 
-To learn how to install and update salt-formulas, consult the documentation
-available online at:
+* http://salt-formulas.readthedocs.io/
+   Learn how to install and update salt-formulas
 
-    http://salt-formulas.readthedocs.io/
+* https://github.com/salt-formulas/salt-formula-salt/issues
+   In the unfortunate event that bugs are discovered, report the issue to the
+   appropriate issue tracker. Use the Github issue tracker for a specific salt
+   formula
 
-In the unfortunate event that bugs are discovered, they should be reported to
-the appropriate issue tracker. Use Github issue tracker for specific salt
-formula:
+* https://launchpad.net/salt-formulas
+   For feature requests, bug reports, or blueprints affecting the entire
+   ecosystem, use the Launchpad salt-formulas project
 
-    https://github.com/salt-formulas/salt-formula-salt/issues
+* https://launchpad.net/~salt-formulas-users
+   Join the salt-formulas-users team and subscribe to mailing list if required
 
-For feature requests, bug reports or blueprints affecting entire ecosystem,
-use Launchpad salt-formulas project:
+* https://github.com/salt-formulas/salt-formula-salt
+   Develop the salt-formulas projects in the master branch and then submit pull
+   requests against a specific formula
 
-    https://launchpad.net/salt-formulas
+* #salt-formulas @ irc.freenode.net
+   Use this IRC channel in case of any questions or feedback which is always
+   welcome
 
-You can also join salt-formulas-users team and subscribe to mailing list:
-
-    https://launchpad.net/~salt-formulas-users
-
-Developers wishing to work on the salt-formulas projects should always base
-their work on master branch and submit pull request against specific formula.
-
-    https://github.com/salt-formulas/salt-formula-salt
-
-Any questions or feedback is always welcome so feel free to join our IRC
-channel:
-
-    #salt-formulas @ irc.freenode.net
