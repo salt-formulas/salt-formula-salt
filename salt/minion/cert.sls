@@ -110,7 +110,7 @@ salt_minion_cert_{{ cert_name }}_dirs:
 {%- if cert.host is defined and ca_file not in created_ca_files %}
 {%- for ca_path,ca_cert in salt['mine.get'](cert.host, 'x509.get_pem_entries').get(cert.host, {}).iteritems() %}
 
-{%- if '/etc/pki/ca/'+cert.authority in ca_path %}
+{%- if '/etc/pki/all_cas/'+cert.authority in ca_path %}
 
 {{ ca_file }}:
   x509.pem_managed:
@@ -122,7 +122,6 @@ salt_minion_cert_{{ cert_name }}_dirs:
     - watch_in:
       - cmd: salt_minion_cert_{{ cert_name }}_all
     {%- endif %}
-
 
 # TODO: Squash this with the previous state after switch to Salt version >= 2016.11.2
 {{ ca_file }}_cert_permissions:
@@ -194,7 +193,7 @@ salt_update_certificates:
 {%- if ca_path.endswith('ca.crt') %}
 
 {# authority name can be obtained only from a cacert path in case of mine.get #}
-{%- set ca_authority = ca_path.split("/")[-2] %}
+{%- set ca_authority = ca_path.split("/")[-1].split(".")[0] %}
 {%- set cacert_file="%s/ca-%s.crt" % (cacerts_dir,ca_authority) %}
 
 salt_trust_ca_{{ cacert_file }}:
