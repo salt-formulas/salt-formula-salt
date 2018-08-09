@@ -32,6 +32,7 @@ salt_minion_dependency_packages:
   - source: salt://salt/files/minion.conf
   - user: root
   - group: root
+  - mode: 600
   - template: jinja
   - require:
     - {{ minion.install_state }}
@@ -42,6 +43,8 @@ salt_minion_dependency_packages:
   file.managed:
   - source: salt://salt/files/_renderer.conf
   - user: root
+  - group: root
+  - mode: 600
   - template: jinja
   - require:
     - {{ minion.install_state }}

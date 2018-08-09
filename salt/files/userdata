@@ -6,4 +6,6 @@ curl --insecure -L http://bootstrap.saltstack.org -o install_salt.sh
 sh install_salt.sh
 echo "id: {{ node_name }}.{{ cluster.domain }}" > /etc/salt/minion.d/minion.conf
 echo "master: salt/master: {{ cluster.config.host }}" >> /etc/salt/minion.d/minion.conf
+chown root:root /etc/salt/minion.d/minion.conf
+chmod 0600 /etc/salt/minion.d/minion.conf
 service salt-minion restart
