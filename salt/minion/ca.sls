@@ -46,32 +46,38 @@ salt_minion_cert_{{ ca_name }}_dirs:
 
 {{ ca_file }}:
   x509.certificate_managed:
-  - signing_private_key: {{ ca_key_file }}
-  - CN: "{{ ca.common_name }}"
-  {%- if ca.country is defined %}
-  - C: {{ ca.country }}
-  {%- endif %}
-  {%- if ca.state is defined %}
-  - ST: {{ ca.state }}
-  {%- endif %}
-  {%- if ca.locality is defined %}
-  - L: {{ ca.locality }}
-  {%- endif %}
-  {%- if ca.organization is defined %}
-  - O: {{ ca.organization }}
-  {%- endif %}
-  {%- if ca.organization_unit is defined %}
-  - OU: {{ ca.organization_unit }}
-  {%- endif %}
-  - basicConstraints: "critical,CA:TRUE"
-  - keyUsage: {{ ca_key_usage }}
-  - subjectKeyIdentifier: hash
-  - authorityKeyIdentifier: keyid,issuer:always
-  - days_valid: {{ ca.days_valid.authority }}
-  - days_remaining: 0
-  - backup: True
-  - require:
-    - x509: {{ ca_key_file }}
+    - signing_private_key: {{ ca_key_file }}
+    - CN: "{{ ca.common_name }}"
+    {%- if ca.country is defined %}
+    - C: {{ ca.country }}
+    {%- endif %}
+    {%- if ca.state is defined %}
+    - ST: {{ ca.state }}
+    {%- endif %}
+    {%- if ca.locality is defined %}
+    - L: {{ ca.locality }}
+    {%- endif %}
+    {%- if ca.organization is defined %}
+    - O: {{ ca.organization }}
+    {%- endif %}
+    {%- if ca.organization_unit is defined %}
+    - OU: {{ ca.organization_unit }}
+    {%- endif %}
+    - basicConstraints: "critical,CA:TRUE"
+    - keyUsage: {{ ca_key_usage }}
+    - subjectKeyIdentifier: hash
+    - authorityKeyIdentifier: keyid,issuer:always
+    - days_valid: {{ ca.days_valid.authority }}
+    - days_remaining: 0
+    - backup: True
+    - require:
+      - x509: {{ ca_key_file }}
+    {%- if grains['saltversioninfo'][0] >= 2017 %}
+    - retry:
+        attepmts: 5
+        until: True
+        interval: 60
+    {%- endif %}
 
 # TODO: Squash this with the previous state after switch to Salt version >= 2016.11.2
 {{ ca_name }}_cert_permissions:
