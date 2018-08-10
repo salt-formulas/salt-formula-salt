@@ -8,6 +8,8 @@ include:
   file.managed:
   - source: salt://salt/files/_orchestration.conf
   - user: root
+  - group: root
+  - mode: 600
   - template: jinja
   - makedirs: true
   - require:
