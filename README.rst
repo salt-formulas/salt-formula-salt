@@ -43,8 +43,22 @@ Salt master with Architect ENC metadata back end:
 
 Salt master with multiple ``ext_pillars``:
 
-.. literalinclude:: tests/pillar/master_single_extpillars.sls
-   :language: yaml
+.. code-block:: yaml
+
+    salt:
+      master:
+        enabled: true
+        pillar:
+          engine: salt
+          source:
+            engine: local
+        ext_pillars:
+          1:
+            module: cmd_json
+            params: '"echo {\"arg\": \"val\"}"'
+          2:
+            module: cmd_yaml
+            params: /usr/local/bin/get_yml.sh
 
 Salt master with API:
 

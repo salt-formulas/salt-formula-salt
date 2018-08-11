@@ -16,6 +16,13 @@ salt:
       engine: salt
       source:
         engine: local
+    ext_pillars:
+      1:
+        module: cmd_json
+        params: '"echo {\"arg\": \"val\"}"'
+      2:
+        module: cmd_yaml
+        params: /usr/local/bin/get_yml.sh
     environment:
       prd:
         formula: {}
