@@ -91,6 +91,12 @@ salt_minion_cert_{{ cert_name }}_dirs:
     - watch_in:
       - cmd: salt_minion_cert_{{ cert_name }}_all
     {%- endif %}
+    {%- if grains['saltversioninfo'][0] >= 2017 %}
+    - retry:
+        attepmts: 5
+        until: True
+        interval: 60
+    {%- endif %}
 
 # TODO: Squash this with the previous state after switch to Salt version >= 2016.11.2
 {{ cert_file }}_cert_permissions:
