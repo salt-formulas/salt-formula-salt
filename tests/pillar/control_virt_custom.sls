@@ -1,3 +1,13 @@
+_param:
+  private-ipv4: &private-ipv4
+  - id: private-ipv4
+    type: ipv4
+    link: ens2
+    netmask: 255.255.255.0
+    routes:
+    - gateway: 192.168.0.1
+      netmask: 0.0.0.0
+      network: 0.0.0.0
 virt:
   disk:
     three_disks:
@@ -57,6 +67,29 @@ salt:
         config:
           engine: salt
           host: master.domain.com
+        cloud_init:
+          user_data:
+            disable_ec2_metadata: true
+            resize_rootfs: True
+            timezone: UTC
+            ssh_deletekeys: True
+            ssh_genkeytypes: ['rsa', 'dsa', 'ecdsa']
+            ssh_svcname: ssh
+            locale: en_US.UTF-8
+            disable_root: true
+            apt_preserve_sources_list: false
+            apt:
+              sources_list: ""
+              sources:
+                ubuntu.list:
+                  source: ${linux:system:repo:ubuntu:source}
+                mcp_saltstack.list:
+                  source: ${linux:system:repo:mcp_saltstack:source}
+          network_data:
+            links:
+            - id: ens2
+              type: phy
+              name: ens2
         node:
           ubuntu1:
             provider: node01.domain.com
@@ -72,6 +105,11 @@ salt:
             provider: node03.domain.com
             image: meowbuntu.qcom2
             size: medium_three_disks
+            cloud_init:
+              network_data:
+                networks:
+                - <<: *private-ipv4
+                  ip_address: 192.168.0.161
             rng:
               backend: /dev/urandom
               model: random

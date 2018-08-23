@@ -42,6 +42,9 @@ salt_libvirt_service:
 {%- if node.provider == grains.id %}
 
 {%- set size = control.size.get(node.size) %}
+{%- set cluster_cloud_init = cluster.get('cloud_init', {}) %}
+{%- set node_cloud_init = node.get('cloud_init', {}) %}
+{%- set cloud_init = salt['grains.filter_by']({'default': cluster_cloud_init}, merge=node_cloud_init) %}
 
 salt_control_virt_{{ cluster_name }}_{{ node_name }}:
   module.run:
@@ -59,6 +62,9 @@ salt_control_virt_{{ cluster_name }}_{{ node_name }}:
   - rng: {{ rng }}
   {%- endif %}
   - kwargs:
+      {%- if cloud_init is defined %}
+      cloud_init: {{ cloud_init }}
+      {%- endif %}
       seed: True
       serial_type: pty
       console: True

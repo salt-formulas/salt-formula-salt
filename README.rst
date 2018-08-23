@@ -394,6 +394,16 @@ Control VM provisioning:
 
 .. code-block:: yaml
 
+    _param:
+      private-ipv4: &private-ipv4
+      - id: private-ipv4
+        type: ipv4
+        link: ens2
+        netmask: 255.255.255.0
+        routes:
+        - gateway: 192.168.0.1
+          netmask: 0.0.0.0
+          network: 0.0.0.0
     virt:
       disk:
         three_disks:
@@ -440,6 +450,24 @@ Control VM provisioning:
             engine: virt
             #Option to set rng globaly
             rng: false
+            cloud_init:
+              user_data:
+                disable_ec2_metadata: true
+                resize_rootfs: True
+                timezone: UTC
+                ssh_deletekeys: True
+                ssh_genkeytypes: ['rsa', 'dsa', 'ecdsa']
+                ssh_svcname: ssh
+                locale: en_US.UTF-8
+                disable_root: true
+                apt_preserve_sources_list: false
+                apt:
+                  sources_list: ""
+                  sources:
+                    ubuntu.list:
+                      source: ${linux:system:repo:ubuntu:source}
+                    mcp_saltstack.list:
+                      source: ${linux:system:repo:mcp_saltstack:source}
             node:
               ubuntu1:
                 provider: node01.domain.com
@@ -456,6 +484,13 @@ Control VM provisioning:
                 mac:
                   nic01: AC:DE:48:AA:AA:AA
                   nic02: AC:DE:48:AA:AA:BB
+                # netconfig affects: hostname during boot
+                # manual interfaces configuration
+                cloud_init:
+                  network_data:
+                    networks:
+                    - <<: *private-ipv4
+                      ip_address: 192.168.0.161
 
 To enable Redis plugin for the Salt caching subsystem, use the
 below pillar structure:

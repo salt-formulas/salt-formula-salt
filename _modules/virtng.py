@@ -20,6 +20,7 @@ import logging
 
 # Import third party libs
 import yaml
+import json
 import jinja2
 import jinja2.exceptions
 import salt.ext.six as six
@@ -558,6 +559,9 @@ def init(name,
             diskp[0][disk_name]['image'] = image
 
     # Create multiple disks, empty or from specified images.
+    cloud_init = None
+    cfg_drive  = None
+
     for disk in diskp:
         log.debug("Creating disk for VM [ {0} ]: {1}".format(name, disk))
 
@@ -618,13 +622,39 @@ def init(name,
                         raise CommandExecutionError('problem while copying image. {0} - {1}'.format(args['image'], e))
 
                     if kwargs.get('seed'):
-                        install = kwargs.get('install', True)
-                        seed_cmd = kwargs.get('seed_cmd', 'seedng.apply')
+                        seed_cmd   = kwargs.get('seed_cmd', 'seedng.apply')
+                        cloud_init = kwargs.get('cloud_init', None)
+                        master     = __salt__['config.option']('master')
+                        cfg_drive  = os.path.join(img_dir,'config-2.iso')
 
-                        __salt__[seed_cmd](img_dest,
-                                           id_=name,
-                                           config=kwargs.get('config'),
-                                           install=install)
+                        if cloud_init:
+                          _tmp         = name.split('.')
+
+                          try:
+                            user_data  = json.dumps(cloud_init["user_data"])
+                          except:
+                            user_data  = None
+
+                          try:
+                            network_data = json.dumps(cloud_init["network_data"])
+                          except:
+                            network_data = None
+
+                          __salt__["cfgdrive.generate"](
+                            dst          = cfg_drive,
+                            hostname     = _tmp.pop(0),
+                            domainname   = '.'.join(_tmp),
+                            user_data    = user_data,
+                            network_data = network_data,
+                            saltconfig   = { "salt_minion": { "conf": { "master": master, "id": name } } }
+                          )
+                        else:
+                          __salt__[seed_cmd](
+                            path      = img_dest,
+                            id_       = name,
+                            config    = kwargs.get('config'),
+                            install   = kwargs.get('install', True)
+                          )
                 else:
                     # Create empty disk
                     try:
@@ -648,6 +678,26 @@ def init(name,
                                           .format(hypervisor))
 
     xml = _gen_xml(name, cpu, mem, diskp, nicp, hypervisor, **kwargs)
+
+    if cloud_init and cfg_drive:
+      xml_doc = minidom.parseString(xml)
+      iso_xml = xml_doc.createElement("disk")
+      iso_xml.setAttribute("type", "file")
+      iso_xml.setAttribute("device", "cdrom")
+      iso_xml.appendChild(xml_doc.createElement("readonly"))
+      driver = xml_doc.createElement("driver")
+      driver.setAttribute("name", "qemu")
+      driver.setAttribute("type", "raw")
+      target = xml_doc.createElement("target")
+      target.setAttribute("dev", "hdc")
+      target.setAttribute("bus", "ide")
+      source = xml_doc.createElement("source")
+      source.setAttribute("file", cfg_drive)
+      iso_xml.appendChild(driver)
+      iso_xml.appendChild(target)
+      iso_xml.appendChild(source)
+      xml_doc.getElementsByTagName("domain")[0].getElementsByTagName("devices")[0].appendChild(iso_xml)
+      xml = xml_doc.toxml()
 
     # TODO: Remove this code and refactor module, when salt-common would have updated libvirt_domain.jinja template
     for _nic in nicp:

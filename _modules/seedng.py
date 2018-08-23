@@ -91,8 +91,16 @@ def _umount(mpt, ftype):
         __salt__['mount.umount'](mpt, util='qemu_nbd')
 
 
-def apply_(path, id_=None, config=None, approve_key=True, install=True,
-           prep_install=False, pub_key=None, priv_key=None, mount_point=None):
+def apply_(
+             path, id_=None,
+             config=None,
+             approve_key=True,
+             install=True,
+             prep_install=False,
+             pub_key=None,
+             priv_key=None,
+             mount_point=None
+          ):
     '''
     Seed a location (disk image, directory, or block device) with the
     minion config, approve the minion's key, and/or install salt-minion.
