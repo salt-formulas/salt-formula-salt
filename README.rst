@@ -481,6 +481,13 @@ Control VM provisioning:
                   rate:
                     period: '1800'
                     bytes: '1500'
+                # Custom per-node loader definition (e.g. for AArch64 UEFI)
+                loader:
+                  readonly: yes
+                  type: pflash
+                  path: /usr/share/AAVMF/AAVMF_CODE.fd
+                machine: virt-2.11  # Custom per-node virt machine type
+                cpu_mode: host-passthrough
                 mac:
                   nic01: AC:DE:48:AA:AA:AA
                   nic02: AC:DE:48:AA:AA:BB

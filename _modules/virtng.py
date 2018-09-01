@@ -531,6 +531,9 @@ def init(name,
          disk='default',
          saltenv='base',
          rng=None,
+         loader=None,
+         machine=None,
+         cpu_mode=None,
          **kwargs):
     '''
     Initialize a new vm
@@ -698,6 +701,37 @@ def init(name,
       iso_xml.appendChild(source)
       xml_doc.getElementsByTagName("domain")[0].getElementsByTagName("devices")[0].appendChild(iso_xml)
       xml = xml_doc.toxml()
+
+    # TODO: Remove this code and refactor module, when salt-common would have updated libvirt_domain.jinja template
+    if cpu_mode:
+        xml_doc = minidom.parseString(xml)
+        cpu_xml = xml_doc.createElement("cpu")
+        cpu_xml.setAttribute('mode', cpu_mode)
+        xml_doc.getElementsByTagName("domain")[0].appendChild(cpu_xml)
+        xml = xml_doc.toxml()
+
+    # TODO: Remove this code and refactor module, when salt-common would have updated libvirt_domain.jinja template
+    if machine:
+        xml_doc = minidom.parseString(xml)
+        os_xml = xml_doc.getElementsByTagName("domain")[0].getElementsByTagName("os")[0]
+        os_xml.getElementsByTagName("type")[0].setAttribute('machine', machine)
+        xml = xml_doc.toxml()
+
+    # TODO: Remove this code and refactor module, when salt-common would have updated libvirt_domain.jinja template
+    if loader and 'path' not in loader:
+        log.info('`path` is a required property of `loader`, and cannot be found. Skipping loader configuration')
+        loader = None
+    elif loader:
+        xml_doc = minidom.parseString(xml)
+        loader_xml = xml_doc.createElement("loader")
+        for key, val in loader.items():
+            if key == 'path':
+                continue
+            loader_xml.setAttribute(key, val)
+        loader_path_xml = xml_doc.createTextNode(loader['path'])
+        loader_xml.appendChild(loader_path_xml)
+        xml_doc.getElementsByTagName("domain")[0].getElementsByTagName("os")[0].appendChild(loader_xml)
+        xml = xml_doc.toxml()
 
     # TODO: Remove this code and refactor module, when salt-common would have updated libvirt_domain.jinja template
     for _nic in nicp:
@@ -1602,7 +1636,11 @@ def undefine(vm_):
         salt '*' virtng.undefine <vm name>
     '''
     dom = _get_dom(vm_)
-    return dom.undefine() == 0
+    if getattr(libvirt, 'VIR_DOMAIN_UNDEFINE_NVRAM', False):
+        # This one is only in 1.2.8+
+        return dom.undefineFlags(libvirt.VIR_DOMAIN_UNDEFINE_NVRAM) == 0
+    else:
+        return dom.undefine() == 0
 
 
 def purge(vm_, dirs=False):
