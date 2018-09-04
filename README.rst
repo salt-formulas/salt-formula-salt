@@ -300,6 +300,22 @@ Enable Windows repository support:
           address: https://github.com/saltstack/salt-winrepo-ng
           revision: master
 
+Configure a gitfs_remotes resource:
+
+.. code-block:: yaml
+
+    salt:
+      master:
+        gitfs_remotes:
+          salt_formula:
+            url: https://github.com/salt-formulas/salt-formula-salt.git
+            enabled: true
+            params:
+              base: master
+
+Read more about gitfs resource options in the official Salt documentation.
+
+
 Event/Reactor systems
 ~~~~~~~~~~~~~~~~~~~~~
 
