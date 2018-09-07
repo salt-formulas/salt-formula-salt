@@ -1,5 +1,5 @@
 classes:
-- service.master.pillar.composite
+- service.salt.master.pillar.composite
 parameters:
   salt:
     master:

@@ -1,6 +1,6 @@
 classes:
-- service.master.nacl
-- service.master.pillar.composite
+- service.salt.master.nacl
+- service.salt.master.pillar.composite
 parameters:
   salt:
     master:
