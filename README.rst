@@ -504,6 +504,7 @@ Control VM provisioning:
                   path: /usr/share/AAVMF/AAVMF_CODE.fd
                 machine: virt-2.11  # Custom per-node virt machine type
                 cpu_mode: host-passthrough
+                cpuset: '1-4'
                 mac:
                   nic01: AC:DE:48:AA:AA:AA
                   nic02: AC:DE:48:AA:AA:BB

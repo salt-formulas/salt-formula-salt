@@ -98,6 +98,7 @@ salt:
             img_dest: /var/lib/libvirt/ssdimages
             machine: virt-2.11
             cpu_mode: host-passthrough
+            cpuset: '1-2'
           ubuntu2:
             provider: node02.domain.com
             image: bubuntu.qcomw

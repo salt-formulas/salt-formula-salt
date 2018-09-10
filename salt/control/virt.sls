@@ -67,6 +67,9 @@ salt_control_virt_{{ cluster_name }}_{{ node_name }}:
   {%- if  node.machine is defined %}
   - machine: {{ node.machine }}
   {%- endif %}
+  {%- if  node.cpuset is defined %}
+  - cpuset: {{ node.cpuset }}
+  {%- endif %}
   {%- if  node.cpu_mode is defined %}
   - cpu_mode: {{ node.cpu_mode }}
   {%- endif %}

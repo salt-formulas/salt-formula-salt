@@ -534,6 +534,7 @@ def init(name,
          loader=None,
          machine=None,
          cpu_mode=None,
+         cpuset=None,
          **kwargs):
     '''
     Initialize a new vm
@@ -701,6 +702,12 @@ def init(name,
       iso_xml.appendChild(source)
       xml_doc.getElementsByTagName("domain")[0].getElementsByTagName("devices")[0].appendChild(iso_xml)
       xml = xml_doc.toxml()
+
+    # TODO: Remove this code and refactor module, when salt-common would have updated libvirt_domain.jinja template
+    if cpuset:
+        xml_doc = minidom.parseString(xml)
+        xml_doc.getElementsByTagName("vcpu")[0].setAttribute('cpuset', cpuset)
+        xml = xml_doc.toxml()
 
     # TODO: Remove this code and refactor module, when salt-common would have updated libvirt_domain.jinja template
     if cpu_mode:
