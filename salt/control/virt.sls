@@ -49,6 +49,7 @@ salt_libvirt_service:
 {%- if node.provider == grains.id %}
 
 {%- set size = control.size.get(node.size) %}
+{%- set seed = node.get('seed', cluster.get('seed', True)) %}
 {%- set cluster_cloud_init = cluster.get('cloud_init', {}) %}
 {%- set node_cloud_init = node.get('cloud_init', {}) %}
 {%- set cloud_init = salt['grains.filter_by']({'default': cluster_cloud_init}, merge=node_cloud_init) %}
@@ -63,28 +64,33 @@ salt_control_virt_{{ cluster_name }}_{{ node_name }}:
   - start: True
   - disk: {{ size.disk_profile }}
   - nic: {{ size.net_profile }}
-  {%- if  node.rng is defined %}
+  {%- if node.rng is defined %}
   - rng: {{  node.rng }}
   {%- elif rng is defined %}
   - rng: {{ rng }}
   {%- endif %}
-  {%- if  node.loader is defined %}
+  {%- if node.loader is defined %}
   - loader: {{  node.loader }}
   {%- endif %}
-  {%- if  node.machine is defined %}
+  {%- if node.machine is defined %}
   - machine: {{ node.machine }}
   {%- endif %}
-  {%- if  node.cpuset is defined %}
+  {%- if node.cpuset is defined %}
   - cpuset: {{ node.cpuset }}
   {%- endif %}
-  {%- if  node.cpu_mode is defined %}
+  {%- if node.cpu_mode is defined %}
   - cpu_mode: {{ node.cpu_mode }}
   {%- endif %}
   - kwargs:
-      {%- if cloud_init is defined %}
+      {%- if cluster.config is defined %}
+      config: {{ cluster.config }}
+      {%- endif %}
+      {%- if cloud_init and cloud_init.get('enabled', True) %}
       cloud_init: {{ cloud_init }}
       {%- endif %}
-      seed: True
+      {%- if seed %}
+      seed: {{ seed }}
+      {%- endif %}
       serial_type: pty
       console: True
       {%- if node.enable_vnc is defined %}
@@ -103,13 +109,6 @@ salt_control_virt_{{ cluster_name }}_{{ node_name }}:
   - unless: virsh list --all --name| grep -E "^{{ node_name }}.{{ cluster.domain }}$"
   - require:
     - salt_libvirt_service
-
-#salt_control_seed_{{ cluster_name }}_{{ node_name }}:
-#  module.run:
-#  - name: seed.apply
-#  - path: /srv/salt-images/{{ node_name }}.{{ cluster.domain }}/system.qcow2
-#  - id_: {{ node_name }}.{{ cluster.domain }}
-#  - unless: virsh list | grep {{ node_name }}.{{ cluster.domain }}
 
 {%- if node.get("autostart", True) %}
 

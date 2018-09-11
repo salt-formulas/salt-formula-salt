@@ -467,6 +467,7 @@ Control VM provisioning:
             # Cluster global settings
             rng: false
             enable_vnc: True
+            seed: cloud-init
             cloud_init:
               user_data:
                 disable_ec2_metadata: true
@@ -517,6 +518,31 @@ Control VM provisioning:
                     networks:
                     - <<: *private-ipv4
                       ip_address: 192.168.0.161
+                  user_data:
+                    salt_minion:
+                      conf:
+                        master: 10.1.1.1
+              ubuntu2:
+                seed: qemu-nbd
+                cloud_init:
+                  enabled: false
+
+There are two methods to seed an initial Salt minion configuration to
+Libvirt VMs: mount a disk and update a filesystem or create a ConfigDrive with
+a Cloud-init config. This is controlled by the "seed" parameter on cluster and
+node levels. When set to _True_ or "qemu-nbd", the old method of mounting a disk
+will be used. When set to "cloud-init", the new method will be used. When set
+to _False_, no seeding will happen. The default value is _True_, meaning
+the "qemu-nbd" method will be used. This is done for backward compatibility
+and may be changed in future.
+
+The recommended method is to use Cloud-init.
+It's controlled by the "cloud_init" dictionary on cluster and node levels.
+Node level parameters are merged on top of cluster level parameters.
+The Salt Minion config is populated automatically based on a VM name and config
+settings of the minion who is actually executing a state. To override them,
+add the "salt_minion" section into the "user_data" section as shown above.
+It is possible to disable Cloud-init by setting "cloud_init.enabled" to _False_.
 
 To enable Redis plugin for the Salt caching subsystem, use the
 below pillar structure:
@@ -932,4 +958,3 @@ Documentation and Bugs
 * #salt-formulas @ irc.freenode.net
    Use this IRC channel in case of any questions or feedback which is always
    welcome
-

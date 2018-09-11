@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
 
+import errno
 import json
 import logging
 import os
 import shutil
 import six
+import subprocess
 import tempfile
+import uuid
 import yaml
 
-from oslo_utils import uuidutils
-from oslo_utils import fileutils
-from oslo_concurrency import processutils
+LOG = logging.getLogger(__name__)
 
 class ConfigDriveBuilder(object):
     """Build config drives, optionally as a context manager."""
@@ -20,11 +21,29 @@ class ConfigDriveBuilder(object):
         self.mdfiles=[]
 
     def __enter__(self):
-        fileutils.delete_if_exists(self.image_file)
+        self._delete_if_exists(self.image_file)
         return self
 
     def __exit__(self, exctype, excval, exctb):
         self.make_drive()
+
+    @staticmethod
+    def _ensure_tree(path):
+        try:
+            os.makedirs(path)
+        except OSError as e:
+            if e.errno == errno.EEXIST and os.path.isdir(path):
+                pass
+            else:
+                raise
+
+    @staticmethod
+    def _delete_if_exists(path):
+        try:
+            os.unlink(path)
+        except OSError as e:
+            if e.errno != errno.ENOENT:
+                raise
 
     def add_file(self, path, data):
         self.mdfiles.append((path, data))
@@ -32,7 +51,7 @@ class ConfigDriveBuilder(object):
     def _add_file(self, basedir, path, data):
         filepath = os.path.join(basedir, path)
         dirname = os.path.dirname(filepath)
-        fileutils.ensure_tree(dirname)
+        self._ensure_tree(dirname)
         with open(filepath, 'wb') as f:
             if isinstance(data, six.text_type):
                 data = data.encode('utf-8')
@@ -43,8 +62,7 @@ class ConfigDriveBuilder(object):
             self._add_file(basedir, data[0], data[1])
 
     def _make_iso9660(self, path, tmpdir):
-
-        processutils.execute('mkisofs',
+        cmd = ['mkisofs',
             '-o', path,
             '-ldots',
             '-allow-lowercase',
@@ -54,13 +72,34 @@ class ConfigDriveBuilder(object):
             '-r',
             '-J',
             '-quiet',
-            tmpdir,
-            attempts=1,
-            run_as_root=False)
+            tmpdir]
+        try:
+            LOG.info('Running cmd (subprocess): %s', cmd)
+            _pipe = subprocess.PIPE
+            obj = subprocess.Popen(cmd,
+                       stdin=_pipe,
+                       stdout=_pipe,
+                       stderr=_pipe,
+                       close_fds=True)
+            (stdout, stderr) = obj.communicate()
+            obj.stdin.close()
+            _returncode = obj.returncode
+            LOG.debug('Cmd "%s" returned: %s', cmd, _returncode)
+            if _returncode != 0:
+                output = 'Stdout: %s\nStderr: %s' % (stdout, stderr)
+                LOG.error('The command "%s" failed. %s',
+                          cmd, output)
+                raise subprocess.CalledProcessError(cmd=cmd,
+                                                    returncode=_returncode,
+                                                    output=output)
+        except OSError as err:
+            LOG.error('Got an OSError in the command: "%s". Errno: %s', cmd,
+                      err.errno)
+            raise
 
     def make_drive(self):
         """Make the config drive.
-        :raises ProcessExecuteError if a helper process has failed.
+        :raises CalledProcessError if a helper process has failed.
         """
         try:
             tmpdir = tempfile.mkdtemp()
@@ -70,15 +109,8 @@ class ConfigDriveBuilder(object):
             shutil.rmtree(tmpdir)
 
 
-def generate(
-               dst,
-               hostname,
-               domainname,
-               instance_id=None,
-               user_data=None,
-               network_data=None,
-               saltconfig=None
-            ):
+def generate(dst, hostname, domainname, instance_id=None, user_data=None,
+             network_data=None):
 
     ''' Generate config drive
 
@@ -86,29 +118,24 @@ def generate(
     :param hostname: hostname of Instance.
     :param domainname: instance domain.
     :param instance_id: UUID of the instance.
-    :param user_data: custom user data dictionary. type: json
-    :param network_data: custom network info dictionary. type: json
-    :param saltconfig: salt minion configuration. type: json
+    :param user_data: custom user data dictionary.
+    :param network_data: custom network info dictionary.
 
     '''
-
-    instance_md              = {}
-    instance_md['uuid']      = instance_id or uuidutils.generate_uuid()
-    instance_md['hostname']  = '%s.%s' % (hostname, domainname)
-    instance_md['name']      = hostname
+    instance_md = {}
+    instance_md['uuid'] = instance_id or str(uuid.uuid4())
+    instance_md['hostname'] = '%s.%s' % (hostname, domainname)
+    instance_md['name'] = hostname
 
     if user_data:
-      user_data = '#cloud-config\n\n' + yaml.dump(yaml.load(user_data), default_flow_style=False)
-      if saltconfig:
-        user_data += yaml.dump(yaml.load(str(saltconfig)), default_flow_style=False)
+        user_data = '#cloud-config\n\n' + yaml.dump(user_data, default_flow_style=False)
 
     data = json.dumps(instance_md)
-
     with ConfigDriveBuilder(dst) as cfgdrive:
-      cfgdrive.add_file('openstack/latest/meta_data.json', data)
-      if user_data:
-        cfgdrive.add_file('openstack/latest/user_data', user_data)
-      if network_data:
-         cfgdrive.add_file('openstack/latest/network_data.json', network_data)
-      cfgdrive.add_file('openstack/latest/vendor_data.json', '{}')
-      cfgdrive.add_file('openstack/latest/vendor_data2.json', '{}')
+        cfgdrive.add_file('openstack/latest/meta_data.json', data)
+        if user_data:
+            cfgdrive.add_file('openstack/latest/user_data', user_data)
+        if network_data:
+            cfgdrive.add_file('openstack/latest/network_data.json', json.dumps(network_data))
+
+    LOG.debug('Config drive was built %s' % dst)

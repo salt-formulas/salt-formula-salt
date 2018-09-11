@@ -67,6 +67,7 @@ salt:
         config:
           engine: salt
           host: master.domain.com
+        seed: cloud-init
         cloud_init:
           user_data:
             disable_ec2_metadata: true
@@ -104,6 +105,9 @@ salt:
             image: bubuntu.qcomw
             size: small
             img_dest: /var/lib/libvirt/hddimages
+            seed: qemu-nbd
+            cloud_init:
+              enabled: false
             loader:
               readonly: yes
               type: pflash
@@ -113,6 +117,10 @@ salt:
             image: meowbuntu.qcom2
             size: medium_three_disks
             cloud_init:
+              user_data:
+                salt_minion:
+                  config:
+                    master: master.domain.com
               network_data:
                 networks:
                 - <<: *private-ipv4

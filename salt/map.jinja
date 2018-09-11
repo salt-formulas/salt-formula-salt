@@ -192,6 +192,7 @@ Debian:
   virt_pkgs:
   - libvirt-dev
   - pkg-config
+  - genisoimage
 {% if grains.get('oscodename') == 'trusty' %}
   - libguestfs-tools
 {% endif %}
@@ -201,6 +202,7 @@ RedHat:
   virt_pkgs:
   - libvirt-dev
   - pkg-config
+  - genisoimage
   virt_service: 'libvirtd'
 {%- endload %}
 
