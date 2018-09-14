@@ -236,6 +236,9 @@ def _gen_xml(name,
     else:
         context['boot_dev'] = ['hd']
 
+    if 'enable_vnc' in kwargs:
+        context['enable_vnc'] = kwargs['enable_vnc']
+        log.info('VNC enabled: {0}.'.format(kwargs['enable_vnc']))
     if 'serial_type' in kwargs:
         context['serial_type'] = kwargs['serial_type']
     if 'serial_type' in context and context['serial_type'] == 'tcp':
