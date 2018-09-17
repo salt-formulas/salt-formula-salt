@@ -33,6 +33,13 @@ salt_libvirt_service:
 {%- set rng = cluster.rng %}
 {%- endif %}
 
+{%- if cluster.enable_vnc is defined and cluster.enable_vnc %}
+{%- set enable_vnc = True %}
+{%- else %}
+{%- set enable_vnc = False %}
+{%- endif %}
+
+
 {%- for node_name, node in cluster.node.iteritems() %}
 
 {%- if node.name is defined %}
@@ -80,6 +87,11 @@ salt_control_virt_{{ cluster_name }}_{{ node_name }}:
       seed: True
       serial_type: pty
       console: True
+      {%- if node.enable_vnc is defined %}
+      enable_vnc: {{ node.enable_vnc }}
+      {%- else %}
+      enable_vnc: {{ enable_vnc }}
+      {%- endif %}
       {%- if node.img_dest is defined %}
       img_dest: {{ node.img_dest }}
       {%- endif %}
