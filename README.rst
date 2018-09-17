@@ -464,8 +464,9 @@ Control VM provisioning:
           mycluster:
             domain: neco.virt.domain.com
             engine: virt
-            #Option to set rng globaly
+            # Cluster global settings
             rng: false
+            enable_vnc: True
             cloud_init:
               user_data:
                 disable_ec2_metadata: true
@@ -490,7 +491,8 @@ Control VM provisioning:
                 image: ubuntu.qcow
                 size: medium
                 img_dest: /var/lib/libvirt/ssdimages
-                #Rng defined on node will have higher priority then global one
+                # Node settings override cluster global ones
+                enable_vnc: False
                 rng:
                   backend: /dev/urandom
                   model: random
