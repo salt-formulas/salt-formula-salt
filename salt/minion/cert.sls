@@ -13,6 +13,7 @@
 {%- set created_ca_files = [] %}
 
 {%- for cert_name,cert in minion.get('cert', {}).iteritems() %}
+{%- if cert.get('enabled', True) %}
 {%- set rowloop = loop %}
 
 {%- set key_file  = cert.get('key_file', '/etc/ssl/private/' + cert.common_name + '.key') %}
@@ -169,6 +170,7 @@ salt_minion_cert_{{ cert_name }}_all:
     - replace: false
     - require:
       - cmd: salt_minion_cert_{{ cert_name }}_all
+{%- endif %}
 {%- endif %}
 
 {%- endfor %}
