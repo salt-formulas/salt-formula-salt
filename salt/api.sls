@@ -26,15 +26,29 @@ salt_api_init_tls:
   - creates: /etc/ssl/certs/{{ api.ssl.get('name', grains.id) }}-chain.crt
   - watch_in:
     - service: salt_api_service
-
 {%- endif %}
 
 salt_api_service:
   service.running:
-  - name: salt-api
+  - name: {{ api.service }}
   - require:
     - pkg: salt_api_packages
   - watch:
     - file: /etc/salt/master.d/_api.conf
 
+{%- if grains.get('init', None) == 'systemd' %}
+salt_api_systemd_override:
+  file.managed:
+    - name: /etc/systemd/system/{{ api.service }}.service.d/50-restarts.conf
+    - source: salt://salt/files/systemd/{{ api.service }}.service_50-restarts
+    - makedirs: True
+
+salt_api_systemd_reload:
+  module.wait:
+    - name: service.systemctl_reload
+    - onchanges:
+      - file: salt_api_systemd_override
+    - watch_in:
+      - service: salt_api_service
+{%- endif %}
 {%- endif %}

@@ -109,6 +109,22 @@ salt_master_service:
     splay: 5
   {%- endif %}
 
+{%- if grains.get('init', None) == 'systemd' %}
+salt_master_systemd_override:
+  file.managed:
+    - name: /etc/systemd/system/{{ master.service }}.service.d/50-restarts.conf
+    - source: salt://salt/files/systemd/{{ master.service }}.service_50-restarts
+    - makedirs: True
+
+salt_master_systemd_reload:
+  module.wait:
+    - name: service.systemctl_reload
+    - onchanges:
+      - file: salt_master_systemd_override
+    - watch_in:
+      - service: salt_master_service
+{%- endif %}
+
 /srv/salt/env:
   file.directory:
   - user: root

@@ -64,6 +64,22 @@ salt_minion_service:
     - onlyif: /bin/false
     {%- endif %}
 
+{%- if grains.get('init', None) == 'systemd' %}
+salt_minion_systemd_override:
+  file.managed:
+    - name: /etc/systemd/system/{{ minion.service }}.service.d/50-restarts.conf
+    - source: salt://salt/files/systemd/{{ minion.service }}.service_50-restarts
+    - makedirs: True
+
+salt_minion_systemd_reload:
+  module.wait:
+    - name: service.systemctl_reload
+    - onchanges:
+      - file: salt_minion_systemd_override
+    - watch_in:
+      - service: salt_minion_service
+{%- endif %}
+
 {#- Restart salt-minion if needed but after all states are executed #}
 salt_minion_service_restart:
   cmd.run:
