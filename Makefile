@@ -18,7 +18,11 @@ else
 JOBS := 1
 endif
 
+ifeq (,$(wildcard ./.kitchen.openstack.yml))
+KITCHEN_LOCAL_YAML?=.kitchen.openstack.yml
+else
 KITCHEN_LOCAL_YAML?=.kitchen.yml
+endif
 KITCHEN_OPTS?="--concurrency=$(JOBS)"
 KITCHEN_OPTS_CREATE?=""
 KITCHEN_OPTS_CONVERGE?=""

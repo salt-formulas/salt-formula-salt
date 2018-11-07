@@ -9,15 +9,9 @@ install:
   - pip install PyYAML
   - pip install virtualenv
   - |
-    test -e Gemfile || cat <<EOF > Gemfile
-    source 'https://rubygems.org'
-    gem 'rake'
-    gem 'test-kitchen'
-    gem 'kitchen-docker'
-    gem 'kitchen-inspec'
-    gem 'inspec', '<3.0.0'
-     #Version was frozen, because of issues in the version of inspec >3.0.0 -- see https://mirantis.jira.com/browse/PROD-24324 for more info, '<3.0.0'
-    gem 'kitchen-salt' #, :git => 'https://github.com/salt-formulas/kitchen-salt.git'
+    if [ ! -e Gemfile ]; then
+       curl -s -o ./Gemfile 'https://gerrit.mcp.mirantis.com/gitweb?p=salt-formulas/salt-formulas-scripts.git;a=blob_plain;f=Gemfile;hb=refs/heads/master'
+    fi
   - bundle install
 
 env:
