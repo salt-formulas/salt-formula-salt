@@ -94,7 +94,7 @@ salt_minion_cert_{{ cert_name }}_dirs:
     {%- endif %}
     {%- if grains['saltversioninfo'][0] >= 2017 %}
     - retry:
-        attepmts: 5
+        attempts: 5
         until: True
         interval: 60
     {%- endif %}

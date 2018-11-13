@@ -76,7 +76,7 @@ salt_minion_cert_{{ ca_name }}_dirs:
       - x509: {{ ca_key_file }}
     {%- if grains['saltversioninfo'][0] >= 2017 %}
     - retry:
-        attepmts: 5
+        attempts: 5
         until: True
         interval: 60
     {%- endif %}
