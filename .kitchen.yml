@@ -61,7 +61,7 @@ verifier:
 platforms:
   - name: <%=ENV['PLATFORM'] ||  'saltstack-ubuntu-xenial-salt-stable' %>
     driver_config:
-      image: <%=ENV['PLATFORM'] || 'epcim/salt:saltstack-ubuntu-xenial-salt-stable'%>
+      image: <%=ENV['PLATFORM'] || 'docker-dev-local.docker.mirantis.net/epcim/salt/saltstack-ubuntu-xenial-salt-stable/salt:2018_11_19'%>
       platform: ubuntu
 
 suites:
